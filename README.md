@@ -14,3 +14,29 @@ java.com.example.beagle.sourse:   questa cartella serve per:
   - Si occupa solo di recuperare o inviare dati, senza logica di business o UI.
   - Espone metodi “bassi” che il Repository userà per costruire operazioni più complesse.
 
+
+
+```mermaid
+erDiagram
+  USER 1--0+ PET : owns
+  USER 1--0+ CHAT : creates
+  USER {
+    string *userId
+    string email UK
+  }
+
+  PET {
+    string *petId
+    string name
+    string species
+    string race
+  }
+
+  CHAT 0+--1 PET : "is about"
+  CHAT {
+  string *chatId
+  string userId FK
+  string petId FK
+  }
+
+  
