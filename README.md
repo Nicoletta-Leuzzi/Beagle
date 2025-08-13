@@ -19,7 +19,7 @@ Diagrammi creati con [mermaid](https://mermaid.js.org/intro/).
 
 ## Modificare i diagrammi
 Per editare più comodamente i diagrammi:
-1. Copia il codice di un singolo diagramma, escludendo la prima riga (```` ```mermaid ````) e l'ultima (```` ``` ````).
+1. Copia il codice di un singolo diagramma, escludendo la prima riga (` ```mermaid `) e l'ultima (` ``` `).
 2. Incollalo in questo [tool](https://www.mermaidchart.com/play?utm_source=mermaid_live_editor).
 
 ## Diagramma ER (Entity Relationship)
