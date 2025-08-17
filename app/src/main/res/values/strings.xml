@@ -1,3 +1,13 @@
 <resources>
     <string name="app_name">Beagle</string>
+    <string name="hint_email">Email</string>
+    <string name="hint_password">Password</string>
+    <string name="btn_login">Accedi</string>
+    <string name="tv_go_register">Non hai un account? Registrati</string>
+    <string name="btn_register">Crea account</string>
+    <string name="hello_world">Hello World!</string>
+    <string name="btn_logout">Logout</string>
+    <string name="home_message">Sei nella Home ✅</string>
+    <string name="tv_home_text">Sei nella Home ✅</string>
+
 </resources>
