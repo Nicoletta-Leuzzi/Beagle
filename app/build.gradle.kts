@@ -53,6 +53,10 @@ dependencies {
     implementation("androidx.lifecycle:lifecycle-livedata:2.8.4")
     implementation("androidx.lifecycle:lifecycle-runtime:2.8.4")
 
+    // Nav Graph
+    implementation(libs.navigation.fragment)
+    implementation(libs.navigation.ui)
+
     // Google Sign-In (lascia commentato finché non serve/è nel catalog)
     // implementation(libs.play.services.auth)
 
