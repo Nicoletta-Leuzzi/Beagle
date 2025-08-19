@@ -10,8 +10,10 @@ import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.lifecycle.ViewModelProvider;
+import androidx.navigation.Navigation;
 
 import com.example.beagle.R;
+import com.example.beagle.ui.chat.ChatActivity;
 import com.example.beagle.ui.welcome.viewmodel.AuthState;
 import com.example.beagle.ui.welcome.viewmodel.UserViewModel;
 
@@ -87,6 +89,10 @@ public class LoginActivity extends AppCompatActivity {
     private void goHome() {
         // TODO: sostituisci con la tua HomeActivity quando pronta
         Toast.makeText(this, "Login OK", Toast.LENGTH_SHORT).show();
+
+        // TODO: rifare usando nav graph quando diventerà una fragment
+        startActivity(new Intent(this, ChatActivity.class));
+
         finish();
     }
 }

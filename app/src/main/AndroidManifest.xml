@@ -11,9 +11,11 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.Beagle">
         <activity
-            android:name=".ui.home.HomeActivity"
+            android:name=".ui.chat.ChatActivity"
             android:exported="false" />
-        <!-- Registrazione (nessun intent-filter) -->
+        <activity
+            android:name=".ui.home.HomeActivity"
+            android:exported="false" /> <!-- Registrazione (nessun intent-filter) -->
         <activity
             android:name=".ui.welcome.RegisterActivity"
             android:exported="false" /> <!-- Login: schermata iniziale -->
