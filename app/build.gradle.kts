@@ -1,7 +1,7 @@
 plugins {
     alias(libs.plugins.android.application)
-    // Abilita quando aggiungerai google-services.json:
-    // id("com.google.gms.google-services")
+    // Abilita il plugin di Google Services (richiede google-services.json in app/)
+    id("com.google.gms.google-services")
 }
 
 android {
@@ -48,17 +48,22 @@ dependencies {
     implementation(libs.activity)
     implementation(libs.constraintlayout)
 
-    // MVVM / Lifecycle (coordinati DIRETTI per evitare errori del catalog)
+    // MVVM / Lifecycle (coordinate DIRETTE per evitare mismatch di catalog)
     implementation("androidx.lifecycle:lifecycle-viewmodel:2.8.4")
     implementation("androidx.lifecycle:lifecycle-livedata:2.8.4")
     implementation("androidx.lifecycle:lifecycle-runtime:2.8.4")
 
-    // Nav Graph
+    // Navigation
     implementation(libs.navigation.fragment)
     implementation(libs.navigation.ui)
 
-    // Google Sign-In (lascia commentato finché non serve/è nel catalog)
-    // implementation(libs.play.services.auth)
+    // --- Firebase ---
+    implementation(platform("com.google.firebase:firebase-bom:34.1.0"))
+    implementation("com.google.firebase:firebase-auth")
+    implementation("com.google.firebase:firebase-database")
+
+    // Google Sign-In (necessario se usi login con Google)
+    implementation("com.google.android.gms:play-services-auth:21.4.0")
 
     // Test
     testImplementation(libs.junit)
