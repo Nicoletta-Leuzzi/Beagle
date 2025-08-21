@@ -12,7 +12,6 @@
 
     <string name="saluto_iniziale">Come stà %1$s\?</string>
     <string name="hint">Descrivi il problema</string>
-    <string name="no_text">Scivi una domanda all\'AI riguardo il tuo animale</string>
 
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>

@@ -63,9 +63,12 @@ public class MessageRecyclerAdapter extends RecyclerView.Adapter<MessageRecycler
 
         // Get element from your dataset at this position and replace the
         // contents of the view with that element
-        if (messageList.get(position).getUser()) {
+
+        // If message is an user question
+        if (messageList.get(position).isUser()) {
             viewHolder.getTextViewQuestion().setText(messageList.get(position).getMessage());
             viewHolder.textViewAnswer.setVisibility(View.GONE);
+        // Else message is AI reply
         } else {
             viewHolder.textViewQuestion.setVisibility(View.GONE);
             viewHolder.getTextViewAnswer().setText(messageList.get(position).getMessage());
