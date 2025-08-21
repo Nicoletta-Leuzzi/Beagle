@@ -9,7 +9,7 @@
     <string name="btn_logout">Logout</string>
     <string name="home_message">Sei nella Home ✅</string>
     <string name="tv_home_text">Sei nella Home ✅</string>
-    <string name="saluto_iniziale">Come stà %1$s\\?</string>
+    <string name="saluto_iniziale">Come sta %1$s\\?</string>
     <string name="hint">Descrivi il problema</string>
     <string name="no_text">Scivi una domanda all\'AI riguardo il tuo animale</string>
     <string name="chats">Chat</string>
