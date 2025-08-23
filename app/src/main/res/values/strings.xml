@@ -8,6 +8,9 @@
     <string name="btn_register">Crea account</string>
     <string name="btn_logout">Logout</string>
     <string name="please_wait">Attendere…</string>
+    <string name="welcome">Benvenuta/o</string>
+    <string name="already_registered">Hai già un account? Accedi</string>
+
 
     <!-- Navigazione testo -->
     <string name="tv_go_register">Non hai un account? Registrati</string>
