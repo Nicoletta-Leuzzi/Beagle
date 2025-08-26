@@ -67,7 +67,7 @@ public class Conversation {
     // restituisce una vista non modificabile dei messaggi
     public List<Message> getMessages() {
         return Collections.unmodifiableList(messages);
-        } 
+        }
 
     public Message addMessage(Message m) {
         if (m == null) return null;
