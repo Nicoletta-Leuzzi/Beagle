@@ -1,6 +1,5 @@
 package com.example.beagle.model;
 
-import android.os.Build;
 
 import java.util.List;
 import java.util.ArrayList;
