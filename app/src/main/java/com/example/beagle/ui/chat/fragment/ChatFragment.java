@@ -97,15 +97,11 @@ public class ChatFragment extends Fragment {
         if (hasPetSaved()) {
             //firstText = String.format(Constants.WELCOME_MESSAGE, petName);
             firstText = String.format(res.getString(R.string.saluto_iniziale), petName);
-            editTextPrompt.setEnabled(true);
-            editTextPrompt.setInputType(InputType.TYPE_TEXT_VARIATION_NORMAL);
             sendButton.setEnabled(true);
             addPetButton.setVisibility(View.GONE);
         } else {
             //firstText = Constants.NO_PET_MESSAGE;
             firstText = String.format(res.getString(R.string.no_pet));
-            editTextPrompt.setEnabled(false);
-            editTextPrompt.setInputType(InputType.TYPE_NULL);
             sendButton.setEnabled(false);
             addPetButton.setVisibility(View.VISIBLE);
         }
