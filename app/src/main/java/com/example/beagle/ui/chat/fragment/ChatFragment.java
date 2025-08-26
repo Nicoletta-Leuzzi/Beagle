@@ -39,7 +39,7 @@ public class ChatFragment extends Fragment {
     private String petName;
 
 
-    private Pet pet;
+    //private Pet pet;
     //private TextView questionMessage = findViewById(R.id.textViewQuestion);
 
     public ChatFragment() {
@@ -89,18 +89,20 @@ public class ChatFragment extends Fragment {
         TextView textView = view.findViewById(R.id.textView);
 
 
-        // Resources res = getResources();
-        // String text = String.format(res.getString(R.string.saluto_iniziale), petName);
+        Resources res = getResources();
+
 
         String firstText;
         if (hasPetSaved()) {
-            firstText = String.format(Constants.WELCOME_MESSAGE, petName);
+            //firstText = String.format(Constants.WELCOME_MESSAGE, petName);
+            firstText = String.format(res.getString(R.string.saluto_iniziale), petName);
             editTextPrompt.setEnabled(true);
             editTextPrompt.setInputType(InputType.TYPE_TEXT_VARIATION_NORMAL);
             sendButton.setEnabled(true);
             addPetButton.setVisibility(View.GONE);
         } else {
-            firstText = Constants.NO_PET_MESSAGE;
+            //firstText = Constants.NO_PET_MESSAGE;
+            firstText = String.format(res.getString(R.string.no_pet));
             editTextPrompt.setEnabled(false);
             editTextPrompt.setInputType(InputType.TYPE_NULL);
             sendButton.setEnabled(false);
@@ -133,7 +135,8 @@ public class ChatFragment extends Fragment {
                 textView.setText("");
 
             } else {
-                editTextPrompt.setError(Constants.NO_MESSAGE);
+                //editTextPrompt.setError(Constants.NO_MESSAGE);
+                editTextPrompt.setError(String.format(res.getString(R.string.no_text)));
             }
         });
     }

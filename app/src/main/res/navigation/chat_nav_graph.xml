@@ -9,8 +9,9 @@
         android:id="@+id/chatFragment"
         android:name="com.example.beagle.ui.chat.fragment.ChatFragment"
         tools:layout="@layout/fragment_chat"
-        android:label="ChatFragment">
+        android:label="ChatFragment"/>
 
+        <!--
     <action android:id="@+id/action_chatFragment_to_conversationsHistoryFragment"
         app:destination="@id/conversationsHistoryFragment"
         app:enterAnim="@anim/slide_in_left"
@@ -28,4 +29,5 @@
             android:id="@+id/action_conversationsHistoryFragment_to_chatFragment"
             app:destination="@id/chatFragment" />
     </fragment>
+    -->
 </navigation>

@@ -54,7 +54,7 @@ public class Message {
         this.content = content;
     }
 
-    public boolean getFromUser() {
+    public boolean isFromUser() {
         return fromUser;
     }
     public void setFromUser(boolean fromUser) {
