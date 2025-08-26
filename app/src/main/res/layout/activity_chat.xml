@@ -7,11 +7,12 @@
     tools:context=".ui.chat.ChatActivity">
 
 
+
     <androidx.fragment.app.FragmentContainerView
         android:name="androidx.navigation.fragment.NavHostFragment"
         app:navGraph="@navigation/chat_nav_graph"
         app:defaultNavHost="true"
-        android:id="@+id/FragmentContainterViewChat"
+        android:id="@+id/fragmentContainterViewChat"
         android:layout_width="match_parent"
         android:layout_height="match_parent" />
 
