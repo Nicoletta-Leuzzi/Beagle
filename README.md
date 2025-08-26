@@ -45,17 +45,17 @@ erDiagram
   CHAT 0+..1 PET : "is about"
   CHAT 1--0+ MESSAGE : contains
   CHAT {
-  string *chatId
+  string *conversationId
   string userId FK "NOT NULL"
   string petId FK "NOT NULL"
   datetime createdAt "NOT NULL"
   }
 
   MESSAGE {
-    string *chatId FK
+    string *conversationId FK
     int *seq
     datetime ts "NOT NULL"
-    string role "NOT NULL"
+    boolean fromUser "NOT NULL"
     string content "NOT NULL"
   }
 ```

@@ -9,5 +9,23 @@
         android:id="@+id/chatFragment"
         android:name="com.example.beagle.ui.chat.fragment.ChatFragment"
         tools:layout="@layout/fragment_chat"
-        android:label="ChatFragment" />
+        android:label="ChatFragment">
+
+    <action android:id="@+id/action_chatFragment_to_conversationsHistoryFragment"
+        app:destination="@id/conversationsHistoryFragment"
+        app:enterAnim="@anim/slide_in_left"
+        app:exitAnim="@anim/hold"
+        app:popEnterAnim="@anim/hold"
+        app:popExitAnim="@anim/slide_out_left" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/conversationsHistoryFragment"
+        android:name="com.example.beagle.ui.chat.fragment.ConversationsHistoryFragment"
+        android:label="@string/chats"
+        tools:layout="@layout/fragment_conversations_history">
+        <action
+            android:id="@+id/action_conversationsHistoryFragment_to_chatFragment"
+            app:destination="@id/chatFragment" />
+    </fragment>
 </navigation>

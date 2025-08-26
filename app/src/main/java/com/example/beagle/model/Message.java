@@ -1,27 +1,63 @@
 package com.example.beagle.model;
 
 public class Message {
-    private String message;
-    private boolean isUser;
+    private String messageId;
+    private String conversationId; // chiave esterna
+    private int seq; // numero crescente
+    private long ts = 0L; // timestamp inizializzato
+    private boolean fromUser; // true se il messaggio è dell'utente
+    private String content;
 
+    // costruttore vuoto per firebase
     public Message() {
     }
 
-    public Message(String message, boolean isUser) {
-        this.message = message;
-        this.isUser = isUser;
+    public Message(String content, boolean fromUser) {
+        this.content = content;
+        this.fromUser = fromUser;
+        // ts verrà assegnato da Conversation.java per indicare il ts del messaggio inviato
     }
 
-    public String getMessage() {
-        return message;
+    public String getMessageId() {
+        return messageId;
     }
 
-    public boolean isUser() {
-        return isUser;
+    public void setMessageId(String messageId) {
+        this.messageId = messageId;
     }
 
-    // TODO: Setter da rimuovere perchè non neccessario penso
-    public void setMessage(String message) {
-        this.message = message;
+    public String getConversationId() {
+        return conversationId;
+    }
+    public void setConversationId(String conversationId) {
+        this.conversationId = conversationId;
+    }
+
+    public int getSeq() {
+        return seq;
+    }
+    public void setSeq(int seq) {
+        this.seq = seq;
+    }
+
+    public long getTs() {
+        return ts;
+    }
+    public void setTs(long ts) {
+        this.ts = ts;
+    }
+
+    public String getMessageContent() {
+        return content;
+    }
+    public void setMessageContent(String content) {
+        this.content = content;
+    }
+
+    public boolean getFromUser() {
+        return fromUser;
+    }
+    public void setFromUser(boolean fromUser) {
+        this.fromUser = fromUser;
     }
 }
