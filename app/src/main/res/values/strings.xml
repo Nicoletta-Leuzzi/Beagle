@@ -12,7 +12,7 @@
 
     <string name="saluto_iniziale">Come stà %1$s\?</string>
     <string name="hint">Descrivi il problema</string>
-    <string name="no_text">Scivi una domanda all\'AI riguardo il tuo animale</string>
+    <string name="no_text">Scrivi una domanda all\'AI riguardo il tuo animale</string>
     <string name="chats">Chat</string>
 
     <!-- TODO: Remove or change this placeholder text -->
