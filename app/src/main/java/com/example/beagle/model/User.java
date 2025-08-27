@@ -2,6 +2,7 @@ package com.example.beagle.model;
 
 import android.os.Parcel;
 import android.os.Parcelable;
+
 import com.google.firebase.database.Exclude;
 
 public class User implements Parcelable {
@@ -9,35 +10,25 @@ public class User implements Parcelable {
     private String email;
     private String idToken;
 
+    // Necessario per Firebase (deserializzazione)
+    public User() { }
+
     public User(String name, String email, String idToken) {
         this.name = name;
         this.email = email;
         this.idToken = idToken;
     }
 
-    public String getName() {
-        return name;
-    }
+    public String getName() { return name; }
+    public void setName(String name) { this.name = name; }
 
-    public void setName(String name) {
-        this.name = name;
-    }
+    public String getEmail() { return email; }
+    public void setEmail(String email) { this.email = email; }
 
-    public String getEmail() {
-        return email;
-    }
-
-    public void setEmail(String email) {
-        this.email = email;
-    }
-    
-    public String getIdToken() {
-        return idToken;
-    }
-
-    public void setIdToken(String idToken) {
-        this.idToken = idToken;
-    }
+    // Non salvare l'idToken nel Realtime DB
+    @Exclude
+    public String getIdToken() { return idToken; }
+    public void setIdToken(String idToken) { this.idToken = idToken; }
 
     @Override
     public String toString() {
@@ -48,10 +39,9 @@ public class User implements Parcelable {
                 '}';
     }
 
+    // Parcelable
     @Override
-    public int describeContents() {
-        return 0;
-    }
+    public int describeContents() { return 0; }
 
     @Override
     public void writeToParcel(Parcel dest, int flags) {
@@ -72,15 +62,10 @@ public class User implements Parcelable {
         this.idToken = in.readString();
     }
 
-    public static final Creator<User> CREATOR = new Creator<User>() {
+    public static final Parcelable.Creator<User> CREATOR = new Parcelable.Creator<User>() {
         @Override
-        public User createFromParcel(Parcel source) {
-            return new User(source);
-        }
-
+        public User createFromParcel(Parcel source) { return new User(source); }
         @Override
-        public User[] newArray(int size) {
-            return new User[size];
-        }
+        public User[] newArray(int size) { return new User[size]; }
     };
 }
