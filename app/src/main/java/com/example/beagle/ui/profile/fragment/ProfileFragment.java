@@ -19,12 +19,15 @@ import android.widget.Button;
 import android.widget.EditText;
 
 import com.example.beagle.R;
+import com.example.beagle.model.Pet;
 import com.google.android.material.textfield.TextInputEditText;
 
 public class ProfileFragment extends Fragment {
 
     private TextInputEditText name, species, breed, age;
     private ConstraintLayout btns_save_cancel;
+
+    Pet pet;
 
     public ProfileFragment() {
         // Required empty public constructor
@@ -33,7 +36,7 @@ public class ProfileFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
+        pet = new Pet("", "", "", "", "", "");
     }
 
     @Override
@@ -122,9 +125,53 @@ public class ProfileFragment extends Fragment {
             }
         });
 
-        btnSave.setOnClickListener(v -> btns_save_cancel.setVisibility(GONE));
-        btnCancel.setOnClickListener(v-> btns_save_cancel.setVisibility(GONE));
+        btnSave.setOnClickListener(v -> {
+                pet.setName(name.getText().toString());
+                pet.setSpecies(species.getText().toString());
+                pet.setBreed(breed.getText().toString());
+                pet.setAge(age.getText().toString());
+                btns_save_cancel.setVisibility(GONE);
+
+        });
+        btnCancel.setOnClickListener(v-> {
+            name.setText(pet.getName());
+            species.setText(pet.getSpecies());
+            breed.setText(pet.getBreed());
+            age.setText(pet.getAge());
+            btns_save_cancel.setVisibility(GONE);
+        });
 
         return view;
     }
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

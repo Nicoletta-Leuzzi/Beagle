@@ -1,10 +1,9 @@
 package com.example.beagle.model;
 
 public class Pet {
-    private String petId, userId, name, species, breed;
-    private int age;
+    private String petId, userId, name, species, breed, age;
 
-    public Pet(String petId, String userId, String name, String species, String breed, int age) {
+    public Pet(String petId, String userId, String name, String species, String breed, String age) {
         this.petId = petId;
         this.userId = userId;
         this.name = name;
@@ -13,11 +12,11 @@ public class Pet {
         this.age = age;
     }
 
-    public int getAge() {
+    public String getAge() {
         return age;
     }
 
-    public void setAge(int age) {
+    public void setAge(String age) {
         this.age = age;
     }
 
