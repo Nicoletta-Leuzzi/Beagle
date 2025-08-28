@@ -1,21 +1,16 @@
 package com.example.beagle.ui.chat;
 
-import android.content.res.Resources;
 import android.os.Bundle;
-import android.widget.ImageButton;
-import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
+import androidx.navigation.NavController;
+import androidx.navigation.fragment.NavHostFragment;
+import androidx.navigation.ui.AppBarConfiguration;
+import androidx.navigation.ui.NavigationUI;
 
 import com.example.beagle.R;
-import com.example.beagle.adapter.MessageRecyclerAdapter;
-import com.example.beagle.model.Message;
-import com.google.android.material.textfield.TextInputEditText;
+import com.google.android.material.appbar.MaterialToolbar;
 
-import java.util.ArrayList;
-import java.util.List;
 
 public class ChatActivity extends AppCompatActivity {
 
@@ -25,5 +20,17 @@ public class ChatActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_chat);
 
+        MaterialToolbar topAppBar = findViewById(R.id.topAppBar);
+        setSupportActionBar(topAppBar);
+
+        NavHostFragment navHostFragment = (NavHostFragment) getSupportFragmentManager()
+                .findFragmentById(R.id.fragmentContainterViewChat);
+
+        if (navHostFragment != null) {
+            NavController navController = navHostFragment.getNavController();
+            AppBarConfiguration appBarConfiguration =
+                    new AppBarConfiguration.Builder(navController.getGraph()).build();
+            NavigationUI.setupWithNavController(topAppBar, navController, appBarConfiguration);
+        }
     }
 }

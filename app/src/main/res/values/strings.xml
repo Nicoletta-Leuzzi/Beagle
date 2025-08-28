@@ -13,10 +13,12 @@
     <string name="saluto_iniziale">How is %1$s doing?</string>
     <string name="hint">Describe your problem</string>
     <string name="no_text">Write a question to the AI regarding your pet</string>
-    <string name="chats">Chat</string>
+    <string name="conversations_history_title">Chat</string>
     <string name="no_pet">You don\'t have a pet saved, add one</string>
 
-    <!-- TODO: Remove or change this placeholder text -->
-    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="hello_blank_fragment">USELESS</string>
+    <string name="history_description">history button</string>
+    <string name="pet_profile_description">pet profile button</string>
+    <string name="chat_fragment_title">Beagle OSS</string>
 
 </resources>

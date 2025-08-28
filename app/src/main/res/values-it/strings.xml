@@ -12,8 +12,11 @@
     <string name="saluto_iniziale">Come sta %1$s?</string>
     <string name="hint">Descrivi il problema</string>
     <string name="no_text">Scrivi una domanda all\'AI riguardo il tuo animale</string>
-    <string name="chats">Chat</string>
+    <string name="conversations_history_title">Chat</string>
     <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="hello_world">Hello World!</string>
     <string name="no_pet">Non hai un animale domestico salvato, aggiungine uno</string>
+    <string name="history_description">bottone cronologia</string>
+    <string name="pet_profile_description">bottone profilo del pet</string>
+    <string name="chat_fragment_title">Beagle OSS</string>
 </resources>
