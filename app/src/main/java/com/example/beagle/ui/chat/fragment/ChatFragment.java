@@ -5,13 +5,18 @@ import android.os.Bundle;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.core.view.MenuHost;
+import androidx.core.view.MenuProvider;
 import androidx.fragment.app.Fragment;
-import androidx.navigation.Navigation;
+import androidx.lifecycle.Lifecycle;
+import androidx.navigation.fragment.NavHostFragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import android.text.InputType;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
@@ -22,7 +27,6 @@ import com.example.beagle.R;
 import com.example.beagle.adapter.MessageRecyclerAdapter;
 import com.example.beagle.model.Message;
 import com.example.beagle.model.Pet;
-import com.example.beagle.util.Constants;
 import com.google.android.material.textfield.TextInputEditText;
 
 import java.util.ArrayList;
@@ -78,7 +82,7 @@ public class ChatFragment extends Fragment {
         recyclerView.setAdapter(adapter);
 
 
-        // TODO: Da rimuovere dopo con effetiva ricerca di animale
+        // TODO: Da rimuovere dopo con effettiva ricerca di animale
         Pet pet = new Pet("Among Us");
 
         // SET UP
@@ -107,16 +111,6 @@ public class ChatFragment extends Fragment {
         }
         textView.setText(firstText);
 
-
-
-        ImageButton historyButton = view.findViewById(R.id.historyButton);
-        historyButton.setOnClickListener(v -> {
-            Navigation.findNavController(v).navigate(R.id.action_chatFragment_to_conversationsHistoryFragment);
-        });
-
-
-
-
         // TODO: pulire (e finire) codice
         sendButton.setOnClickListener(v -> {
             if (!Objects.requireNonNull(editTextPrompt.getText()).toString().trim().isEmpty()) {
@@ -141,6 +135,26 @@ public class ChatFragment extends Fragment {
                 editTextPrompt.setError(String.format(res.getString(R.string.no_text)));
             }
         });
+
+        MenuHost menuHost = requireActivity();
+        menuHost.addMenuProvider(new MenuProvider() {
+            @Override
+            public void onCreateMenu(@NonNull Menu menu, @NonNull MenuInflater menuInflater) {
+                menu.clear(); // pulisce menu prima di aggiungere elementi di questo fragment
+                menuInflater.inflate(R.menu.menu_chat, menu);
+            }
+
+            @Override
+            public boolean onMenuItemSelected(@NonNull MenuItem menuItem) {
+                if (menuItem.getItemId() == R.id.action_history) {
+                    NavHostFragment.findNavController(ChatFragment.this)
+                            .navigate(R.id.action_chatFragment_to_conversationsHistoryFragment);
+                    return true;
+                }
+                return false;
+            }
+
+        }, getViewLifecycleOwner(), Lifecycle.State.RESUMED);
     }
 
 
@@ -148,4 +162,6 @@ public class ChatFragment extends Fragment {
     public boolean hasPetSaved() {
         return true;
     }
+
+
 }
