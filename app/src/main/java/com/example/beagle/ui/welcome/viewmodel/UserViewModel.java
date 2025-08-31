@@ -1,26 +1,86 @@
 package com.example.beagle.ui.welcome.viewmodel;
 
-import androidx.lifecycle.LiveData;
+import androidx.annotation.NonNull;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 
+import com.example.beagle.model.Result;
+import com.example.beagle.model.User;
+import com.example.beagle.repository.user.IUserRepository;
+import com.example.beagle.repository.user.UserRepository;
+
+/**
+ * ViewModel per l'autenticazione (login/registrazione).
+ * Allineata al modello del prof, ma senza preferenze/news.
+ */
 public class UserViewModel extends ViewModel {
-    private final MutableLiveData<AuthState> state = new MutableLiveData<>(AuthState.IDLE);
-    private final MutableLiveData<String> error = new MutableLiveData<>(null);
 
-    public LiveData<AuthState> getState() { return state; }
-    public LiveData<String> getError() { return error; }
+    private final IUserRepository userRepository;
+    private MutableLiveData<Result> userMutableLiveData;
+    private boolean authenticationError = false;
 
-    // Stub per far compilare Login e Register
-    public void login(String email, String password) {
-        state.postValue(AuthState.SUCCESS);
+    /** Costruttore di default (comodo per test/prototipi). */
+    public UserViewModel() {
+        this(new UserRepository());
     }
 
-    public void register(String name, String email, String password) {
-        state.postValue(AuthState.SUCCESS);
+    /** Costruttore per DI (usato dalla UserViewModelFactory). */
+    public UserViewModel(@NonNull IUserRepository userRepository) {
+        this.userRepository = userRepository;
     }
 
-    public void logout() {
-        state.postValue(AuthState.IDLE);
+    /** Entry point stile prof: se isUserRegistered==true -> login, altrimenti -> signup. */
+    public MutableLiveData<Result> getUserMutableLiveData(String email, String password, boolean isUserRegistered) {
+        if (userMutableLiveData == null) {
+            userMutableLiveData = userRepository.getUser(email, password, isUserRegistered);
+        }
+        return userMutableLiveData;
     }
+
+    /** Variante per Google One Tap: prende l'idToken e delega al repo. */
+    public MutableLiveData<Result> getGoogleUserMutableLiveData(String token) {
+        if (userMutableLiveData == null) {
+            userMutableLiveData = userRepository.getGoogleUser(token);
+        }
+        return userMutableLiveData;
+    }
+
+    /** Chiamata “fire and forget” come nel prof (utile quando osservi già LiveData). */
+    public void getUser(String email, String password, boolean isUserRegistered) {
+        userRepository.getUser(email, password, isUserRegistered);
+    }
+
+    /** Comode scorciatoie. */
+    public MutableLiveData<Result> login(String email, String password) {
+        return getUserMutableLiveData(email, password, true);
+    }
+
+    public MutableLiveData<Result> register(String email, String password) {
+        return getUserMutableLiveData(email, password, false);
+    }
+
+    /** Logout: riusa lo stesso LiveData per notificare la UI. */
+    public MutableLiveData<Result> logout() {
+        if (userMutableLiveData == null) {
+            userMutableLiveData = userRepository.logout();
+        } else {
+            userRepository.logout();
+        }
+        return userMutableLiveData;
+    }
+
+    /** Utente attualmente loggato (se presente nel provider sottostante). */
+    public User getLoggedUser() {
+        return userRepository.getLoggedUser();
+    }
+
+    /** Flag d’errore di autenticazione (stile prof). */
+    public boolean isAuthenticationError() {
+        return authenticationError;
+    }
+
+    public void setAuthenticationError(boolean authenticationError) {
+        this.authenticationError = authenticationError;
+    }
+
 }
