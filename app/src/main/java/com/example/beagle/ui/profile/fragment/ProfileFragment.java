@@ -11,23 +11,45 @@ import androidx.fragment.app.Fragment;
 
 import android.text.Editable;
 import android.text.Layout;
+import android.text.TextUtils;
 import android.text.TextWatcher;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ArrayAdapter;
+import android.widget.AutoCompleteTextView;
 import android.widget.Button;
 import android.widget.EditText;
 
 import com.example.beagle.R;
 import com.example.beagle.model.Pet;
+import com.google.android.material.datepicker.MaterialDatePicker;
+import com.google.android.material.datepicker.MaterialPickerOnPositiveButtonClickListener;
+import com.google.android.material.snackbar.Snackbar;
 import com.google.android.material.textfield.TextInputEditText;
+import com.google.android.material.textfield.TextInputLayout;
+
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+import java.util.Locale;
+import java.util.TimeZone;
 
 public class ProfileFragment extends Fragment {
 
-    private TextInputEditText name, species, breed, age;
+    private TextInputEditText name, species, breed, birthDate, age;
+    private Button btnSave, btnCancel, btnAdd;
     private ConstraintLayout btns_save_cancel;
-
-    Pet pet;
+    private SimpleDateFormat sdf;
+    private AutoCompleteTextView autoCompleteTextView;
+    private TextInputLayout textInputLayoutAutoCompleteTextView;
+    private Pet pet, tempPet;
+    private int indexOfPet;
+    private boolean fieldsError;
+    private List<Pet> animals = new ArrayList<>();
+    private ArrayAdapter<Pet> adapter;
 
     public ProfileFragment() {
         // Required empty public constructor
@@ -36,112 +58,229 @@ public class ProfileFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        pet = new Pet("", "", "", "", "", "");
+        sdf = new SimpleDateFormat("dd/MM/yyyy", Locale.getDefault());
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_profile, container, false);
 
         name = view.findViewById(R.id.outlinedTextFieldName);
         species = view.findViewById(R.id.outlinedTextFieldSpecies);
         breed = view.findViewById(R.id.outlinedTextFieldBreed);
+        birthDate = view.findViewById(R.id.outlinedTextFieldDate);
         age = view.findViewById(R.id.outlinedTextFieldAge);
         btns_save_cancel = view.findViewById(R.id.btns_save_cancel);
-        Button btnSave = view.findViewById(R.id.btn_save);
-        Button btnCancel = view.findViewById(R.id.btn_cancel);
+        btnSave = view.findViewById(R.id.btn_save);
+        btnCancel = view.findViewById(R.id.btn_cancel);
+        btnAdd = view.findViewById(R.id.btnAdd);
+        autoCompleteTextView = view.findViewById(R.id.outlinedTextFieldDropDownMenu);
+        textInputLayoutAutoCompleteTextView = view.findViewById(R.id.textInputLayoutDropDownMenu);
 
-        name.addTextChangedListener(new TextWatcher() {
+        fieldsError = false;
+        adapter = new ArrayAdapter<Pet>(getContext(), android.R.layout.simple_dropdown_item_1line, animals);
+        autoCompleteTextView.setAdapter(adapter);
 
-            @Override
-            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
-
-            }
-
-            @Override
-            public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
-
-            }
-
-            @Override
-            public void afterTextChanged(Editable editable) {
-                btns_save_cancel.setVisibility(VISIBLE);
-            }
-        });
-
-        species.addTextChangedListener(new TextWatcher() {
-
-            @Override
-            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
-
-            }
-
-            @Override
-            public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
-
-            }
-
-            @Override
-            public void afterTextChanged(Editable editable) {
-                btns_save_cancel.setVisibility(VISIBLE);
-            }
-        });
-
-        breed.addTextChangedListener(new TextWatcher() {
-
-            @Override
-            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
-
-            }
-
-            @Override
-            public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
-
-            }
-
-            @Override
-            public void afterTextChanged(Editable editable) {
-                btns_save_cancel.setVisibility(VISIBLE);
-            }
-        });
-
-        age.addTextChangedListener(new TextWatcher() {
-
-            @Override
-            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
-
-            }
-
-            @Override
-            public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
-
-            }
-
-            @Override
-            public void afterTextChanged(Editable editable) {
-                btns_save_cancel.setVisibility(VISIBLE);
-            }
-        });
+        if(animals.isEmpty()){
+            disableDropDownMenu();
+        }
 
         btnSave.setOnClickListener(v -> {
-                pet.setName(name.getText().toString());
-                pet.setSpecies(species.getText().toString());
-                pet.setBreed(breed.getText().toString());
-                pet.setAge(age.getText().toString());
-                btns_save_cancel.setVisibility(GONE);
 
+            //aggiungere controlli che tutti gli input text siano riempiti
+            fieldsError = false;
+            if(name.getText().toString().isEmpty()){
+                name.setError("Campo obbligatorio");
+                fieldsError = true;
+            }
+            else{
+                name.setError(null);
+            }
+            if(species.getText().toString().isEmpty()){
+                species.setError("Campo obbligatorio");
+                fieldsError = true;
+            }
+            else{
+                species.setError(null);
+            }
+            if(breed.getText().toString().isEmpty()){
+                breed.setError("Campo obbligatorio");
+                fieldsError = true;
+            }
+            else{
+                breed.setError(null);
+            }
+            if(birthDate.getText().toString().isEmpty()){
+                birthDate.setError("Campo obbligatorio");
+                fieldsError = true;
+            }
+            else{
+                birthDate.setError(null);
+            }
+
+            if(!fieldsError) {
+                try {
+                    pet = new Pet("", "", name.getText().toString(), species.getText().toString(), breed.getText().toString(), sdf.parse(birthDate.getText().toString()).getTime());
+                } catch (ParseException e) {
+                    throw new RuntimeException(e);
+                }
+
+                age.setText(pet.getAge());
+                animals.add(new Pet(pet));
+                adapter.notifyDataSetChanged();
+                disableAllInputText();
+                if (animals.isEmpty()) {
+                    disableDropDownMenu();
+                } else {
+                    enableDropDownMenu();
+                    autoCompleteTextView.setText(pet.toString(), false);
+                }
+                btnAdd.setVisibility(VISIBLE);
+            }
+        else {
+            Snackbar.make(view, "Compila tutti i campi", Snackbar.LENGTH_SHORT).show();
+        }
         });
+
         btnCancel.setOnClickListener(v-> {
+            if(!(animals.isEmpty())) {
+                name.setText(pet.getName());
+                species.setText(pet.getSpecies());
+                breed.setText(pet.getBreed());
+                if (pet.getBirthDate() != 0) {
+                    birthDate.setText(sdf.format(new Date(pet.getBirthDate())));
+                }
+                age.setText(pet.getAge());
+                autoCompleteTextView.setText(pet.toString(), false);
+            }
+                disableAllInputText();
+                if(animals.isEmpty()){
+                    disableDropDownMenu();
+                }
+                else{
+                    enableDropDownMenu();
+                }
+                btnAdd.setVisibility(VISIBLE);
+        });
+
+        autoCompleteTextView.setOnItemClickListener((parent, v, position, id) -> {
+
+            pet = (Pet) parent.getItemAtPosition(position);
             name.setText(pet.getName());
             species.setText(pet.getSpecies());
             breed.setText(pet.getBreed());
+
+            if (pet.getBirthDate() != 0) {
+                birthDate.setText(sdf.format(new Date(pet.getBirthDate())));
+            }
             age.setText(pet.getAge());
-            btns_save_cancel.setVisibility(GONE);
+        });
+
+
+        birthDate.setOnClickListener(v -> showDatePicker());
+
+        birthDate.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+
+                if (!s.toString().isEmpty()) {
+                    birthDate.setError(null);
+                }
+            }
+
+            @Override
+            public void afterTextChanged(Editable editable) {
+
+            }
+        });
+
+        btnAdd.setOnClickListener(v->{
+            btnAdd.setVisibility(INVISIBLE);
+            disableDropDownMenu();
+            clearAllFields();
+            enableAllInputText();
         });
 
         return view;
+    }
+
+// METODI
+    private void showDatePicker() {
+        // Costruzione del MaterialDatePicker
+        MaterialDatePicker.Builder<Long> builder = MaterialDatePicker.Builder.datePicker();
+        builder.setTitleText("Select Birth Date");
+
+        // Se c’è già una data scritta, impostala come selezione iniziale
+        String currentText = birthDate.getText() != null ? birthDate.getText().toString() : "";
+        if (!currentText.isEmpty()) {
+            try {
+                Date parsedDate = sdf.parse(currentText);
+                if (parsedDate != null) {
+                    builder.setSelection(parsedDate.getTime());
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+
+        final MaterialDatePicker<Long> datePicker = builder.build();
+
+        // Callback sul pulsante OK
+        datePicker.addOnPositiveButtonClickListener(new MaterialPickerOnPositiveButtonClickListener<Long>() {
+            @Override
+            public void onPositiveButtonClick(Long selection) {
+                String formattedDate = sdf.format(new Date(selection));
+                birthDate.setText(formattedDate);
+            }
+        });
+
+        // Callback su Cancel
+        datePicker.addOnNegativeButtonClickListener(dialog -> birthDate.clearFocus());
+
+        // Callback su chiusura del popup
+        datePicker.addOnDismissListener(dialog -> birthDate.clearFocus());
+
+        // Mostro il calendario
+        datePicker.show(getParentFragmentManager(), "DATE_PICKER");
+    }
+
+    private void enableAllInputText(){
+        name.setEnabled(true);
+        species.setEnabled(true);
+        breed.setEnabled(true);
+        birthDate.setEnabled(true);
+        btns_save_cancel.setVisibility(VISIBLE);
+    }
+
+    private void disableAllInputText(){
+        name.setEnabled(false);
+        species.setEnabled(false);
+        breed.setEnabled(false);
+        birthDate.setEnabled(false);
+        btns_save_cancel.setVisibility(GONE);
+    }
+
+    private void disableDropDownMenu(){
+        textInputLayoutAutoCompleteTextView.setEnabled(false);
+    }
+
+    private void enableDropDownMenu(){
+        textInputLayoutAutoCompleteTextView.setEnabled(true);
+    }
+
+    private void clearAllFields(){
+        autoCompleteTextView.setText("", false);
+        name.setText("");
+        species.setText("");
+        breed.setText("");
+        birthDate.setText("");
+        age.setText("");
     }
 }
 
