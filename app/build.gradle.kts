@@ -47,10 +47,10 @@ dependencies {
     implementation(libs.activity)
     implementation(libs.constraintlayout)
 
-    // MVVM / Lifecycle (coordinati DIRETTI per evitare errori del catalog)
-    implementation("androidx.lifecycle:lifecycle-viewmodel:2.8.4")
-    implementation("androidx.lifecycle:lifecycle-livedata:2.8.4")
-    implementation("androidx.lifecycle:lifecycle-runtime:2.8.4")
+    // MVVM / Lifecycle
+    implementation(libs.androidx.lifecycle.viewmodel.v284)
+    implementation(libs.androidx.lifecycle.livedata.v284)
+    implementation(libs.androidx.lifecycle.runtime)
 
     // Nav Graph
     implementation(libs.navigation.fragment)

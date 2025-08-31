@@ -1,6 +1,7 @@
 package com.example.beagle.ui.welcome.viewmodel;
 
 import androidx.annotation.NonNull;
+import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 
@@ -30,7 +31,7 @@ public class UserViewModel extends ViewModel {
     }
 
     /** Entry point stile prof: se isUserRegistered==true -> login, altrimenti -> signup. */
-    public MutableLiveData<Result> getUserMutableLiveData(String email, String password, boolean isUserRegistered) {
+    public LiveData<Result> getUserMutableLiveData(String email, String password, boolean isUserRegistered) {
         if (userMutableLiveData == null) {
             userMutableLiveData = userRepository.getUser(email, password, isUserRegistered);
         }
@@ -38,7 +39,7 @@ public class UserViewModel extends ViewModel {
     }
 
     /** Variante per Google One Tap: prende l'idToken e delega al repo. */
-    public MutableLiveData<Result> getGoogleUserMutableLiveData(String token) {
+    public LiveData<Result> getGoogleUserMutableLiveData(String token) {
         if (userMutableLiveData == null) {
             userMutableLiveData = userRepository.getGoogleUser(token);
         }
@@ -51,16 +52,16 @@ public class UserViewModel extends ViewModel {
     }
 
     /** Comode scorciatoie. */
-    public MutableLiveData<Result> login(String email, String password) {
+    public LiveData<Result> login(String email, String password) {
         return getUserMutableLiveData(email, password, true);
     }
 
-    public MutableLiveData<Result> register(String email, String password) {
+    public LiveData<Result> register(String email, String password) {
         return getUserMutableLiveData(email, password, false);
     }
 
     /** Logout: riusa lo stesso LiveData per notificare la UI. */
-    public MutableLiveData<Result> logout() {
+    public LiveData<Result> logout() {
         if (userMutableLiveData == null) {
             userMutableLiveData = userRepository.logout();
         } else {

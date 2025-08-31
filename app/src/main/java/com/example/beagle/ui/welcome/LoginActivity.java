@@ -120,13 +120,14 @@ public class LoginActivity extends AppCompatActivity {
         etPassword.setError(null);
         setLoading(true);
 
-        userViewModel.getUserMutableLiveData(email, password, true)
-                .observe(this, new Observer<Result>() {
+        // Cache del LiveData: una sola richiesta/istanza, niente removeObserver
+        final androidx.lifecycle.LiveData<Result> loginLiveData =
+                userViewModel.getUserMutableLiveData(email, password, /*isUserRegistered=*/true);
+
+        loginLiveData.observe(this, new Observer<Result>() {
                     @Override
                     public void onChanged(Result result) {
                         setLoading(false);
-                        userViewModel.getUserMutableLiveData(email, password, true)
-                                .removeObserver(this);
 
                         if (result instanceof Result.UserSuccess) {
                             userViewModel.setAuthenticationError(false);
@@ -245,13 +246,14 @@ public class LoginActivity extends AppCompatActivity {
     private void authenticateWithGoogle(String idToken) {
         setLoading(true);
 
-        userViewModel.getGoogleUserMutableLiveData(idToken)
-                .observe(this, new Observer<Result>() {
+        // Cache del LiveData: una sola istanza, niente removeObserver
+        final androidx.lifecycle.LiveData<Result> googleLiveData =
+                userViewModel.getGoogleUserMutableLiveData(idToken);
+
+        googleLiveData.observe(this, new Observer<Result>() {
                     @Override
                     public void onChanged(Result result) {
                         setLoading(false);
-
-                        userViewModel.getGoogleUserMutableLiveData(idToken).removeObserver(this);
 
                         if (result instanceof Result.UserSuccess) {
                             userViewModel.setAuthenticationError(false);
