@@ -14,9 +14,6 @@
             android:name=".ui.chat.ChatActivity"
             android:exported="false" />
         <activity
-            android:name=".ui.home.HomeActivity"
-            android:exported="false" /> <!-- Registrazione (nessun intent-filter) -->
-        <activity
             android:name=".ui.welcome.RegisterActivity"
             android:exported="false" /> <!-- Login: schermata iniziale -->
         <activity
@@ -27,10 +24,7 @@
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
-        </activity> <!-- Main (schermata interna) -->
-        <activity
-            android:name=".MainActivity"
-            android:exported="false" />
+        </activity>
     </application>
 
 </manifest>
