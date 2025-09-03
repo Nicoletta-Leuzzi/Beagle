@@ -13,8 +13,8 @@ import java.util.Collections;
     foreignKeys = {
             @ForeignKey(
                     entity = User.class,
-                    parentColumns = "userId",
-                    childColumns = "userId",
+                    parentColumns = "idToken",
+                    childColumns = "idToken",
                     onDelete = ForeignKey.CASCADE,
                     onUpdate = ForeignKey.CASCADE
             ),
@@ -27,11 +27,11 @@ import java.util.Collections;
                     deferred = true
             )
     },
-    indices = { @Index("userId"), @Index("petId") }
+    indices = { @Index("idToken"), @Index("petId") }
 )
 public class Conversation {
     private String conversationId;
-    //TODO: userId che manca in User
+    private String idToken;
     private String petId;
     private long createdAt; // timestamp in UTC
 
