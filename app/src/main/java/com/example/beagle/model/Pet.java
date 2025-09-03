@@ -3,6 +3,7 @@ package com.example.beagle.model;
 import androidx.room.Entity;
 import androidx.room.ForeignKey;
 import androidx.room.Index;
+import androidx.room.PrimaryKey;
 
 @Entity(
         foreignKeys = @ForeignKey(
@@ -16,7 +17,11 @@ import androidx.room.Index;
                 @Index("idToken") }
 )
 public class Pet {
+    @PrimaryKey(autoGenerate = true)
+    private long petId;
     private String name;
+    private String species;
+    private String breed;
 
     public Pet() {
     }
