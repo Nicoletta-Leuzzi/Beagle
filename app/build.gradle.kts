@@ -48,10 +48,10 @@ dependencies {
     implementation(libs.activity)
     implementation(libs.constraintlayout)
 
-    // MVVM / Lifecycle (coordinati DIRETTI per evitare errori del catalog)
-    implementation("androidx.lifecycle:lifecycle-viewmodel:2.8.4")
-    implementation("androidx.lifecycle:lifecycle-livedata:2.8.4")
-    implementation("androidx.lifecycle:lifecycle-runtime:2.8.4")
+    // MVVM / Lifecycle
+    implementation(libs.lifecycle.viewmodel.v284)
+    implementation(libs.lifecycle.livedata.v284)
+    implementation(libs.lifecycle.runtime)
 
     // Nav Graph
     implementation(libs.navigation.fragment)
@@ -64,4 +64,8 @@ dependencies {
     testImplementation(libs.junit)
     androidTestImplementation(libs.ext.junit)
     androidTestImplementation(libs.espresso.core)
+
+    //Room
+    implementation(libs.room.runtime)
+    annotationProcessor(libs.room.compiler)
 }

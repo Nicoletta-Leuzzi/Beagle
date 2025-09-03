@@ -1,13 +1,37 @@
 package com.example.beagle.model;
 
 
+import androidx.room.Entity;
+import androidx.room.ForeignKey;
+import androidx.room.Index;
+
 import java.util.List;
 import java.util.ArrayList;
 import java.util.Collections;
 
+@Entity(
+    foreignKeys = {
+            @ForeignKey(
+                    entity = User.class,
+                    parentColumns = "idToken",
+                    childColumns = "idToken",
+                    onDelete = ForeignKey.CASCADE,
+                    onUpdate = ForeignKey.CASCADE
+            ),
+            @ForeignKey( // deferibile se ti serve inserire prima la convo e poi il pet nella stessa transazione
+                    entity = Pet.class,
+                    parentColumns = "petId",
+                    childColumns = "petId",
+                    onDelete = ForeignKey.CASCADE,
+                    onUpdate = ForeignKey.CASCADE,
+                    deferred = true
+            )
+    },
+    indices = { @Index("idToken"), @Index("petId") }
+)
 public class Conversation {
     private String conversationId;
-    //TODO: userId che manca in User
+    private String idToken;
     private String petId;
     private long createdAt; // timestamp in UTC
 
@@ -86,11 +110,6 @@ public class Conversation {
         // assegna numero progressivo
         if (m.getSeq() <= 0) {
             m.setSeq(getNextSeq());
-        }
-
-        // assegna messageId composto (conversationId + seq) se assente
-        if ((m.getMessageId() == null || m.getMessageId().isEmpty()) && this.conversationId != null && m.getSeq() > 0) {
-            m.setMessageId(buildCompositeId(this.conversationId, m.getSeq()));
         }
 
         // aggiunge il messaggio alla conversazione

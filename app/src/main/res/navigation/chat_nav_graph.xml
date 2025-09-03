@@ -12,13 +12,19 @@
         tools:layout="@layout/fragment_chat"
         android:label="@string/chat_fragment_title">
 
-    <action
-        android:id="@+id/action_chatFragment_to_conversationsHistoryFragment"
-        app:destination="@id/conversationsHistoryFragment"
-        app:enterAnim="@anim/slide_in_left"
-        app:exitAnim="@anim/hold"
-        app:popEnterAnim="@anim/hold"
-        app:popExitAnim="@anim/slide_out_left" />
+        <!-- Added: argument passed from intents or navigation to open a specific conversation -->
+        <argument
+            android:name="conversationId"
+            app:argType="string"
+            />
+
+        <action
+            android:id="@+id/action_chatFragment_to_conversationsHistoryFragment"
+            app:destination="@id/conversationsHistoryFragment"
+            app:enterAnim="@anim/slide_in_left"
+            app:exitAnim="@anim/hold"
+            app:popEnterAnim="@anim/hold"
+            app:popExitAnim="@anim/slide_out_left" />
     </fragment>
 
     <fragment

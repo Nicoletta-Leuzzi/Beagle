@@ -27,6 +27,6 @@
         android:id="@+id/fragmentContainterViewChat"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        app:layout_behavior="@string/appbar_scrolling_view_behavior" />
+        app:layout_behavior="@string/appbar_scrolling_view_behavior" /> <!-- Comportamento app bar -->
 
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

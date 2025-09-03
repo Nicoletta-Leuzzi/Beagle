@@ -29,8 +29,6 @@ import com.example.beagle.model.Message;
 import com.example.beagle.model.Pet;
 import com.google.android.material.textfield.TextInputEditText;
 
-import org.w3c.dom.Text;
-
 import java.util.ArrayList;
 import java.util.Objects;
 
@@ -53,8 +51,7 @@ public class ChatFragment extends Fragment {
     }
 
     public static ChatFragment newInstance() {
-        ChatFragment fragment = new ChatFragment();
-        return fragment;
+        return new ChatFragment();
     }
 
     @Override
@@ -119,7 +116,7 @@ public class ChatFragment extends Fragment {
 
                 // CREA MESSAGGIO E LO MOSTRA
                 String messageContent = editTextPrompt.getText().toString();
-                sendMessage(messageContent, messageList, adapter, true);
+                showMessage(messageContent, messageList, adapter, true);
                 editTextPrompt.setText("");
                 welcomeTextView.setVisibility(View.GONE);
                 setPromptEnabled(sendButton, editTextPrompt, false);
@@ -127,7 +124,7 @@ public class ChatFragment extends Fragment {
                 // RISPOSTA?
                 // TODO: AI reply
                 String answer = getMessageAPI_WIP();
-                sendMessage(answer, messageList, adapter, false);
+                showMessage(answer, messageList, adapter, false);
                 setPromptEnabled(sendButton, editTextPrompt, true);
 
             // Se il prompt è vuoto
@@ -170,11 +167,12 @@ public class ChatFragment extends Fragment {
     }
 
     // Mostra il messaggio in Chat
-    private void sendMessage(String messageContent, ArrayList<Message> messageList,
+    // TODO: da separare in due metodi: show, create e send
+    private void showMessage(String messageContent, ArrayList<Message> messageList,
                              MessageRecyclerAdapter adapter, boolean fromUser) {
         Message message = new Message(messageContent, fromUser);
         messageList.add(message);
-        adapter.notifyItemInserted(messageList.size());
+        adapter.notifyItemInserted(messageList.size() -1);
     }
 
     // TODO: dovrebbe ritornarse true se esiste almeno un animale salvato

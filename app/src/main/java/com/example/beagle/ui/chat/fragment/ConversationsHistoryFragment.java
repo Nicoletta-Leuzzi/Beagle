@@ -1,5 +1,6 @@
 package com.example.beagle.ui.chat.fragment;
 
+import android.content.Intent;
 import android.os.Bundle;
 
 import androidx.fragment.app.Fragment;
@@ -9,50 +10,34 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.example.beagle.R;
+import com.example.beagle.ui.chat.ChatActivity;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.core.view.MenuHost;
 import androidx.core.view.MenuProvider;
 import androidx.lifecycle.Lifecycle;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
+
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 
-/**
- * A simple {@link Fragment} subclass.
- * Use the {@link ConversationsHistoryFragment#newInstance} factory method to
- * create an instance of this fragment.
- */
+import com.example.beagle.adapter.ConversationAdapter;
+import com.example.beagle.model.Conversation;
+import com.example.beagle.model.Message;
+
+import java.util.ArrayList;
+import java.util.List;
+
 public class ConversationsHistoryFragment extends Fragment {
 
-    // TODO: Rename parameter arguments, choose names that match
-    // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-    private static final String ARG_PARAM1 = "param1";
-    private static final String ARG_PARAM2 = "param2";
+    public ConversationsHistoryFragment() { }
 
-    // TODO: Rename and change types of parameters
-    private String mParam1;
-    private String mParam2;
-
-    public ConversationsHistoryFragment() {
-        // Required empty public constructor
-    }
-
-    /**
-     * Use this factory method to create a new instance of
-     * this fragment using the provided parameters.
-     *
-     * @param param1 Parameter 1.
-     * @param param2 Parameter 2.
-     * @return A new instance of fragment ConversationsHistoryFragment.
-     */
-    // TODO: Rename and change types and number of parameters
     public static ConversationsHistoryFragment newInstance(String param1, String param2) {
         ConversationsHistoryFragment fragment = new ConversationsHistoryFragment();
         Bundle args = new Bundle();
-        args.putString(ARG_PARAM1, param1);
-        args.putString(ARG_PARAM2, param2);
         fragment.setArguments(args);
         return fragment;
     }
@@ -60,17 +45,42 @@ public class ConversationsHistoryFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        if (getArguments() != null) {
-            mParam1 = getArguments().getString(ARG_PARAM1);
-            mParam2 = getArguments().getString(ARG_PARAM2);
-        }
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_conversations_history, container, false);
+        View view = inflater.inflate(R.layout.fragment_conversations_history, container, false);
+        RecyclerView recyclerConversations = view.findViewById(R.id.recyclerConversations);
+
+        recyclerConversations.setLayoutManager(new LinearLayoutManager(requireContext()));
+
+        // Dati dummy per test
+        List<Conversation> demo = new ArrayList<>();
+        long now = System.currentTimeMillis();
+        for (int i = 1; i <= 12; i++) {
+            Conversation c = new Conversation("conv-" + i, "pet-" + ((i % 3) + 1), now - i * 3600_000L);
+            Message m = new Message("Ultimo messaggio " + i, (i % 2 == 0));
+            c.addMessage(m);
+            demo.add(c);
+        }
+
+        ConversationAdapter adapter = new ConversationAdapter(demo, conversation -> {
+            String conversationId = conversation.getConversationId();
+            if (requireActivity() instanceof ChatActivity) {
+                Bundle args = new Bundle();
+                args.putString("conversationId", conversationId);
+                androidx.navigation.fragment.NavHostFragment.findNavController(this)
+                        .navigate(R.id.action_conversationsHistoryFragment_to_chatFragment, args);
+            } else {
+                Intent intent = new Intent(requireContext(), ChatActivity.class);
+                intent.putExtra("conversationId", conversationId);
+                startActivity(intent);
+            }
+        });
+        recyclerConversations.setAdapter(adapter);
+
+        return view;
     }
 
     @Override
@@ -87,13 +97,10 @@ public class ConversationsHistoryFragment extends Fragment {
 
             @Override
             public boolean onMenuItemSelected(@NonNull MenuItem menuItem) {
-                // TODO: handle menu actions here if needed
                 return false;
             }
         }, getViewLifecycleOwner(), Lifecycle.State.RESUMED);
 
         requireActivity().setTitle(R.string.conversations_history_title);
     }
-
-
 }
