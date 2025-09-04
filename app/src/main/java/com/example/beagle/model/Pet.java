@@ -94,4 +94,8 @@ public class Pet {
     public String toString(){
         return getName();
     }
+
+    public boolean equals(Pet other){
+        return (this.name).equals(other.getName());
+    }
 }

@@ -4,6 +4,7 @@ import static android.view.View.GONE;
 import static android.view.View.INVISIBLE;
 import static android.view.View.VISIBLE;
 
+import android.os.Build;
 import android.os.Bundle;
 
 import androidx.constraintlayout.widget.ConstraintLayout;
@@ -32,6 +33,7 @@ import com.google.android.material.textfield.TextInputLayout;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
@@ -40,11 +42,11 @@ import java.util.TimeZone;
 public class ProfileFragment extends Fragment {
 
     private TextInputEditText name, species, breed, birthDate, age;
-    private Button btnSave, btnCancel, btnAdd;
+    private Button btnSave, btnCancel, btnAdd, btnDelete;
     private ConstraintLayout btns_save_cancel;
     private SimpleDateFormat sdf;
     private AutoCompleteTextView autoCompleteTextView;
-    private TextInputLayout textInputLayoutAutoCompleteTextView;
+    private TextInputLayout textInputLayoutAutoCompleteTextView, nameLayout, speciesLayout, breedLayout, birthDateLayout, ageLayout;
     private Pet pet, tempPet;
     private int indexOfPet;
     private boolean fieldsError;
@@ -67,14 +69,20 @@ public class ProfileFragment extends Fragment {
         View view = inflater.inflate(R.layout.fragment_profile, container, false);
 
         name = view.findViewById(R.id.outlinedTextFieldName);
+        nameLayout = view.findViewById(R.id.nameLayout);
         species = view.findViewById(R.id.outlinedTextFieldSpecies);
+        speciesLayout = view.findViewById(R.id.speciesLayout);
         breed = view.findViewById(R.id.outlinedTextFieldBreed);
-        birthDate = view.findViewById(R.id.outlinedTextFieldDate);
+        breedLayout = view.findViewById(R.id.breedLayout);
+        birthDate = view.findViewById(R.id.outlinedTextFieldBirthDate);
+        birthDateLayout = view.findViewById(R.id.birthDateLayout);
         age = view.findViewById(R.id.outlinedTextFieldAge);
+        ageLayout = view.findViewById(R.id.ageLayout);
         btns_save_cancel = view.findViewById(R.id.btns_save_cancel);
         btnSave = view.findViewById(R.id.btn_save);
         btnCancel = view.findViewById(R.id.btn_cancel);
         btnAdd = view.findViewById(R.id.btnAdd);
+        btnDelete = view.findViewById(R.id.btn_delete);
         autoCompleteTextView = view.findViewById(R.id.outlinedTextFieldDropDownMenu);
         textInputLayoutAutoCompleteTextView = view.findViewById(R.id.textInputLayoutDropDownMenu);
 
@@ -84,26 +92,28 @@ public class ProfileFragment extends Fragment {
 
         if(animals.isEmpty()){
             disableDropDownMenu();
+            btnDelete.setVisibility(INVISIBLE);
         }
 
         btnSave.setOnClickListener(v -> {
 
-            //aggiungere controlli che tutti gli input text siano riempiti
             fieldsError = false;
             if(name.getText().toString().isEmpty()){
                 name.setError("Campo obbligatorio");
                 fieldsError = true;
             }
-            else{
-                name.setError(null);
-            }
+//            else{
+//                name.setError(null);
+//            }
+
             if(species.getText().toString().isEmpty()){
                 species.setError("Campo obbligatorio");
                 fieldsError = true;
             }
-            else{
-                species.setError(null);
-            }
+//            else{
+//                species.setError(null);
+//            }
+
             if(breed.getText().toString().isEmpty()){
                 breed.setError("Campo obbligatorio");
                 fieldsError = true;
@@ -111,13 +121,14 @@ public class ProfileFragment extends Fragment {
             else{
                 breed.setError(null);
             }
+
             if(birthDate.getText().toString().isEmpty()){
                 birthDate.setError("Campo obbligatorio");
                 fieldsError = true;
             }
-            else{
-                birthDate.setError(null);
-            }
+//            else{
+//                birthDate.setError(null);
+//            }
 
             if(!fieldsError) {
                 try {
@@ -127,7 +138,7 @@ public class ProfileFragment extends Fragment {
                 }
 
                 age.setText(pet.getAge());
-                animals.add(new Pet(pet));
+                animals.add(pet);
                 adapter.notifyDataSetChanged();
                 disableAllInputText();
                 if (animals.isEmpty()) {
@@ -137,6 +148,8 @@ public class ProfileFragment extends Fragment {
                     autoCompleteTextView.setText(pet.toString(), false);
                 }
                 btnAdd.setVisibility(VISIBLE);
+                btnDelete.setVisibility(VISIBLE);
+                btns_save_cancel.setVisibility(INVISIBLE);
             }
         else {
             Snackbar.make(view, "Compila tutti i campi", Snackbar.LENGTH_SHORT).show();
@@ -153,16 +166,24 @@ public class ProfileFragment extends Fragment {
                 }
                 age.setText(pet.getAge());
                 autoCompleteTextView.setText(pet.toString(), false);
+                btnDelete.setVisibility(VISIBLE);
+                enableDropDownMenu();
             }
-                disableAllInputText();
-                if(animals.isEmpty()){
+                else{
+                    clearAllFields();
                     disableDropDownMenu();
                 }
-                else{
-                    enableDropDownMenu();
-                }
-                btnAdd.setVisibility(VISIBLE);
+            resetErrors();
+            disableAllInputText();
+            btnAdd.setVisibility(VISIBLE);
+            btns_save_cancel.setVisibility(INVISIBLE);
         });
+
+
+//        autoCompleteTextView.setOnClickListener(v->{
+//
+//                autoCompleteTextView.showDropDown();
+//        });
 
         autoCompleteTextView.setOnItemClickListener((parent, v, position, id) -> {
 
@@ -175,6 +196,7 @@ public class ProfileFragment extends Fragment {
                 birthDate.setText(sdf.format(new Date(pet.getBirthDate())));
             }
             age.setText(pet.getAge());
+            btnDelete.setVisibility(VISIBLE);
         });
 
 
@@ -202,13 +224,38 @@ public class ProfileFragment extends Fragment {
 
         btnAdd.setOnClickListener(v->{
             btnAdd.setVisibility(INVISIBLE);
+            btns_save_cancel.setVisibility(VISIBLE);
+            btnDelete.setVisibility(INVISIBLE);
             disableDropDownMenu();
             clearAllFields();
             enableAllInputText();
         });
 
+        btnDelete.setOnClickListener(v->{
+            deletePet(pet);
+            clearAllFields();
+            btnDelete.setVisibility(INVISIBLE);
+            if(animals.isEmpty()){
+                textInputLayoutAutoCompleteTextView.setEnabled(false);
+            }
+        });
+
         return view;
     }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 // METODI
     private void showDatePicker() {
@@ -251,19 +298,17 @@ public class ProfileFragment extends Fragment {
     }
 
     private void enableAllInputText(){
-        name.setEnabled(true);
-        species.setEnabled(true);
-        breed.setEnabled(true);
-        birthDate.setEnabled(true);
-        btns_save_cancel.setVisibility(VISIBLE);
+        nameLayout.setEnabled(true);
+        speciesLayout.setEnabled(true);
+        breedLayout.setEnabled(true);
+        birthDateLayout.setEnabled(true);
     }
 
     private void disableAllInputText(){
-        name.setEnabled(false);
-        species.setEnabled(false);
-        breed.setEnabled(false);
-        birthDate.setEnabled(false);
-        btns_save_cancel.setVisibility(GONE);
+        nameLayout.setEnabled(false);
+        speciesLayout.setEnabled(false);
+        breedLayout.setEnabled(false);
+        birthDateLayout.setEnabled(false);
     }
 
     private void disableDropDownMenu(){
@@ -281,6 +326,24 @@ public class ProfileFragment extends Fragment {
         breed.setText("");
         birthDate.setText("");
         age.setText("");
+    }
+
+    private void deletePet (Pet petToBeDeleted){
+        if(!animals.isEmpty()){
+            animals.remove(petToBeDeleted);
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.VANILLA_ICE_CREAM) {
+                pet = animals.getLast();
+            }
+
+        }
+        adapter.notifyDataSetChanged();
+    }
+
+    private void resetErrors(){
+        name.setError(null);
+        species.setError(null);
+        breed.setError(null);
+        birthDate.setError(null);
     }
 }
 
