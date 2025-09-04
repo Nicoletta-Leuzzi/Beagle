@@ -48,9 +48,9 @@ dependencies {
     implementation(libs.constraintlayout)
 
     // MVVM / Lifecycle
-    implementation(libs.androidx.lifecycle.viewmodel.v284)
-    implementation(libs.androidx.lifecycle.livedata.v284)
-    implementation(libs.androidx.lifecycle.runtime)
+    implementation(libs.lifecycle.viewmodel.v284)
+    implementation(libs.lifecycle.livedata.v284)
+    implementation(libs.lifecycle.runtime)
 
     // Nav Graph
     implementation(libs.navigation.fragment)
@@ -71,4 +71,8 @@ dependencies {
     testImplementation(libs.junit)
     androidTestImplementation(libs.ext.junit)
     androidTestImplementation(libs.espresso.core)
+
+    //Room
+    implementation(libs.room.runtime)
+    annotationProcessor(libs.room.compiler)
 }

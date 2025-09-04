@@ -5,19 +5,28 @@ import android.os.Bundle;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.core.view.MenuHost;
+import androidx.core.view.MenuProvider;
 import androidx.fragment.app.Fragment;
+import androidx.lifecycle.Lifecycle;
+import androidx.navigation.fragment.NavHostFragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.TextView;
 
 import com.example.beagle.R;
 import com.example.beagle.adapter.MessageRecyclerAdapter;
 import com.example.beagle.model.Message;
+import com.example.beagle.model.Pet;
 import com.google.android.material.textfield.TextInputEditText;
 
 import java.util.ArrayList;
@@ -30,17 +39,17 @@ import java.util.Objects;
  */
 public class ChatFragment extends Fragment {
 
-    private TextInputEditText editTextPrompt;
-    private String messageContent;
-    //private TextView questionMessage = findViewById(R.id.textViewQuestion);
+    // private String messageContent;
+    // TODO: Da rimuovere dopo con ultimo animale se esiste (e mettere in luogo più adeguato)
+    Pet pet = new Pet("Among Us");
+
 
     public ChatFragment() {
         // Required empty public constructor
     }
 
     public static ChatFragment newInstance() {
-        ChatFragment fragment = new ChatFragment();
-        return fragment;
+        return new ChatFragment();
     }
 
     @Override
@@ -63,48 +72,119 @@ public class ChatFragment extends Fragment {
         RecyclerView recyclerView = view.findViewById(R.id.recyclerView);
         recyclerView.setLayoutManager(new LinearLayoutManager(view.getContext()));
         ArrayList<Message> messageList = new ArrayList<Message>();
-        //ArrayList<Message> answerList = new ArrayList<Message>();
-
 
         MessageRecyclerAdapter adapter = new MessageRecyclerAdapter(R.layout.message, messageList);
         recyclerView.setAdapter(adapter);
 
 
+
+
         // SET UP
+        TextInputEditText editTextPrompt = view.findViewById(R.id.textInputPrompt);
+        Button addPetButton = view.findViewById(R.id.addPetButton);
+        ImageButton sendButton = view.findViewById(R.id.imageSendButton);
+        TextView welcomeTextView = view.findViewById(R.id.textView);
 
         Resources res = getResources();
-        String text = String.format(res.getString(R.string.saluto_iniziale), "amogus");
 
-        TextView textView = view.findViewById(R.id.textView);
-        textView.setText(text);
+        // Se esiste un animale salvato, forma screen normale
+        if (hasPetSaved()) {
+            welcomeTextView.setText(String.format(res.getString(R.string.saluto_iniziale),
+                    pet.getName()));
+            addPetButton.setVisibility(View.GONE);
+            setPromptEnabled(sendButton, editTextPrompt, true);
 
-        editTextPrompt = view.findViewById(R.id.textInputPrompt);
-        ImageButton sendButton = view.findViewById(R.id.imageSendButton);
+        // Altrimenti, forma screen con bottone aggiungi animale
+        } else {
+            welcomeTextView.setText(String.format(res.getString(R.string.no_pet)));
+            addPetButton.setVisibility(View.VISIBLE);
+            setPromptEnabled(sendButton, editTextPrompt, false);
+        }
 
 
+        addPetButton.setOnClickListener(v -> {
+            // TODO: intent verso Pet activity
+        });
 
-        // TODO: pulire (e finire) codice
+
+        // TODO: finire codice
         sendButton.setOnClickListener(v -> {
+            // Se il prompt non è vuoto
             if (!Objects.requireNonNull(editTextPrompt.getText()).toString().trim().isEmpty()) {
+
                 // CREA MESSAGGIO E LO MOSTRA
-                messageContent = editTextPrompt.getText().toString();
-                Message messageQuestion = new Message(messageContent, true);
-                messageList.add(messageQuestion);
-                adapter.notifyItemInserted(messageList.size());
+                String messageContent = editTextPrompt.getText().toString();
+                showMessage(messageContent, messageList, adapter, true);
+                editTextPrompt.setText("");
+                welcomeTextView.setVisibility(View.GONE);
+                setPromptEnabled(sendButton, editTextPrompt, false);
 
                 // RISPOSTA?
+                // TODO: AI reply
+                String answer = getMessageAPI_WIP();
+                showMessage(answer, messageList, adapter, false);
+                setPromptEnabled(sendButton, editTextPrompt, true);
 
-                Message messageAnswer = new Message("REPLY", false);
-                messageList.add(messageAnswer);
-                adapter.notifyItemInserted(messageList.size());
-
-
-                editTextPrompt.setText("");
-                textView.setText("");
-
+            // Se il prompt è vuoto
             } else {
-                editTextPrompt.setError(res.getString(R.string.no_text));
+                editTextPrompt.setError(String.format(res.getString(R.string.no_text)));
             }
         });
+
+
+
+        MenuHost menuHost = requireActivity();
+        menuHost.addMenuProvider(new MenuProvider() {
+            @Override
+            public void onCreateMenu(@NonNull Menu menu, @NonNull MenuInflater menuInflater) {
+                menu.clear(); // pulisce menu prima di aggiungere elementi di questo fragment
+                menuInflater.inflate(R.menu.menu_chat, menu);
+            }
+
+            @Override
+            public boolean onMenuItemSelected(@NonNull MenuItem menuItem) {
+                if (menuItem.getItemId() == R.id.action_history) {
+                    NavHostFragment.findNavController(ChatFragment.this)
+                            .navigate(R.id.action_chatFragment_to_conversationsHistoryFragment);
+                    return true;
+                }
+                return false;
+            }
+
+        }, getViewLifecycleOwner(), Lifecycle.State.RESUMED);
     }
+
+
+
+
+    // TODO: da spostare tutti i metodi in classe(i) più adeguata(e)
+
+    // TODO: dovrebbe ritornare la reply dell'AI
+    private String getMessageAPI_WIP() {
+        return "REPLY";
+    }
+
+    // Mostra il messaggio in Chat
+    // TODO: da separare in due metodi: show, create e send
+    private void showMessage(String messageContent, ArrayList<Message> messageList,
+                             MessageRecyclerAdapter adapter, boolean fromUser) {
+        Message message = new Message(messageContent, fromUser);
+        messageList.add(message);
+        adapter.notifyItemInserted(messageList.size() -1);
+    }
+
+    // TODO: dovrebbe ritornarse true se esiste almeno un animale salvato
+    private boolean hasPetSaved() {
+        return true;
+    }
+
+
+    // Abilita/Disabilita scrittura in Chat e tasto invio
+    private void setPromptEnabled(ImageButton sendButton,
+                                  TextInputEditText editTextPrompt, boolean b) {
+        sendButton.setEnabled(b);
+        sendButton.setSelected(b);
+        editTextPrompt.setEnabled(b);
+    }
+
 }

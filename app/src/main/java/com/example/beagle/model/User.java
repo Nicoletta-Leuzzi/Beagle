@@ -3,12 +3,21 @@ package com.example.beagle.model;
 import android.os.Parcel;
 import android.os.Parcelable;
 
-import com.google.firebase.database.Exclude;
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.room.Entity;
+import androidx.room.Index;
+import androidx.room.PrimaryKey;
+// Se NON hai ancora Firebase nelle dipendenze, lascia la riga sotto commentata
+// import com.google.firebase.database.Exclude;
 
+@Entity(
+        indices = { @Index(value = "email", unique = true)}
+)
 public class User implements Parcelable {
     private String name;
-    private String email;
-    private String idToken;
+    @NonNull private String email;
+    @PrimaryKey @NonNull private String idToken;
 
     // Necessario per Firebase (deserializzazione)
     public User() { }

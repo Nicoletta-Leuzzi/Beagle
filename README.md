@@ -53,7 +53,7 @@ erDiagram
   }
 
   MESSAGE {
-    string *chatId FK
+    string *conversationId FK
     int *seq
     long ts "NOT NULL"
     boolean fromUser "NOT NULL"

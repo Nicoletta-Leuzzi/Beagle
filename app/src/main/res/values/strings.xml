@@ -4,26 +4,34 @@
     <!-- UI: comuni -->
     <string name="hint_email">Email</string>
     <string name="hint_password">Password</string>
-    <string name="btn_login">Accedi</string>
-    <string name="btn_register">Crea account</string>
+    <string name="btn_login">Login</string>
+    <string name="btn_register">Create new account</string>
     <string name="btn_logout">Logout</string>
     <string name="please_wait">Attendere…</string>
     <string name="welcome">Benvenuta/o</string>
     <string name="already_registered">Hai già un account? Accedi</string>
 
     <!-- Navigazione testo -->
-    <string name="tv_go_register">Non hai un account? Registrati</string>
-    <string name="tv_home_text">Sei nella Home ✅</string>
-    <string name="home_message">Sei nella Home ✅</string>
+    <string name="tv_go_register">You don\'t have an account? Register</string>
+    <string name="tv_home_text">You are in the Home page ✅</string>
+    <string name="home_message">You are in the Home page ✅</string>
 
     <!-- Chat / copy -->
-    <string name="saluto_iniziale">Come sta %1$s?</string>
-    <string name="hint">Descrivi il problema</string>
-    <string name="no_text">Scrivi una domanda all\'AI riguardo il tuo animale</string>
+    <string name="saluto_iniziale">How is %1$s doing?</string>
+    <string name="hint">Describe your problem</string>
+    <string name="no_text">Write a question to the AI regarding your pet</string>
 
     <!-- Messaggi di esito -->
     <string name="login_success">Login effettuato!</string>
     <string name="register_success">Registrazione completata!</string>
+
+    <string name="no_pet">You don\'t have a pet saved, add one</string>
+    <string name="add_pet_button">Add a new pet</string>
+    <string name="conversations_history_title">Chat</string>
+
+    <string name="history_description">history button</string>
+    <string name="pet_profile_description">pet profile button</string>
+    <string name="chat_fragment_title">Beagle OSS</string>
 
     <!-- Errori Login/Register -->
     <string name="error_email_login">Inserisci un\'email valida.</string>
