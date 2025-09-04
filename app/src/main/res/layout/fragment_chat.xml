@@ -41,9 +41,6 @@
         app:layout_constraintTop_toBottomOf="@+id/textView" />
 
 
-
-
-
     <RelativeLayout
         android:id="@+id/relativeLayout"
         android:layout_width="match_parent"

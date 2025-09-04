@@ -1,7 +1,6 @@
 plugins {
     alias(libs.plugins.android.application)
-    // Abilita quando aggiungerai google-services.json:
-    // id("com.google.gms.google-services")
+    alias(libs.plugins.google.services) // Decommentato per abilitare Google Services
 }
 
 android {
@@ -57,8 +56,16 @@ dependencies {
     implementation(libs.navigation.fragment)
     implementation(libs.navigation.ui)
 
-    // Google Sign-In (lascia commentato finché non serve/è nel catalog)
-    // implementation(libs.play.services.auth)
+    // Firebase & Google Services
+    implementation(platform(libs.firebase.bom))
+    implementation(libs.firebase.auth)
+    implementation(libs.play.services.auth)
+    implementation(libs.firebase.database)
+
+    implementation(libs.androidx.credentials)
+    implementation(libs.androidx.credentials.play)
+    implementation(libs.googleid)
+
 
     // Test
     testImplementation(libs.junit)

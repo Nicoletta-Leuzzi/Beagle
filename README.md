@@ -27,36 +27,37 @@ Per editare più comodamente i diagrammi:
 ```mermaid
 erDiagram
   USER 1..0+ PET : owns
-  USER 1..0+ CHAT : creates
+  USER 1..0+ CONVERSATION : creates
   USER {
-    string *userId
-    string email UK "NOT NULL"
+    String *idToken
+    String email UK "NOT NULL"
+    String name
   }
 
-  %%UNIQUE (userId, name)
+  %%UNIQUE (idToken, name)
   PET {
-    string *petId
-    string userId FK "NOT NULL, part of UK(userId,name)"
-    string name "NOT NULL, part of UK(userId,name)"
-    string species "NOT NULL"
-    string breed
+    String *petId
+    String idToken FK "NOT NULL, part of UK(idToken,name)"
+    String name "NOT NULL, part of UK(idToken,name)"
+    String species "NOT NULL"
+    String breed
   }
 
-  CHAT 0+..1 PET : "is about"
-  CHAT 1--0+ MESSAGE : contains
-  CHAT {
-  string *conversationId
-  string userId FK "NOT NULL"
-  string petId FK "NOT NULL"
-  datetime createdAt "NOT NULL"
+  CONVERSATION 0+..1 PET : "is about"
+  CONVERSATION 1--0+ MESSAGE : contains
+  CONVERSATION {
+  String *conversationId
+  String idToken FK "NOT NULL"
+  String petId FK "NOT NULL"
+  long createdAt "NOT NULL"
   }
 
   MESSAGE {
     string *conversationId FK
     int *seq
-    datetime ts "NOT NULL"
+    long ts "NOT NULL"
     boolean fromUser "NOT NULL"
-    string content "NOT NULL"
+    String content "NOT NULL"
   }
 ```
 

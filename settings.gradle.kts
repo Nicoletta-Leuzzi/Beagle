@@ -10,7 +10,12 @@ pluginManagement {
         mavenCentral()
         gradlePluginPortal()
     }
+    plugins {
+        // 👇 aggiunto: dichiarazione plugin Google Services con versione
+        id("com.google.gms.google-services") version "4.4.2"
+    }
 }
+
 dependencyResolutionManagement {
     repositoriesMode.set(RepositoriesMode.FAIL_ON_PROJECT_REPOS)
     repositories {

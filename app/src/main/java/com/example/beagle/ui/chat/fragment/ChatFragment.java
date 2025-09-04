@@ -44,8 +44,6 @@ public class ChatFragment extends Fragment {
     Pet pet = new Pet("Among Us");
 
 
-
-
     public ChatFragment() {
         // Required empty public constructor
     }

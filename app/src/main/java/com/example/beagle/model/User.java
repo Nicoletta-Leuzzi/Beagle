@@ -19,8 +19,8 @@ public class User implements Parcelable {
     @NonNull private String email;
     @PrimaryKey @NonNull private String idToken;
 
-    // Costruttore vuoto utile per Firebase/serializzazione
-    public User() {}
+    // Necessario per Firebase (deserializzazione)
+    public User() { }
 
     public User(String name, String email, String idToken) {
         this.name = name;
@@ -34,11 +34,13 @@ public class User implements Parcelable {
     public String getEmail() { return email; }
     public void setEmail(String email) { this.email = email; }
 
-    // @Exclude  // decommenta SOLO quando aggiungi Firebase Database
+    // Non salvare l'idToken nel Realtime DB
+    @Exclude
     public String getIdToken() { return idToken; }
     public void setIdToken(String idToken) { this.idToken = idToken; }
 
-    @Override public String toString() {
+    @Override
+    public String toString() {
         return "User{" +
                 "name='" + name + '\'' +
                 ", email='" + email + '\'' +
@@ -47,24 +49,32 @@ public class User implements Parcelable {
     }
 
     // Parcelable
-    @Override public int describeContents() { return 0; }
-    @Override public void writeToParcel(Parcel dest, int flags) {
+    @Override
+    public int describeContents() { return 0; }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
         dest.writeString(this.name);
         dest.writeString(this.email);
         dest.writeString(this.idToken);
     }
+
     public void readFromParcel(Parcel source) {
         this.name = source.readString();
         this.email = source.readString();
         this.idToken = source.readString();
     }
+
     protected User(Parcel in) {
         this.name = in.readString();
         this.email = in.readString();
         this.idToken = in.readString();
     }
-    public static final Creator<User> CREATOR = new Creator<User>() {
-        @Override public User createFromParcel(Parcel source) { return new User(source); }
-        @Override public User[] newArray(int size) { return new User[size]; }
+
+    public static final Parcelable.Creator<User> CREATOR = new Parcelable.Creator<User>() {
+        @Override
+        public User createFromParcel(Parcel source) { return new User(source); }
+        @Override
+        public User[] newArray(int size) { return new User[size]; }
     };
 }

@@ -31,6 +31,7 @@ render.experimental.xml
 *.keystore
 
 # Google Services (e.g. APIs or Firebase)
+# NON COMMITTARE: deve essere generato sulla propria macchina tramite comando ./gradlew signingReport
 google-services.json
 
 # Android Profiling
