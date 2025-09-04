@@ -60,7 +60,7 @@ public class ConversationsHistoryFragment extends Fragment {
         long now = System.currentTimeMillis();
         for (int i = 1; i <= 12; i++) {
             Conversation c = new Conversation("conv-" + i, "pet-" + ((i % 3) + 1), now - i * 3600_000L);
-            Message m = new Message("Ultimo messaggio " + i, (i % 2 == 0));
+            Message m = new Message(c.getConversationId(), i, (i % 2 == 0), "Ultimo messaggio " + i);
             c.addMessage(m);
             demo.add(c);
         }
