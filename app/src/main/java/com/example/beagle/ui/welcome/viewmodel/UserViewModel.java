@@ -11,9 +11,7 @@ import com.example.beagle.repository.user.IUserRepository;
 import com.example.beagle.repository.user.UserRepository;
 
 /**
- * ViewModel per l'autenticazione (login/registrazione).
- * Allineata al modello del prof, ma senza preferenze/news.
- */
+ * ViewModel per l'autenticazione (login/registrazione).*/
 public class UserViewModel extends ViewModel {
 
     private final IUserRepository userRepository;
@@ -46,7 +44,7 @@ public class UserViewModel extends ViewModel {
         return userMutableLiveData;
     }
 
-    /** Chiamata “fire and forget” come nel prof (utile quando osservi già LiveData). */
+    /** Chiamata “fire and forget” */
     public void getUser(String email, String password, boolean isUserRegistered) {
         userRepository.getUser(email, password, isUserRegistered);
     }
@@ -75,7 +73,7 @@ public class UserViewModel extends ViewModel {
         return userRepository.getLoggedUser();
     }
 
-    /** Flag d’errore di autenticazione (stile prof). */
+    /** Flag d’errore di autenticazione. */
     public boolean isAuthenticationError() {
         return authenticationError;
     }

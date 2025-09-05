@@ -44,4 +44,10 @@
 
     <!-- Extra utili -->
     <string name="hello_world">Hello World!</string>
+
+    <!-- Missing for login/register layouts -->
+    <string name="forgot_password">Forgot password?</string>
+    <string name="or">or</string>
+    <string name="continue_with_google">Continue with Google</string>
+
 </resources>

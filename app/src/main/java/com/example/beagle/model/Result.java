@@ -8,8 +8,8 @@ public abstract class Result {
     }
 
     /**
-     * Class that represents a successful authentication action
-     * (login or registration) returning a User.
+     * Classe che rappresenta un'azione di autenticazione riuscita
+     * (login o registrazione) che restituisce un utente (User).
      */
     public static final class UserSuccess extends Result {
         private final User user;
@@ -24,8 +24,8 @@ public abstract class Result {
     }
 
     /**
-     * Class that represents an error occurred during
-     * authentication (login or registration).
+     * Classe che rappresenta un errore verificatosi durante
+     * l'autenticazione (login o registrazione).
      */
     public static final class Error extends Result {
         private final String message;

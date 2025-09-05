@@ -1,20 +1,30 @@
-package com.example.beagle.ui.welcome;
+package com.example.beagle.ui.welcome.fragment;
 
 import android.content.Intent;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.util.Log;
 import android.util.Patterns;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.annotation.Nullable;
-import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.ContextCompat;
-import androidx.lifecycle.Observer;
+import androidx.credentials.Credential;
+import androidx.credentials.CredentialManager;
+import androidx.credentials.CredentialManagerCallback;
+import androidx.credentials.CustomCredential;
+import androidx.credentials.GetCredentialRequest;
+import androidx.credentials.GetCredentialResponse;
+import androidx.credentials.exceptions.GetCredentialException;
+import androidx.credentials.exceptions.NoCredentialException;
+import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
+import androidx.navigation.fragment.NavHostFragment;
 
 import com.example.beagle.R;
 import com.example.beagle.model.Result;
@@ -24,24 +34,13 @@ import com.example.beagle.ui.welcome.viewmodel.UserViewModel;
 import com.example.beagle.ui.welcome.viewmodel.UserViewModelFactory;
 import com.example.beagle.util.ServiceLocator;
 import com.google.android.material.snackbar.Snackbar;
-
-// --- Credential Manager + Google ID ---
-import androidx.credentials.Credential;
-import androidx.credentials.CredentialManager;
-import androidx.credentials.CredentialManagerCallback;
-import androidx.credentials.CustomCredential;
-import androidx.credentials.GetCredentialRequest;
-import androidx.credentials.GetCredentialResponse;
-import androidx.credentials.exceptions.GetCredentialException;
-import androidx.credentials.exceptions.NoCredentialException;
-
 import com.google.android.libraries.identity.googleid.GetSignInWithGoogleOption;
 import com.google.android.libraries.identity.googleid.GetGoogleIdOption;
 import com.google.android.libraries.identity.googleid.GoogleIdTokenCredential;
 
-public class LoginActivity extends AppCompatActivity {
+public class LoginFragment extends Fragment {
 
-    private static final String TAG = "LoginActivity";
+    private static final String TAG = "LoginFragment";
 
     private EditText etEmail, etPassword;
     private Button btnLogin, btnGoogle;
@@ -52,16 +51,19 @@ public class LoginActivity extends AppCompatActivity {
     // Credential Manager
     private CredentialManager credentialManager;
     private GetSignInWithGoogleOption siwgOption;          // pulsante "Sign in with Google"
-    private GetGoogleIdOption googleIdAnyAccountOption;    // fallback: chooser (qualsiasi account)
+    private GetGoogleIdOption googleIdAnyAccountOption;    // fallback chooser
+
+    public LoginFragment() { /* empty */ }
 
     @Override
-    protected void onCreate(@Nullable Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_login);
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+        return inflater.inflate(R.layout.fragment_login, container, false);
+    }
 
-        Log.d(TAG, "onCreate");
-
-        initViews();
+    @Override
+    public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
+        Log.d(TAG, "onViewCreated");
+        initViews(view);
         initViewModel();
 
         // Autologin
@@ -71,30 +73,30 @@ public class LoginActivity extends AppCompatActivity {
             return;
         }
 
-        Log.d(TAG, "Nessun utente loggato all'avvio");
-
         setupListeners();
-        setupGoogleSignIn(); // Credential Manager
+        setupGoogleSignIn();
     }
 
-    private void initViews() {
-        etEmail = findViewById(R.id.etEmail);
-        etPassword = findViewById(R.id.etPassword);
-        btnLogin = findViewById(R.id.btnLogin);
-        tvGoRegister = findViewById(R.id.tvGoRegister);
-        btnGoogle = findViewById(R.id.btnGoogle);
+    private void initViews(View root) {
+        etEmail      = root.findViewById(R.id.etEmail);
+        etPassword   = root.findViewById(R.id.etPassword);
+        btnLogin     = root.findViewById(R.id.btnLogin);
+        tvGoRegister = root.findViewById(R.id.tvGoRegister);
+        btnGoogle    = root.findViewById(R.id.btnGoogle);
     }
 
     private void initViewModel() {
-        IUserRepository repo = ServiceLocator.getInstance().getUserRepository(getApplication());
-        userViewModel = new ViewModelProvider(this, new UserViewModelFactory(repo))
-                .get(UserViewModel.class);
+        IUserRepository repo = ServiceLocator.getInstance().getUserRepository(requireActivity().getApplication());
+        userViewModel = new ViewModelProvider(requireActivity(), new UserViewModelFactory(repo))
+                .get(UserViewModel.class); // VM condiviso tra Login/Register
     }
 
     private void setupListeners() {
         btnLogin.setOnClickListener(v -> performEmailLogin());
+
         tvGoRegister.setOnClickListener(v ->
-                startActivity(new Intent(this, RegisterActivity.class)));
+                NavHostFragment.findNavController(this)
+                        .navigate(R.id.action_loginFragment_to_registerFragment));
 
         if (btnGoogle != null) {
             btnGoogle.setOnClickListener(v -> performGoogleLogin());
@@ -120,22 +122,15 @@ public class LoginActivity extends AppCompatActivity {
         etPassword.setError(null);
         setLoading(true);
 
-        // Cache del LiveData: una sola richiesta/istanza, niente removeObserver
-        final androidx.lifecycle.LiveData<Result> loginLiveData =
-                userViewModel.getUserMutableLiveData(email, password, /*isUserRegistered=*/true);
-
-        loginLiveData.observe(this, new Observer<Result>() {
-                    @Override
-                    public void onChanged(Result result) {
-                        setLoading(false);
-
-                        if (result instanceof Result.UserSuccess) {
-                            userViewModel.setAuthenticationError(false);
-                            goNext();
-                        } else if (result instanceof Result.Error) {
-                            userViewModel.setAuthenticationError(true);
-                            showError(((Result.Error) result).getMessage());
-                        }
+        userViewModel.getUserMutableLiveData(email, password, /*isUserRegistered=*/true)
+                .observe(getViewLifecycleOwner(), result -> {
+                    setLoading(false);
+                    if (result instanceof Result.UserSuccess) {
+                        userViewModel.setAuthenticationError(false);
+                        goNext();
+                    } else if (result instanceof Result.Error) {
+                        userViewModel.setAuthenticationError(true);
+                        showError(((Result.Error) result).getMessage());
                     }
                 });
     }
@@ -157,13 +152,12 @@ public class LoginActivity extends AppCompatActivity {
             }
             Log.d(TAG, "default_web_client_id OK (non placeholder)");
 
-            credentialManager = CredentialManager.create(this);
+            credentialManager = CredentialManager.create(requireContext());
 
             // Pulsante ufficiale "Sign in with Google"
-            siwgOption = new GetSignInWithGoogleOption.Builder(webClientId)
-                    .build();
+            siwgOption = new GetSignInWithGoogleOption.Builder(webClientId).build();
 
-            // Fallback opzionale: bottom-sheet chooser con QUALSIASI account
+            // Fallback opzionale: chooser con qualsiasi account
             googleIdAnyAccountOption = new GetGoogleIdOption.Builder()
                     .setServerClientId(webClientId)
                     .setFilterByAuthorizedAccounts(false)
@@ -183,17 +177,17 @@ public class LoginActivity extends AppCompatActivity {
 
         setLoading(true);
 
-        // Includo sia il pulsante SIWG sia (opzionale) il chooser generico.
         GetCredentialRequest request = new GetCredentialRequest.Builder()
                 .addCredentialOption(siwgOption)
-                .addCredentialOption(googleIdAnyAccountOption) // se provider non disponibile, prova chooser
+                .addCredentialOption(googleIdAnyAccountOption)
                 .build();
 
+        // In Fragment, passiamo l'Activity corrente:
         credentialManager.getCredentialAsync(
-                this,
+                requireActivity(),
                 request,
                 null,
-                ContextCompat.getMainExecutor(this),
+                ContextCompat.getMainExecutor(requireContext()),
                 new CredentialManagerCallback<GetCredentialResponse, GetCredentialException>() {
                     @Override
                     public void onResult(GetCredentialResponse response) {
@@ -234,7 +228,6 @@ public class LoginActivity extends AppCompatActivity {
                     }
                 }
             }
-
             Log.e(TAG, "Credenziale non riconosciuta o token mancante");
             showError("Errore: credenziale Google non valida");
         } catch (Exception e) {
@@ -246,22 +239,15 @@ public class LoginActivity extends AppCompatActivity {
     private void authenticateWithGoogle(String idToken) {
         setLoading(true);
 
-        // Cache del LiveData: una sola istanza, niente removeObserver
-        final androidx.lifecycle.LiveData<Result> googleLiveData =
-                userViewModel.getGoogleUserMutableLiveData(idToken);
-
-        googleLiveData.observe(this, new Observer<Result>() {
-                    @Override
-                    public void onChanged(Result result) {
-                        setLoading(false);
-
-                        if (result instanceof Result.UserSuccess) {
-                            userViewModel.setAuthenticationError(false);
-                            goNext();
-                        } else if (result instanceof Result.Error) {
-                            userViewModel.setAuthenticationError(true);
-                            showError(((Result.Error) result).getMessage());
-                        }
+        userViewModel.getGoogleUserMutableLiveData(idToken)
+                .observe(getViewLifecycleOwner(), result -> {
+                    setLoading(false);
+                    if (result instanceof Result.UserSuccess) {
+                        userViewModel.setAuthenticationError(false);
+                        goNext();
+                    } else if (result instanceof Result.Error) {
+                        userViewModel.setAuthenticationError(true);
+                        showError(((Result.Error) result).getMessage());
                     }
                 });
     }
@@ -288,18 +274,13 @@ public class LoginActivity extends AppCompatActivity {
     }
 
     private void showError(String message) {
-        if (findViewById(android.R.id.content) != null) {
-            Snackbar.make(findViewById(android.R.id.content), message, Snackbar.LENGTH_LONG).show();
-        } else {
-            Toast.makeText(this, message, Toast.LENGTH_LONG).show();
-        }
+        View anchor = getView() != null ? getView() : requireActivity().findViewById(android.R.id.content);
+        Snackbar.make(anchor, message, Snackbar.LENGTH_LONG).show();
     }
 
     private void goNext() {
         Log.i(TAG, "Navigo a ChatActivity");
-        Intent intent = new Intent(this, ChatActivity.class);
-        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
-        startActivity(intent);
-        finish();
+        startActivity(new Intent(requireContext(), ChatActivity.class));
+        requireActivity().finish();
     }
 }

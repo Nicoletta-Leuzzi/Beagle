@@ -9,10 +9,9 @@ import com.example.beagle.source.user.BaseUserAuthenticationRemoteDataSource;
 import com.example.beagle.source.user.UserAuthenticationFirebaseDataSource;
 
 /**
- * ServiceLocator (stile prof) – versione minimale per AUTH (login/registrazione).
+ * ServiceLocator – versione per AUTH (login/registrazione).
  * - Singleton: getInstance()
  * - Fornisce il repository utente tramite getUserRepository(Application)
- * - Nessuna parte "news"/Room/Retrofit.
  */
 public class ServiceLocator {
 
@@ -22,7 +21,6 @@ public class ServiceLocator {
 
     private ServiceLocator() { }
 
-    /** Stile prof: nessun parametro. */
     public static ServiceLocator getInstance() {
         if (INSTANCE == null) {
             synchronized (ServiceLocator.class) {
@@ -41,9 +39,7 @@ public class ServiceLocator {
     }
 
     /**
-     * Restituisce il repository utente (solo autenticazione).
-     * Passa Application per coerenza col prof; qui non la usiamo.
-     */
+     * Restituisce il repository utente (solo autenticazione)*/
     public IUserRepository getUserRepository(Application application) {
         if (userRepository == null) {
             BaseUserAuthenticationRemoteDataSource authDs = new UserAuthenticationFirebaseDataSource();

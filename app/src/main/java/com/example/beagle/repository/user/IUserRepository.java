@@ -5,7 +5,7 @@ import androidx.lifecycle.MutableLiveData;
 import com.example.beagle.model.Result;
 import com.example.beagle.model.User;
 
-/** Interfaccia repo utente – allineata allo stile del prof, solo auth. */
+/** Interfaccia repo utente */
 public interface IUserRepository {
 
     /** Entry point unificato: se isUserRegistered=true → login, altrimenti → signup. */
