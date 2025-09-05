@@ -8,8 +8,8 @@ import androidx.annotation.Nullable;
 import androidx.room.Entity;
 import androidx.room.Index;
 import androidx.room.PrimaryKey;
-// Se NON hai ancora Firebase nelle dipendenze, lascia la riga sotto commentata
-// import com.google.firebase.database.Exclude;
+
+import com.google.firebase.database.Exclude;
 
 @Entity(
         indices = { @Index(value = "email", unique = true)}
