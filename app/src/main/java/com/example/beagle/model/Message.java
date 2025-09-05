@@ -16,7 +16,6 @@ import androidx.room.Ignore;
     )
 )
 public class Message {
-    @NonNull
     private String conversationId; // chiave esterna
     private int seq; // numero crescente
     private long ts = 0L; // timestamp inizializzato
@@ -27,29 +26,22 @@ public class Message {
     public Message() {
     }
 
-    public Message(@NonNull String conversationId, int seq, long ts,
+    public Message(@NonNull String conversationId, int seq,
                    boolean fromUser, String content) {
         this.conversationId = conversationId;
         this.seq = seq;
-        this.ts = ts;
+        this.ts = System.currentTimeMillis();
         this.fromUser = fromUser;
         this.content = content;
         // ts verrà assegnato da Conversation.java per indicare il ts del messaggio inviato
     }
 
-    // TODO: da togliere dopo aver fixato showMessage in ChatFragment
-    @Ignore
-    public Message(@NonNull String content, boolean fromUser) {
-        this.content = content;
-        this.fromUser = fromUser;
-        // opzionale se hai un timestamp
-        // this.timestamp = System.currentTimeMillis();
-    }
 
+    @NonNull
     public String getConversationId() {
         return conversationId;
     }
-    public void setConversationId(String conversationId) {
+    public void setConversationId(@NonNull String conversationId) {
         this.conversationId = conversationId;
     }
 
