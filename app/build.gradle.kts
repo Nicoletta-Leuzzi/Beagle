@@ -74,5 +74,5 @@ dependencies {
 
     //Room
     implementation(libs.room.runtime)
-    annotationProcessor(libs.room.compiler)
+    annotationProcessor(libs.androidx.room.compiler)
 }
