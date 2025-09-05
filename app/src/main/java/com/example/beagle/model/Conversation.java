@@ -103,6 +103,7 @@ public class Conversation {
         }
 
         // assegna timestamp
+        // TODO: va nella classe Message
         if (m.getTs() == 0L) { // se non è presente
             m.setTs(System.currentTimeMillis());
         }
