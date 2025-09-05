@@ -51,7 +51,8 @@ public class ProfileFragment extends Fragment {
     private int indexOfPet;
     private boolean fieldsError;
     private List<Pet> animals = new ArrayList<>();
-    private ArrayAdapter<Pet> adapter;
+    private ArrayAdapter<Pet> petAdapter;
+    private ArrayAdapter<Byte> speciesAdapter;
 
     public ProfileFragment() {
         // Required empty public constructor
@@ -87,8 +88,8 @@ public class ProfileFragment extends Fragment {
         textInputLayoutAutoCompleteTextView = view.findViewById(R.id.textInputLayoutDropDownMenu);
 
         fieldsError = false;
-        adapter = new ArrayAdapter<Pet>(getContext(), android.R.layout.simple_dropdown_item_1line, animals);
-        autoCompleteTextView.setAdapter(adapter);
+        petAdapter = new ArrayAdapter<Pet>(getContext(), android.R.layout.simple_dropdown_item_1line, animals);
+        autoCompleteTextView.setAdapter(petAdapter);
 
         if(animals.isEmpty()){
             disableDropDownMenu();
@@ -137,9 +138,9 @@ public class ProfileFragment extends Fragment {
                     throw new RuntimeException(e);
                 }
 
-                age.setText(pet.getAge());
+//                age.setText(pet.getAge());
                 animals.add(pet);
-                adapter.notifyDataSetChanged();
+                petAdapter.notifyDataSetChanged();
                 disableAllInputText();
                 if (animals.isEmpty()) {
                     disableDropDownMenu();
@@ -164,7 +165,7 @@ public class ProfileFragment extends Fragment {
                 if (pet.getBirthDate() != 0) {
                     birthDate.setText(sdf.format(new Date(pet.getBirthDate())));
                 }
-                age.setText(pet.getAge());
+//                age.setText(pet.getAge());
                 autoCompleteTextView.setText(pet.toString(), false);
                 btnDelete.setVisibility(VISIBLE);
                 enableDropDownMenu();
@@ -195,7 +196,7 @@ public class ProfileFragment extends Fragment {
             if (pet.getBirthDate() != 0) {
                 birthDate.setText(sdf.format(new Date(pet.getBirthDate())));
             }
-            age.setText(pet.getAge());
+//            age.setText(pet.getAge());
             btnDelete.setVisibility(VISIBLE);
         });
 
@@ -213,6 +214,11 @@ public class ProfileFragment extends Fragment {
 
                 if (!s.toString().isEmpty()) {
                     birthDate.setError(null);
+                    try {
+                        age.setText(calculateAge(sdf.parse(birthDate.getText().toString()).getTime()));
+                    } catch (ParseException e) {
+                        throw new RuntimeException(e);
+                    }
                 }
             }
 
@@ -336,7 +342,7 @@ public class ProfileFragment extends Fragment {
             }
 
         }
-        adapter.notifyDataSetChanged();
+        petAdapter.notifyDataSetChanged();
     }
 
     private void resetErrors(){
@@ -344,6 +350,23 @@ public class ProfileFragment extends Fragment {
         species.setError(null);
         breed.setError(null);
         birthDate.setError(null);
+    }
+
+    private String calculateAge(long birthDateMillis) {
+        Calendar birth = Calendar.getInstance();
+        birth.setTime(new Date(birthDateMillis));
+
+        Calendar today = Calendar.getInstance();
+
+        int years = today.get(Calendar.YEAR) - birth.get(Calendar.YEAR);
+
+        if (today.get(Calendar.MONTH) < birth.get(Calendar.MONTH) ||
+                (today.get(Calendar.MONTH) == birth.get(Calendar.MONTH) &&
+                        today.get(Calendar.DAY_OF_MONTH) < birth.get(Calendar.DAY_OF_MONTH))) {
+            years--;
+        }
+
+        return years+"";
     }
 }
 
