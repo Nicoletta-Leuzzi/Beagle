@@ -91,6 +91,12 @@
 
             </com.google.android.material.textfield.TextInputLayout>
 
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="horizontal"
+                >
+
             <com.google.android.material.textfield.TextInputLayout
                 android:id="@+id/speciesLayout"
                 style="@style/Widget.Material3.TextInputLayout.OutlinedBox"
@@ -98,7 +104,10 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="16dp"
                 android:hint="Species"
-                android:enabled="false">
+                android:enabled="false"
+                android:layout_weight="50"
+                android:layout_marginEnd="16dp"
+                >
 
                 <com.google.android.material.textfield.TextInputEditText
                     android:id="@+id/outlinedTextFieldSpecies"
@@ -115,7 +124,8 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="16dp"
                 android:hint="Breed"
-                android:enabled="false">
+                android:enabled="false"
+                android:layout_weight="30">
 
                 <com.google.android.material.textfield.TextInputEditText
                     android:id="@+id/outlinedTextFieldBreed"
@@ -125,25 +135,31 @@
 
             </com.google.android.material.textfield.TextInputLayout>
 
-            <androidx.constraintlayout.widget.ConstraintLayout
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/dateAgeLineraLayout"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:layout_marginTop="16dp">
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:layout_marginTop="16dp"
+                >
 
                 <com.google.android.material.textfield.TextInputLayout
                     android:id="@+id/birthDateLayout"
                     style="@style/Widget.Material3.TextInputLayout.OutlinedBox"
-                    android:layout_width="300dp"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:hint="Date of birth"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toTopOf="parent"
                     app:startIconDrawable="@drawable/outline_calendar_month_24"
-                    android:enabled="false">
+                    android:enabled="false"
+                    android:layout_marginEnd="16dp"
+                    android:layout_weight="20"
+                    >
 
                     <com.google.android.material.textfield.TextInputEditText
                         android:id="@+id/outlinedTextFieldBirthDate"
-                        android:layout_width="300dp"
+                        android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:clickable="false"
                         android:focusable="false"
@@ -155,12 +171,13 @@
                 <com.google.android.material.textfield.TextInputLayout
                     android:id="@+id/ageLayout"
                     style="@style/Widget.Material3.TextInputLayout.OutlinedBox"
-                    android:layout_width="70dp"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:hint="Age"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintTop_toTopOf="parent"
                     android:enabled="false"
+                    android:layout_weight="80"
                     >
 
                     <com.google.android.material.textfield.TextInputEditText
@@ -173,27 +190,32 @@
 
                 </com.google.android.material.textfield.TextInputLayout>
 
+            </LinearLayout>
+
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_marginTop="16dp">
+
                 <com.google.android.material.button.MaterialButton
                     android:id="@+id/btn_delete"
                     style="@style/Widget.Material3.Button"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="16dp"
                     android:text="Delete"
                     app:backgroundTint="#d90000"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@+id/birthDateLayout" />
+                    app:layout_constraintTop_toTopOf="parent" />
 
                 <androidx.constraintlayout.widget.ConstraintLayout
                     android:id="@+id/btns_save_cancel"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_gravity="end"
-                    android:layout_marginTop="16dp"
                     android:orientation="horizontal"
                     android:visibility="invisible"
                     app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintTop_toBottomOf="@+id/birthDateLayout">
+                    app:layout_constraintTop_toTopOf="parent">
 
                     <com.google.android.material.button.MaterialButton
                         android:id="@+id/btn_cancel"
