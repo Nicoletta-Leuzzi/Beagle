@@ -1,67 +1,97 @@
 package com.example.beagle.repository.user;
 
-import androidx.annotation.Nullable;
+import androidx.lifecycle.MutableLiveData;
 
+import com.example.beagle.model.Result;
 import com.example.beagle.model.User;
 import com.example.beagle.source.user.BaseUserAuthenticationRemoteDataSource;
-import com.example.beagle.source.user.BaseUserDataRemoteDataSource;
-import com.example.beagle.source.user.UserAuthenticationStubDataSource;
-import com.example.beagle.source.user.UserDataStubDataSource;
+import com.example.beagle.source.user.UserAuthenticationFirebaseDataSource;
 
 public class UserRepository implements IUserRepository {
 
-    private final BaseUserAuthenticationRemoteDataSource authDs;
-    private final BaseUserDataRemoteDataSource dataDs;
+    private final BaseUserAuthenticationRemoteDataSource userRemoteDataSource;
+    private final MutableLiveData<Result> userMutableLiveData = new MutableLiveData<>();
 
-    // Versione STUB per build verde (no AuthStore, no Firebase)
+    // Puoi passare l'impl che vuoi; di default Firebase
     public UserRepository() {
-        this.authDs = new UserAuthenticationStubDataSource();
-        this.dataDs = new UserDataStubDataSource();
+        this(new UserAuthenticationFirebaseDataSource());
+    }
+
+    public UserRepository(BaseUserAuthenticationRemoteDataSource authDs) {
+        this.userRemoteDataSource = authDs;
+        this.userRemoteDataSource.setUserResponseCallback(callback);
+    }
+
+    // ----- CALLBACK UNICO stile prof -----
+    private final UserResponseCallback callback = new UserResponseCallback() {
+        @Override
+        public void onSuccessFromAuthentication(User user) {
+            userMutableLiveData.postValue(new Result.UserSuccess(user));
+        }
+
+        @Override
+        public void onFailureFromAuthentication(String message) {
+            userMutableLiveData.postValue(new Result.Error(message));
+        }
+
+        @Override
+        public void onSuccessFromRemoteDatabase(User user) {
+            userMutableLiveData.postValue(new Result.UserSuccess(user));
+        }
+
+        @Override
+        public void onFailureFromRemoteDatabase(String message) {
+            userMutableLiveData.postValue(new Result.Error(message));
+        }
+
+        @Override
+        public void onSuccessLogout() {
+            userMutableLiveData.postValue(new Result.UserSuccess(null));
+        }
+    };
+    // ----- FINE CALLBACK -----
+
+    @Override
+    public MutableLiveData<Result> getGoogleUser(String idToken) {
+        signInWithGoogle(idToken);
+        return userMutableLiveData;
     }
 
     @Override
-    public void register(String name, String email, String password, UserResponseCallback cb) {
-        // Lo "name" lo ignoriamo negli stub: passiamo l'oggetto restituito dall'auth
-        authDs.register(name, email, password, new UserResponseCallback() {
-            @Override
-            public void onSuccess(User user) {
-                dataDs.saveUser("stub-uid", user, new UserResponseCallback() {
-                    @Override public void onSuccess(User saved) { cb.onSuccess(saved); }
-                    @Override public void onError(Exception e) { cb.onError(e); }
-                });
-            }
-            @Override public void onError(Exception e) { cb.onError(e); }
-        });
+    public MutableLiveData<Result> getUser(String email, String password, boolean isUserRegistered) {
+        if (isUserRegistered) {
+            signIn(email, password);
+        } else {
+            signUp(email, password);
+        }
+        return userMutableLiveData;
+    }
+
+
+
+    @Override
+    public void signIn(String email, String password) {
+        userRemoteDataSource.signIn(email, password);
     }
 
     @Override
-    public void login(String email, String password, UserResponseCallback cb) {
-        authDs.login(email, password, new UserResponseCallback() {
-            @Override
-            public void onSuccess(User userFromAuth) {
-                // Negli stub recuperiamo eventualmente un profilo salvato ma, in ogni caso,
-                // ritorniamo l'utente dell'auth (ha già email + idToken).
-                dataDs.getUser("stub-uid", new UserResponseCallback() {
-                    @Override public void onSuccess(@Nullable User dbUser) {
-                        cb.onSuccess(userFromAuth);
-                    }
-                    @Override public void onError(Exception e) {
-                        cb.onSuccess(userFromAuth); // fallback
-                    }
-                });
-            }
-            @Override public void onError(Exception e) { cb.onError(e); }
-        });
+    public void signInWithGoogle(String token) {
+        userRemoteDataSource.signInWithGoogle(token);
     }
 
     @Override
-    public void logout() {
-        authDs.logout();
+    public void signUp(String email, String password) {
+        userRemoteDataSource.signUp(email, password);
     }
 
     @Override
-    public User getCurrentUserOrNull() {
-        // Negli stub non persistiamo sessione
-        return null;
+    public MutableLiveData<Result> logout() {
+        userRemoteDataSource.logout();
+        return userMutableLiveData;
+    }
+
+    @Override
+    public User getLoggedUser() {
+        return userRemoteDataSource.getLoggedUser();
     }
 }

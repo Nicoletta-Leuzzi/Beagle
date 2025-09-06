@@ -3,12 +3,30 @@ package com.example.beagle.model;
 import java.util.Calendar;
 import java.util.Date;
 
+import androidx.room.Entity;
+import androidx.room.ForeignKey;
+import androidx.room.Index;
+import androidx.room.PrimaryKey;
+
+@Entity(
+        foreignKeys = @ForeignKey(
+                entity = User.class,
+                parentColumns = "idToken",
+                childColumns = "idToken",
+                onDelete = ForeignKey.CASCADE,
+                onUpdate = ForeignKey.CASCADE
+        ),
+        indices = { @Index(value = {"idToken", "name"}, unique = true),
+                @Index("idToken") }
+)
 public class Pet {
-    private String petId, userId, name, breed, age;
+      @PrimaryKey(autoGenerate = true)
+    private long petId;
+    private String userId, name, breed, age;
     private Byte species;
     private long birthDate;
 
-    public Pet(String petId, String userId, String name, String species, String breed, long birthDate) {
+    public Pet(long petId, String userId, String name, String species, String breed, long birthDate) {
         this.petId = petId;
         this.userId = userId;
         this.name = name;
@@ -29,6 +47,12 @@ public class Pet {
         this.breed = other.breed;
         this.birthDate = other.birthDate;
         this.age = other.age;
+    }
+  
+    public Pet(String name) {
+      this.name = name;
+      
+    public Pet() {
     }
 
     public String getAge() {
@@ -82,8 +106,6 @@ public class Pet {
     public void setBreed(String breed) {
         this.breed = breed;
     }
-
-
 
     private String calculateAge(long birthDateMillis) {
         Calendar birth = Calendar.getInstance();

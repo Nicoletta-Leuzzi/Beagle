@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <!-- TODO: mettere ic_history a sinistra-->
+
+    <item
+        android:id="@+id/action_history"
+        android:contentDescription="@string/history_description"
+        android:icon="@drawable/ic_history"
+        app:showAsAction="always"
+        />
+
+    <item
+        android:id="@+id/action_pet_profile"
+        android:contentDescription="@string/pet_profile_description"
+        android:icon="@drawable/ic_account_circle"
+        app:showAsAction="always"/>
+
+</menu>
