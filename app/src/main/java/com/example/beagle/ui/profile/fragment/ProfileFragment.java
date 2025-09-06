@@ -41,18 +41,20 @@ import java.util.TimeZone;
 
 public class ProfileFragment extends Fragment {
 
-    private TextInputEditText name, species, breed, birthDate, age;
+    private TextInputEditText name, breed, birthDate, age;
     private Button btnSave, btnCancel, btnAdd, btnDelete;
     private ConstraintLayout btns_save_cancel;
     private SimpleDateFormat sdf;
-    private AutoCompleteTextView autoCompleteTextView;
-    private TextInputLayout textInputLayoutAutoCompleteTextView, nameLayout, speciesLayout, breedLayout, birthDateLayout, ageLayout;
+    private AutoCompleteTextView autoCompletePet, autoCompleteSpecies;
+    private TextInputLayout autoCompletePetLayout, nameLayout, speciesLayout, breedLayout, birthDateLayout, ageLayout;
     private Pet pet, tempPet;
     private int indexOfPet;
     private boolean fieldsError;
     private List<Pet> animals = new ArrayList<>();
+    private final List<String> species = new ArrayList<>();
+    // 0 = cane, 1 = gatto
     private ArrayAdapter<Pet> petAdapter;
-    private ArrayAdapter<Byte> speciesAdapter;
+    private ArrayAdapter<String> speciesAdapter;
 
     public ProfileFragment() {
         // Required empty public constructor
@@ -71,8 +73,8 @@ public class ProfileFragment extends Fragment {
 
         name = view.findViewById(R.id.outlinedTextFieldName);
         nameLayout = view.findViewById(R.id.nameLayout);
-        species = view.findViewById(R.id.outlinedTextFieldSpecies);
-        speciesLayout = view.findViewById(R.id.speciesLayout);
+        autoCompleteSpecies = view.findViewById(R.id.autoCompleteSpecies);
+        speciesLayout = view.findViewById(R.id.speciesLayoutDropDownMenu);
         breed = view.findViewById(R.id.outlinedTextFieldBreed);
         breedLayout = view.findViewById(R.id.breedLayout);
         birthDate = view.findViewById(R.id.outlinedTextFieldBirthDate);
@@ -84,12 +86,19 @@ public class ProfileFragment extends Fragment {
         btnCancel = view.findViewById(R.id.btn_cancel);
         btnAdd = view.findViewById(R.id.btnAdd);
         btnDelete = view.findViewById(R.id.btn_delete);
-        autoCompleteTextView = view.findViewById(R.id.outlinedTextFieldDropDownMenu);
-        textInputLayoutAutoCompleteTextView = view.findViewById(R.id.textInputLayoutDropDownMenu);
+        autoCompletePet = view.findViewById(R.id.outlinedTextFieldDropDownMenu);
+        autoCompletePetLayout = view.findViewById(R.id.textInputLayoutDropDownMenu);
 
         fieldsError = false;
-        petAdapter = new ArrayAdapter<Pet>(getContext(), android.R.layout.simple_dropdown_item_1line, animals);
-        autoCompleteTextView.setAdapter(petAdapter);
+
+        petAdapter = new ArrayAdapter<>(getContext(), android.R.layout.simple_dropdown_item_1line, animals);
+        autoCompletePet.setAdapter(petAdapter);
+
+        speciesAdapter = new ArrayAdapter<>(getContext(), android.R.layout.simple_dropdown_item_1line, species);
+        autoCompleteSpecies.setAdapter(speciesAdapter);
+        species.add("Cane");
+        species.add("Gatto");
+        speciesAdapter.notifyDataSetChanged();
 
         if(animals.isEmpty()){
             disableDropDownMenu();
@@ -107,12 +116,12 @@ public class ProfileFragment extends Fragment {
 //                name.setError(null);
 //            }
 
-            if(species.getText().toString().isEmpty()){
-                species.setError("Campo obbligatorio");
+            if(autoCompleteSpecies.getText().toString().isEmpty()){
+                speciesLayout.setError("Campo obbligatorio");
                 fieldsError = true;
             }
 //            else{
-//                species.setError(null);
+//                autoCompleteSpecies.setError(null);
 //            }
 
             if(breed.getText().toString().isEmpty()){
@@ -133,7 +142,7 @@ public class ProfileFragment extends Fragment {
 
             if(!fieldsError) {
                 try {
-                    pet = new Pet("", "", name.getText().toString(), species.getText().toString(), breed.getText().toString(), sdf.parse(birthDate.getText().toString()).getTime());
+                    pet = new Pet("", "", name.getText().toString(), autoCompleteSpecies.getText().toString(), breed.getText().toString(), sdf.parse(birthDate.getText().toString()).getTime());
                 } catch (ParseException e) {
                     throw new RuntimeException(e);
                 }
@@ -146,7 +155,7 @@ public class ProfileFragment extends Fragment {
                     disableDropDownMenu();
                 } else {
                     enableDropDownMenu();
-                    autoCompleteTextView.setText(pet.toString(), false);
+                    autoCompletePet.setText(pet.toString(), false);
                 }
                 btnAdd.setVisibility(VISIBLE);
                 btnDelete.setVisibility(VISIBLE);
@@ -160,13 +169,13 @@ public class ProfileFragment extends Fragment {
         btnCancel.setOnClickListener(v-> {
             if(!(animals.isEmpty())) {
                 name.setText(pet.getName());
-                species.setText(pet.getSpecies());
+                autoCompleteSpecies.setText(pet.getSpecies(),false);
                 breed.setText(pet.getBreed());
                 if (pet.getBirthDate() != 0) {
                     birthDate.setText(sdf.format(new Date(pet.getBirthDate())));
                 }
 //                age.setText(pet.getAge());
-                autoCompleteTextView.setText(pet.toString(), false);
+                autoCompletePet.setText(pet.toString(), false);
                 btnDelete.setVisibility(VISIBLE);
                 enableDropDownMenu();
             }
@@ -180,17 +189,11 @@ public class ProfileFragment extends Fragment {
             btns_save_cancel.setVisibility(INVISIBLE);
         });
 
-
-//        autoCompleteTextView.setOnClickListener(v->{
-//
-//                autoCompleteTextView.showDropDown();
-//        });
-
-        autoCompleteTextView.setOnItemClickListener((parent, v, position, id) -> {
+        autoCompletePet.setOnItemClickListener((parent, v, position, id) -> {
 
             pet = (Pet) parent.getItemAtPosition(position);
             name.setText(pet.getName());
-            species.setText(pet.getSpecies());
+            autoCompleteSpecies.setText(pet.getSpecies(),false);
             breed.setText(pet.getBreed());
 
             if (pet.getBirthDate() != 0) {
@@ -228,6 +231,26 @@ public class ProfileFragment extends Fragment {
             }
         });
 
+        autoCompleteSpecies.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+
+                if (!s.toString().isEmpty()) {
+                    speciesLayout.setError(null);
+                }
+            }
+
+            @Override
+            public void afterTextChanged(Editable editable) {
+
+            }
+        });
+
         btnAdd.setOnClickListener(v->{
             btnAdd.setVisibility(INVISIBLE);
             btns_save_cancel.setVisibility(VISIBLE);
@@ -242,7 +265,7 @@ public class ProfileFragment extends Fragment {
             clearAllFields();
             btnDelete.setVisibility(INVISIBLE);
             if(animals.isEmpty()){
-                textInputLayoutAutoCompleteTextView.setEnabled(false);
+                autoCompletePetLayout.setEnabled(false);
             }
         });
 
@@ -318,17 +341,17 @@ public class ProfileFragment extends Fragment {
     }
 
     private void disableDropDownMenu(){
-        textInputLayoutAutoCompleteTextView.setEnabled(false);
+        autoCompletePetLayout.setEnabled(false);
     }
 
     private void enableDropDownMenu(){
-        textInputLayoutAutoCompleteTextView.setEnabled(true);
+        autoCompletePetLayout.setEnabled(true);
     }
 
     private void clearAllFields(){
-        autoCompleteTextView.setText("", false);
+        autoCompletePet.setText("", false);
         name.setText("");
-        species.setText("");
+        autoCompleteSpecies.setText("", false);
         breed.setText("");
         birthDate.setText("");
         age.setText("");
@@ -347,7 +370,7 @@ public class ProfileFragment extends Fragment {
 
     private void resetErrors(){
         name.setError(null);
-        species.setError(null);
+        speciesLayout.setError(null);
         breed.setError(null);
         birthDate.setError(null);
     }

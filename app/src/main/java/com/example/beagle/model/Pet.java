@@ -4,14 +4,18 @@ import java.util.Calendar;
 import java.util.Date;
 
 public class Pet {
-    private String petId, userId, name, species, breed, age;
+    private String petId, userId, name, breed, age;
+    private Byte species;
     private long birthDate;
 
     public Pet(String petId, String userId, String name, String species, String breed, long birthDate) {
         this.petId = petId;
         this.userId = userId;
         this.name = name;
-        this.species = species;
+        if(species.equalsIgnoreCase("Cane"))
+            this.species = 0;
+        if(species.equalsIgnoreCase("Gatto"))
+            this.species = 1;
         this.breed = breed;
         this.birthDate = birthDate;
         this.age = calculateAge(birthDate);
@@ -57,11 +61,18 @@ public class Pet {
     }
 
     public String getSpecies() {
-        return species;
+        if(species == 0)
+            return "Cane";
+        else
+            return "Gatto";
     }
 
     public void setSpecies(String species) {
-        this.species = species;
+
+        if(species.equalsIgnoreCase("Cane"))
+            this.species = 0;
+        if(species.equalsIgnoreCase("Gatto"))
+            this.species = 1;
     }
 
     public String getBreed() {
