@@ -142,7 +142,13 @@ public class ProfileFragment extends Fragment {
 
             if(!fieldsError) {
                 try {
-                    pet = new Pet("", "", name.getText().toString(), autoCompleteSpecies.getText().toString(), breed.getText().toString(), sdf.parse(birthDate.getText().toString()).getTime());
+                    byte speciesCode = mapSpeciesToCode(autoCompleteSpecies.getText().toString());
+                    pet = new Pet(
+                            "",
+                            name.getText().toString(),
+                            speciesCode,
+                            breed.getText().toString(),
+                            sdf.parse(birthDate.getText().toString()).getTime());
                 } catch (ParseException e) {
                     throw new RuntimeException(e);
                 }
@@ -275,17 +281,6 @@ public class ProfileFragment extends Fragment {
 
 
 
-
-
-
-
-
-
-
-
-
-
-
 // METODI
     private void showDatePicker() {
         // Costruzione del MaterialDatePicker
@@ -390,6 +385,14 @@ public class ProfileFragment extends Fragment {
         }
 
         return years+"";
+    }
+
+    private byte mapSpeciesToCode(String label) {
+        if (label == null) return -1;
+        String l = label.trim().toLowerCase(Locale.ITALIAN);
+        if (l.startsWith("cane")) return 0;
+        if (l.startsWith("gatto")) return 1;
+        return -1;                             // Sconosciuto
     }
 }
 
