@@ -10,16 +10,21 @@ import androidx.room.RoomDatabase;
 
 import com.example.beagle.model.Conversation;
 import com.example.beagle.model.Message;
+import com.example.beagle.model.Pet;
+import com.example.beagle.model.User;
 import com.example.beagle.util.Constants;
 
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
-@Database(entities = {Message.class, Conversation.class}, version = DATABASE_VERSION, exportSchema = true)
+@Database(entities = {Message.class, Conversation.class, Pet.class, User.class},
+        version = DATABASE_VERSION, exportSchema = true)
 public abstract class DataRoomDatabase extends RoomDatabase {
 
     public abstract MessageDAO messageDao();
     public abstract ConversationDAO conversationDao();
+    public abstract PetDAO petDao();
+    public abstract UserDAO userDao();
 
     private static volatile DataRoomDatabase INSTANCE;
 
