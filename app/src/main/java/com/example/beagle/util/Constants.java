@@ -14,4 +14,11 @@ public final class Constants {
     public static final String INVALID_CREDENTIALS_ERROR = "invalid_credentials_error";
     public static final String INVALID_USER_ERROR = "invalid_user_error";
     public static final String UNEXPECTED_ERROR = "unexpected_error";
+
+
+    public static final int DATABASE_VERSION = 1;
+    public static final String SAVED_DATABASE = "saved_db";
+
+    public static final String BUNDLE_KEY = "current_conversation";
+
 }

@@ -3,14 +3,16 @@ package com.example.beagle.model;
 
 import androidx.room.Entity;
 import androidx.room.ForeignKey;
+import androidx.room.Ignore;
 import androidx.room.Index;
+import androidx.room.PrimaryKey;
 
 import java.util.List;
 import java.util.ArrayList;
 import java.util.Collections;
 
 @Entity(
-    foreignKeys = {
+    /*foreignKeys = {
             @ForeignKey(
                     entity = User.class,
                     parentColumns = "idToken",
@@ -28,42 +30,49 @@ import java.util.Collections;
             )
     },
     indices = { @Index("idToken"), @Index("petId") }
+
+     */
 )
 public class Conversation {
-    private String conversationId;
-    private String idToken;
-    private String petId;
+    //@PrimaryKey(autoGenerate = true)// TODO: NOTA, autoGenerate NON funge con foreign key per qualche ragione
+    @PrimaryKey ()
+    private long conversationId;
+    private long idToken;
+    private long petId;
     private long createdAt; // timestamp in UTC
 
     //TODO: messaggi utente da "collegare"
-    private List<Message> messages;
+    //private List<Message> messages;
 
+    @Ignore
     public Conversation() {
-        this.messages = new ArrayList<>();
-        this.createdAt = System.currentTimeMillis();
+        //this.messages = new ArrayList<>();
+        //this.createdAt = System.currentTimeMillis();
     }
 
-    public Conversation(String conversationId, String petId, long createdAt) {
-        this.conversationId = conversationId;
+    //public Conversation(long conversationId, long petId, long createdAt) {
+    public Conversation(long conversationId, long petId) {
+        //this.conversationId = conversationId;
+        this.conversationId = conversationId; // TODO: rimuovere
         this.petId = petId;
-        this.createdAt = createdAt;
-        this.messages = new ArrayList<>();
+        this.createdAt = System.currentTimeMillis();
+        //this.messages = new ArrayList<>();
     }
 
-    public String getConversationId() {
+    public long getConversationId() {
         return conversationId;
     }
 
-    public void setConversationId(String conversationId) {
+    public void setConversationId(long conversationId) {
         this.conversationId = conversationId;
         // TODO: da generare
     }
 
-    public String getPetId() {
+    public long getPetId() {
         return petId;
     }
 
-    public void setPetId(String petId) {
+    public void setPetId(long petId) {
         this.petId = petId;
     }
 
@@ -75,7 +84,17 @@ public class Conversation {
         this.createdAt = createdAt;
     }
 
+    public long getIdToken() {
+        return idToken;
+    }
+
+    public void setIdToken(long idToken) {
+        this.idToken = idToken;
+    }
+
+
     // sostituisce tutti i messaggi: per sincronizzazione e caricamento dati
+    /*
     public void setMessages(List<Message> messages) {
         if (this.messages == null) {
             this.messages = new ArrayList<>();
@@ -130,4 +149,6 @@ public class Conversation {
         String padded = String.format("%09d", seq);
         return conversationId + "-" + padded;
     }
+
+     */
 }

@@ -1,0 +1,30 @@
+package com.example.beagle.database;
+
+import androidx.room.Dao;
+import androidx.room.Insert;
+import androidx.room.OnConflictStrategy;
+import androidx.room.Query;
+
+import com.example.beagle.model.Conversation;
+
+import java.util.List;
+
+@Dao
+public interface ConversationDAO {
+
+    @Query("SELECT * FROM Conversation ORDER BY createdAt ASC")
+    List<Conversation> getAll();
+
+    @Query("SELECT * FROM Conversation WHERE petId = :petId ORDER BY createdAt ASC")
+    List<Conversation> getConversations(long petId);
+
+    @Query("SELECT * FROM CONVERSATION WHERE petId = :petId AND conversationId = :conversationId")
+    Conversation getSingleConversation(long petId, long conversationId);
+
+
+    @Insert(onConflict = OnConflictStrategy.IGNORE)
+    void insertAll(List<Conversation> conversations);
+
+    @Insert(onConflict = OnConflictStrategy.IGNORE)
+    void insert(Conversation... conversations);
+}

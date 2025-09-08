@@ -4,6 +4,7 @@ import androidx.annotation.NonNull;
 import androidx.room.Entity;
 import androidx.room.ForeignKey;
 import androidx.room.Ignore;
+import androidx.room.Index;
 
 @Entity(
     primaryKeys = {"conversationId", "seq"},
@@ -12,21 +13,21 @@ import androidx.room.Ignore;
             parentColumns = "conversationId",
             childColumns = "conversationId",
             onDelete = ForeignKey.CASCADE,
-            onUpdate = ForeignKey.CASCADE
-    )
+            onUpdate = ForeignKey.CASCADE)
 )
 public class Message {
-    private String conversationId; // chiave esterna
+    private long conversationId; // chiave esterna
     private int seq; // numero crescente
     private long ts = 0L; // timestamp inizializzato
     private boolean fromUser; // true se il messaggio è dell'utente
     private String content;
 
     // costruttore vuoto per firebase
+    @Ignore
     public Message() {
     }
 
-    public Message(@NonNull String conversationId, int seq,
+    public Message(long conversationId, int seq,
                    boolean fromUser, String content) {
         this.conversationId = conversationId;
         this.seq = seq;
@@ -37,11 +38,10 @@ public class Message {
     }
 
 
-    @NonNull
-    public String getConversationId() {
+    public long getConversationId() {
         return conversationId;
     }
-    public void setConversationId(@NonNull String conversationId) {
+    public void setConversationId(@NonNull long conversationId) {
         this.conversationId = conversationId;
     }
 
@@ -71,5 +71,13 @@ public class Message {
     }
     public void setFromUser(boolean fromUser) {
         this.fromUser = fromUser;
+    }
+
+    public String getContent() {
+        return content;
+    }
+
+    public void setContent(String content) {
+        this.content = content;
     }
 }

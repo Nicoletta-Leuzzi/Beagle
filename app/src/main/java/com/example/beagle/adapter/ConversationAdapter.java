@@ -9,6 +9,7 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.beagle.R;
+import com.example.beagle.database.DataRoomDatabase;
 import com.example.beagle.model.Conversation;
 import com.example.beagle.model.Message;
 
@@ -46,12 +47,15 @@ public class ConversationAdapter extends RecyclerView.Adapter<ConversationAdapte
         // Titolo semplice: petId o conversationId + data
         String date = DateFormat.getDateTimeInstance(DateFormat.SHORT, DateFormat.SHORT)
                 .format(new Date(c.getCreatedAt()));
-        String title = (c.getPetId() != null ? c.getPetId() : c.getConversationId());
+        //String title = (c.getPetId() != null ? c.getPetId() : c.getConversationId());
+        String title = "pet TItle test";
         h.title.setText(title != null ? title + " • " + date : date);
 
         // Sottotitolo: anteprima ultimo messaggio
         String preview = "(nessun messaggio)";
-        List<Message> msgs = c.getMessages();
+        //List<Message> msgs = c.getMessages();
+        List<Message> msgs = new ArrayList<>();
+        msgs.add(new Message(c.getConversationId(), 0, true, preview));
         if (msgs != null && !msgs.isEmpty()) {
             Message last = msgs.get(msgs.size() - 1);
             if (last.getMessageContent() != null && !last.getMessageContent().isEmpty()) {
