@@ -1,6 +1,7 @@
 package com.example.beagle.ui.chat.fragment;
 
 import android.content.Context;
+import android.content.Intent;
 import android.content.res.Resources;
 import android.os.Bundle;
 
@@ -11,7 +12,6 @@ import androidx.core.view.MenuProvider;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.Lifecycle;
 import androidx.navigation.Navigation;
-import androidx.navigation.fragment.NavHostFragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -28,16 +28,15 @@ import android.widget.TextView;
 
 import com.example.beagle.R;
 import com.example.beagle.adapter.MessageRecyclerAdapter;
-import com.example.beagle.database.DataRoomDatabase;
 import com.example.beagle.model.Conversation;
 import com.example.beagle.model.Message;
 import com.example.beagle.model.Pet;
+import com.example.beagle.ui.profile.ProfileActivity;
 import com.example.beagle.util.Constants;
 import com.example.beagle.util.ServiceLocator;
 import com.google.android.material.textfield.TextInputEditText;
 
 import java.util.ArrayList;
-import java.util.List;
 import java.util.Objects;
 import java.util.concurrent.atomic.AtomicInteger;
 
@@ -48,14 +47,16 @@ import java.util.concurrent.atomic.AtomicInteger;
  */
 public class ChatFragment extends Fragment {
 
-    // private String messageContent;
-    // TODO: Da rimuovere dopo con ultimo animale se esiste (e mettere in luogo più adeguato)
-    Pet pet = new Pet("Among Us");
-    // Conversation conversation;
-    // get active conversation
 
+    // TODO: Da rimuovere dopo con ultimo animale se esiste (e mettere in luogo più adeguato)
+    Pet pet = new Pet("420", "Among Us", (byte) 1, "Test", 123);
+    long petId = Long.parseLong(pet.getIdToken());
+
+
+    // TODO: Rimuovere i log DOPO aver finito, ora mi servono ancora
     public String TAG = "TEST";
-    private long conversationId = 6;
+
+    private long conversationId = 0;
 
 
     public ChatFragment() {
@@ -70,10 +71,15 @@ public class ChatFragment extends Fragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         Log.d(TAG,"onCreate");
-        Log.d(TAG, "AAAAA" + conversationId);
+
+        Log.d(TAG, "conversationId: " + conversationId + " dovrebbe essere 0");
+        // Dal bundle, prende il conversationId (se esiste, altrimenti prende 0)
+        // NOTA: key forzatamente da definire nel Constants
         assert getArguments() != null;
-        conversationId = getArguments().getLong(Constants.BUNDLE_KEY);
-        Log.d(TAG, "AAAAA" + conversationId);
+        conversationId = getArguments().getLong(Constants.CONVERSATION_BUNDLE_KEY);
+        //petId = getArguments().getLong(Constants.PET_BUNDLE_KEY);
+        // Preso info dal bundle
+        Log.d(TAG, "conversationId: " + conversationId + " dovrebbe essere o 0, o quello della conversazione");
 
     }
 
@@ -84,68 +90,54 @@ public class ChatFragment extends Fragment {
         Log.d(TAG, "onCreateView");
         if (savedInstanceState != null)
             Log.d(TAG, savedInstanceState.toString());
-
         return inflater.inflate(R.layout.fragment_chat, container, false);
     }
 
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-
         Log.d(TAG,"onViewCreated");
 
-
-
-
-        // RECYCLER ADAPTER STUFF
+        // Setup Recycler Adapter con ArrayList messageList
         RecyclerView recyclerView = view.findViewById(R.id.recyclerView);
         recyclerView.setLayoutManager(new LinearLayoutManager(view.getContext()));
         ArrayList<Message> messageList = new ArrayList<Message>();
+
+
+
+        Log.d(TAG, "conversationId: " + conversationId);
+
+        if (conversationId == 0) {
+            Log.d(TAG, "App appena aperta, si crea nuova chat");
+
+            // Creazione nuova conversazione
+            Conversation activeConversation = new Conversation(petId);
+
+            // Salvataggio conversazione su DB
+            ServiceLocator.getInstance().getDao(requireActivity().getApplication()).conversationDao().insert(activeConversation);
+            Log.d(TAG, "conversationId: " + conversationId + " dovrebbe essere 0");
+
+            // Recupero id della conversazione, in quanto autogenerata solo dopo il salvataggio su DB
+            conversationId = ServiceLocator.getInstance().getDao(requireActivity().getApplication()).conversationDao().getLastConversation(petId).getConversationId();
+            Log.d(TAG, "conversationId: " + conversationId + " dovrebbe essere id autogenerato");
+        }
+        else {
+            // Carica messaggi relativi alla conversazione esistente
+            messageList.addAll(ServiceLocator.getInstance().getDao(requireActivity().getApplication()).messageDao().getMessages(conversationId));
+        }
 
         MessageRecyclerAdapter adapter = new MessageRecyclerAdapter(R.layout.message, messageList);
         recyclerView.setAdapter(adapter);
 
 
-
-
-
-        // SUPPORTO PER LEGGERE CONVERSAZIONI
-        // TODO: da sostituire con lettura da database (ConversationHistoryFragment passa un bundle con conversationId, e chiamata DAO filtrando con quello
-        /*
-        ArrayList<Message> testList = new ArrayList<>();
-        long conversationId = 69;
-        for(int i = 0; i < 5; i++) {
-            testList.add(createMessage(conversationId, i, true, "blaf "+i));
-        }
-        messageList.addAll(testList);
-        populateChat(adapter, messageList);
-        */
-
-
-        //long conversationId = 4;
-        Log.d(TAG, "CCC"+conversationId);
-        long petId = 420;
-        ArrayList<Message> activeConvMessages = new ArrayList<>();
-        if ((ServiceLocator.getInstance().getDao(requireActivity().getApplication()).conversationDao().getSingleConversation(petId, conversationId)) == null) {
-            Conversation activeConversation = new Conversation(conversationId, petId);
-            ServiceLocator.getInstance().getDao(requireActivity().getApplication()).conversationDao().insert(activeConversation);
-        }
-        else {
-            activeConvMessages.addAll(ServiceLocator.getInstance().getDao(requireActivity().getApplication()).messageDao().getMessages(conversationId));
-        }
-
-        messageList.addAll(activeConvMessages);
-        populateChat(adapter, messageList);
-
-
-
-        // SET UP
-        AtomicInteger seq = new AtomicInteger();
+        // Dichiarazione vari attributi
+        AtomicInteger seq = new AtomicInteger(adapter.getItemCount());
         TextInputEditText editTextPrompt = view.findViewById(R.id.textInputPrompt);
         Button addPetButton = view.findViewById(R.id.addPetButton);
         ImageButton sendButton = view.findViewById(R.id.imageSendButton);
         TextView welcomeTextView = view.findViewById(R.id.textView);
 
+        // Per stringhe
         Resources res = getResources();
 
 
@@ -170,42 +162,45 @@ public class ChatFragment extends Fragment {
 
 
         addPetButton.setOnClickListener(v -> {
-            // TODO: intent verso Pet activity
+            startActivity(new Intent(requireContext(), ProfileActivity.class));
         });
-
-
 
 
         Log.d(TAG, requireActivity().toString());
         Log.d(TAG, requireActivity().getApplication().toString());
 
         // TODO: finire codice
+        long finalConversationId = conversationId;
         sendButton.setOnClickListener(v -> {
             // Se il prompt non è vuoto
             if (!Objects.requireNonNull(editTextPrompt.getText()).toString().trim().isEmpty()) {
 
-                // CREA MESSAGGIO E LO MOSTRA
+
                 String question = editTextPrompt.getText().toString();
-                //showMessage(messageContent, messageList, adapter, true);
-                Message messageQuestion = createMessage(conversationId, seq.getAndIncrement(),
-                        true, question);
-                showMessage(messageQuestion, messageList, adapter);
-                // TODO: send to AI
-                sendMessage(messageQuestion); // con un listener nell'adapter?
-                saveMessage(messageQuestion, getActivity());
+
+                // Disabilita scrittura ed invio
                 editTextPrompt.setText("");
                 welcomeTextView.setVisibility(View.GONE);
                 setPromptEnabled(sendButton, editTextPrompt, false);
+
+                Message messageQuestion = createMessage(finalConversationId, seq.getAndIncrement(),
+                        true, question);
+
+                saveMessage(messageQuestion, getActivity());
+                // TODO: send to AI
+                sendMessage(messageQuestion); // con un listener nell'adapter?
+                // TODO: chiarire come deve mostrare il messaggio (da DB è più corretto?)
+                showMessage(messageQuestion, messageList, adapter);
+
 
 
                 // RISPOSTA?
                 // TODO: AI reply
                 String answer = getMessageAPI_WIP();
-                Message messageAnswer = createMessage(conversationId, seq.getAndIncrement(),
+                Message messageAnswer = createMessage(finalConversationId, seq.getAndIncrement(),
                         false, answer);
-                showMessage(messageAnswer, messageList, adapter);
                 saveMessage(messageAnswer, getActivity());
-
+                showMessage(messageAnswer, messageList, adapter);
 
                 setPromptEnabled(sendButton, editTextPrompt, true);
 
@@ -233,6 +228,9 @@ public class ChatFragment extends Fragment {
                     Navigation.findNavController(view).navigate(R.id.action_chatFragment_to_conversationsHistoryFragment);
                     return true;
                 }
+                if (menuItem.getItemId() == R.id.action_pet_profile) {
+                    startActivity(new Intent(requireContext(), ProfileActivity.class));
+                }
                 return false;
             }
 
@@ -252,21 +250,21 @@ public class ChatFragment extends Fragment {
         return new Message(conversationId, seq, fromUser, messageContent);
     }
 
+
+    private void saveMessage(Message message, Context context) {
+        ServiceLocator.getInstance().getDao(requireActivity().getApplication()).messageDao().insert(message);
+    }
+    private void sendMessage(Message message) {
+        // chiamata API
+    }
+
+    // Mostra il messaggio sulla schermata
     private void showMessage(Message message, ArrayList<Message> messageList,
                              MessageRecyclerAdapter adapter) {
         messageList.add(message);
         adapter.notifyItemInserted(messageList.size() -1);
     }
 
-    private void sendMessage(Message message) {
-        // chiamata API
-    }
-
-    private void saveMessage(Message message, Context context) {
-        Log.d(TAG,"saveMessage");
-        ServiceLocator.getInstance().getDao(requireActivity().getApplication()).messageDao().insert(message);
-
-    }
 
     // TODO: dovrebbe ritornare la reply dell'AI
     private String getMessageAPI_WIP() {
@@ -288,6 +286,7 @@ public class ChatFragment extends Fragment {
         editTextPrompt.setEnabled(b);
     }
 
+    // Non penso sia più necessario, ma lo tengo per ora
     private void populateChat(MessageRecyclerAdapter adapter, ArrayList<Message> messageList) {
         for(int i = 0; i < messageList.size() - 1; i++) {
             adapter.notifyDataSetChanged();

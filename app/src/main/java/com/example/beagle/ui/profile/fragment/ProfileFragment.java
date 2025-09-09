@@ -175,7 +175,7 @@ public class ProfileFragment extends Fragment {
         btnCancel.setOnClickListener(v-> {
             if(!(animals.isEmpty())) {
                 name.setText(pet.getName());
-                autoCompleteSpecies.setText(pet.getSpecies(),false);
+                autoCompleteSpecies.setText(pet.getSpeciesString(),false);
                 breed.setText(pet.getBreed());
                 if (pet.getBirthDate() != 0) {
                     birthDate.setText(sdf.format(new Date(pet.getBirthDate())));
@@ -199,7 +199,7 @@ public class ProfileFragment extends Fragment {
 
             pet = (Pet) parent.getItemAtPosition(position);
             name.setText(pet.getName());
-            autoCompleteSpecies.setText(pet.getSpecies(),false);
+            autoCompleteSpecies.setText(pet.getSpeciesString(),false);
             breed.setText(pet.getBreed());
 
             if (pet.getBirthDate() != 0) {
