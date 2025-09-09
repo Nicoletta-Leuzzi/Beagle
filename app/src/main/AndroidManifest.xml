@@ -31,7 +31,10 @@
             android:name=".ui.chat.ChatActivity"
             android:exported="false" />
 
-
+        <!-- Profile -->
+        <activity
+            android:name=".ui.profile.ProfileActivity"
+            android:exported="false" />
 
     </application>
 </manifest>
