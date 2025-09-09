@@ -99,7 +99,7 @@ public class ChatFragment extends Fragment {
         Log.d(TAG,"onViewCreated");
 
         // Setup Recycler Adapter con ArrayList messageList
-        RecyclerView recyclerView = view.findViewById(R.id.recyclerView);
+        RecyclerView recyclerView = view.findViewById(R.id.recyclerViewChat);
         recyclerView.setLayoutManager(new LinearLayoutManager(view.getContext()));
         ArrayList<Message> messageList = new ArrayList<Message>();
 
@@ -132,10 +132,10 @@ public class ChatFragment extends Fragment {
 
         // Dichiarazione vari attributi
         AtomicInteger seq = new AtomicInteger(adapter.getItemCount());
-        TextInputEditText editTextPrompt = view.findViewById(R.id.textInputPrompt);
+        TextInputEditText editTextPrompt = view.findViewById(R.id.textInputPromptChat);
         Button addPetButton = view.findViewById(R.id.addPetButton);
         ImageButton sendButton = view.findViewById(R.id.imageSendButton);
-        TextView welcomeTextView = view.findViewById(R.id.textView);
+        TextView welcomeTextView = view.findViewById(R.id.textViewFirstWelcome);
 
         // Per stringhe
         Resources res = getResources();
