@@ -50,6 +50,7 @@ public class Pet {
         // petId rimane 0 -> Room lo autogenera all'insert
     }
 
+    @Ignore
     public Pet(Pet other){
         this.petId = other.petId;
         this.idToken = other.idToken;
@@ -59,11 +60,13 @@ public class Pet {
         this.birthDate = other.birthDate;
         this.age = other.age;
     }
-  
+
+    @Ignore
     public Pet(String name) {
         this.name = name;
     }
-      
+
+    @Ignore
     public Pet() {
     }
 
@@ -96,7 +99,7 @@ public class Pet {
         return petId;
     }
 
-    public String getSpecies() {
+    public String getSpeciesString() {
         if(species == 0)
             return "Cane";
         else
@@ -142,5 +145,35 @@ public class Pet {
 
     public boolean equals(Pet other){
         return (this.name).equals(other.getName());
+    }
+
+
+
+
+
+
+
+
+    public void setPetId(long petId) {
+        this.petId = petId;
+    }
+
+    public String getIdToken() {
+        return idToken;
+    }
+
+    public void setIdToken(String idToken) {
+        this.idToken = idToken;
+    }
+
+    public void setAge(String age) {
+        this.age = age;
+    }
+
+    public byte getSpecies() {
+        return this.species;
+    }
+    public void setSpecies(byte species) {
+        this.species = species;
     }
 }

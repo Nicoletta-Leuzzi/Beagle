@@ -6,6 +6,7 @@ import android.os.Parcelable;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.room.Entity;
+import androidx.room.Ignore;
 import androidx.room.Index;
 import androidx.room.PrimaryKey;
 
@@ -19,6 +20,7 @@ public class User implements Parcelable {
     @NonNull private String email;
     @PrimaryKey @NonNull private String idToken;
 
+    @Ignore
     // Necessario per Firebase (deserializzazione)
     public User() { }
 
@@ -65,6 +67,7 @@ public class User implements Parcelable {
         this.idToken = source.readString();
     }
 
+    @Ignore
     protected User(Parcel in) {
         this.name = in.readString();
         this.email = in.readString();
@@ -77,4 +80,7 @@ public class User implements Parcelable {
         @Override
         public User[] newArray(int size) { return new User[size]; }
     };
+
+
+
 }

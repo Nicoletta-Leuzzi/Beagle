@@ -34,7 +34,6 @@ public class Message {
         this.ts = System.currentTimeMillis();
         this.fromUser = fromUser;
         this.content = content;
-        // ts verrà assegnato da Conversation.java per indicare il ts del messaggio inviato
     }
 
 

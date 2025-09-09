@@ -1,6 +1,7 @@
 package com.example.beagle.database;
 
 import androidx.room.Dao;
+import androidx.room.Delete;
 import androidx.room.Insert;
 import androidx.room.OnConflictStrategy;
 import androidx.room.Query;
@@ -21,11 +22,13 @@ public interface MessageDAO {
     @Query("SELECT * FROM Message WHERE conversationId = :conversationId AND seq = :seq")
     Message getSingleMessage(long conversationId, int seq);
 
-
     @Insert(onConflict = OnConflictStrategy.IGNORE)
     void insertAll(List<Message> messagesList);
 
     @Insert(onConflict = OnConflictStrategy.IGNORE)
     void insert(Message... messages);
+
+    @Delete
+    void delete(Message message);
 
 }
