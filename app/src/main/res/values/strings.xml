@@ -10,6 +10,8 @@
     <string name="please_wait">Attendere…</string>
     <string name="welcome">Benvenuta/o</string>
     <string name="already_registered">Hai già un account? Accedi</string>
+    <string name="have_account">Do you have an account?</string>
+
 
     <!-- Navigazione testo -->
     <string name="tv_go_register">You don\'t have an account? Register</string>

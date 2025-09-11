@@ -20,4 +20,6 @@
     <string name="history_description">bottone cronologia</string>
     <string name="pet_profile_description">bottone profilo del pet</string>
     <string name="chat_fragment_title">Beagle OSS</string>
+    <string name="have_account">Hai già un account?</string>
+
 </resources>
