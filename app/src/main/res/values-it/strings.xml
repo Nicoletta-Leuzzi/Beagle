@@ -16,8 +16,19 @@
     <string name="conversations_history_title">Chat</string>
     <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="hello_world">Hello World!</string>
-    <string name="no_pet">Non hai un animale domestico salvato, aggiungine uno</string>
+    <string name="no_pet">Non hai alcun animale domestico salvato, aggiungine uno per iniziare!</string>
     <string name="history_description">bottone cronologia</string>
     <string name="pet_profile_description">bottone profilo del pet</string>
     <string name="chat_fragment_title">Beagle OSS</string>
+    <string name="continue_with_google">Accedi con Google</string>
+    <string name="delete">Elimina</string>
+    <string name="please_wait">Attendere…</string>
+    <string name="welcome">Benvenuta/o</string>
+    <string name="already_registered">Hai già un account? Accedi</string>
+    <string name="login_success">Login effettuato!</string>
+    <string name="register_success">Registrazione completata!</string>
+    <string name="error_password_login">La password deve avere almeno 6 caratteri.</string>
+    <string name="error_collision_user">Utente già registrato</string>
+    <string name="error_unexpected">Si è verificato un errore inatteso. Riprova.</string>
+    <string name="or">oppure</string>
 </resources>
