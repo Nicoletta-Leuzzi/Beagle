@@ -7,13 +7,18 @@
     android:layout_height="match_parent"
     tools:context=".ui.profile.ProfileActivity">
 
+<!--    <androidx.fragment.app.FragmentContainerView-->
+<!--        android:id="@+id/fragment_profile_container_view"-->
+<!--        android:layout_width="match_parent"-->
+<!--        android:layout_height="match_parent"-->
+<!--        android:name="com.example.beagle.ui.profile.fragment.ProfileFragment"-->
+<!--        />-->
+
     <androidx.fragment.app.FragmentContainerView
         android:id="@+id/fragment_profile_container_view"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:name="com.example.beagle.ui.profile.fragment.ProfileFragment"
-
-
-        />
+        android:name="com.example.beagle.ui.profile.fragment.SettingsFragment"
+    />
 
 </FrameLayout>
