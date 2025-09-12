@@ -1,9 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <navigation xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/nav_welcome"
     app:startDestination="@id/loginFragment">
 
+    <!-- LOGIN -->
     <fragment
         android:id="@+id/loginFragment"
         android:name="com.example.beagle.ui.welcome.fragment.LoginFragment"
@@ -18,10 +20,20 @@
             app:popEnterAnim="@anim/fragment_close_enter"
             app:popExitAnim="@anim/fragment_close_exit" />
 
+        <!-- Vai a Forgot Password -->
+        <action
+            android:id="@+id/action_loginFragment_to_forgotPasswordFragment"
+            app:destination="@id/forgotPasswordFragment"
+            app:enterAnim="@anim/fragment_open_enter"
+            app:exitAnim="@anim/fragment_open_exit"
+            app:popEnterAnim="@anim/fragment_close_enter"
+            app:popExitAnim="@anim/fragment_close_exit" />
+
         <!-- Deep link opzionale -->
         <deepLink app:uri="beagle://login" />
     </fragment>
 
+    <!-- REGISTER -->
     <fragment
         android:id="@+id/registerFragment"
         android:name="com.example.beagle.ui.welcome.fragment.RegisterFragment"
@@ -40,4 +52,10 @@
         <deepLink app:uri="beagle://register" />
     </fragment>
 
+    <!-- FORGOT PASSWORD -->
+    <fragment
+        android:id="@+id/forgotPasswordFragment"
+        android:name="com.example.beagle.ui.welcome.fragment.ForgotPasswordFragment"
+        android:label="@string/forgot_title"
+        tools:layout="@layout/fragment_forgot_password" />
 </navigation>
