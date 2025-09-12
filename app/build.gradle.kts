@@ -1,7 +1,6 @@
 plugins {
     alias(libs.plugins.android.application)
-    // Abilita quando aggiungerai google-services.json:
-    // id("com.google.gms.google-services")
+    alias(libs.plugins.google.services) // Google Services attivo (Firebase, default_web_client_id, ecc.)
 }
 
 android {
@@ -42,19 +41,35 @@ android {
 }
 
 dependencies {
-    // Base UI (via version catalog)
+    // Base UI (version catalog)
     implementation(libs.appcompat)
-    implementation(libs.material)
+    implementation(libs.material)          // Material 3: usi Widget.Material3.* nei layout
     implementation(libs.activity)
     implementation(libs.constraintlayout)
 
-    // MVVM / Lifecycle (coordinati DIRETTI per evitare errori del catalog)
-    implementation("androidx.lifecycle:lifecycle-viewmodel:2.8.4")
-    implementation("androidx.lifecycle:lifecycle-livedata:2.8.4")
-    implementation("androidx.lifecycle:lifecycle-runtime:2.8.4")
+    // MVVM / Lifecycle
+    implementation(libs.lifecycle.viewmodel.v284)
+    implementation(libs.lifecycle.livedata.v284)
+    implementation(libs.lifecycle.runtime)
 
-    // Google Sign-In (lascia commentato finché non serve/è nel catalog)
-    // implementation(libs.play.services.auth)
+    // Navigation (Java API, coerente con i Fragment e il NavHost)
+    implementation(libs.navigation.fragment)
+    implementation(libs.navigation.ui)
+
+    // Firebase & Google Services
+    implementation(platform(libs.firebase.bom))
+    implementation(libs.firebase.auth)
+    implementation(libs.firebase.database)
+    implementation(libs.play.services.auth) // Google Sign-In (Play Services)
+
+    // Credential Manager + Google Identity Services
+    implementation(libs.androidx.credentials)
+    implementation(libs.androidx.credentials.play)
+    implementation(libs.googleid)
+
+    // Room (Java: annotationProcessor)
+    implementation(libs.room.runtime)
+    annotationProcessor(libs.androidx.room.compiler)
 
     // Test
     testImplementation(libs.junit)

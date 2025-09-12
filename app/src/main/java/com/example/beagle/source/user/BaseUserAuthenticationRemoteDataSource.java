@@ -1,10 +1,30 @@
 package com.example.beagle.source.user;
 
+import com.example.beagle.model.User;
 import com.example.beagle.repository.user.UserResponseCallback;
 
-public interface BaseUserAuthenticationRemoteDataSource {
-    void register(String name, String email, String password, UserResponseCallback cb);
-    void login(String email, String password, UserResponseCallback cb);
-    void logout();
-    boolean isLoggedIn();
+/**
+ * Base class to manage the user authentication (login/register + Google).
+ */
+public abstract class BaseUserAuthenticationRemoteDataSource {
+    protected UserResponseCallback userResponseCallback;
+
+    public void setUserResponseCallback(UserResponseCallback userResponseCallback) {
+        this.userResponseCallback = userResponseCallback;
+    }
+
+    /** Utente attualmente loggato (se presente). */
+    public abstract User getLoggedUser();
+
+    /** Effettua il logout. */
+    public abstract void logout();
+
+    /** Registrazione con email/password. */
+    public abstract void signUp(String email, String password);
+
+    /** Login con email/password. */
+    public abstract void signIn(String email, String password);
+
+    /** Login con Google One Tap (idToken). */
+    public abstract void signInWithGoogle(String idToken);
 }
