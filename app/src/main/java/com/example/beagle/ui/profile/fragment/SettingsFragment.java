@@ -83,8 +83,9 @@ public class SettingsFragment extends Fragment {
 //        });
 
         autoCompleteLanguage.setOnClickListener(v->{
-            if(!autoCompleteLanguage.getText().toString().isEmpty())
-            languageAdapter.getFilter().filter(null);
+            if (!autoCompleteLanguage.getText().toString().isEmpty()) {
+                languageAdapter.getFilter().filter(null);
+            }
 //            if(autoCompleteLanguage.isPopupShowing()){
 //                autoCompleteLanguage.dismissDropDown();
 //            }
