@@ -9,7 +9,7 @@
 
 
     <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/recyclerView"
+        android:id="@+id/recyclerViewChat"
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:paddingVertical="@dimen/margin_medium"
@@ -19,7 +19,7 @@
         app:layout_constraintTop_toTopOf="parent" />
 
     <TextView
-        android:id="@+id/textView"
+        android:id="@+id/textViewFirstWelcome"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="@string/saluto_iniziale"
@@ -40,7 +40,7 @@
         android:visibility="gone"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/textView" />
+        app:layout_constraintTop_toBottomOf="@+id/textViewFirstWelcome" />
 
 
     <RelativeLayout
@@ -53,7 +53,7 @@
         app:layout_constraintEnd_toEndOf="parent">
 
         <com.google.android.material.textfield.TextInputLayout
-            android:id="@+id/textInputLayout"
+            android:id="@+id/textInputLayoutChat"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:hint="@string/hint"
@@ -61,7 +61,7 @@
             android:layout_toStartOf="@id/imageSendButton">
 
             <com.google.android.material.textfield.TextInputEditText
-                android:id="@+id/textInputPrompt"
+                android:id="@+id/textInputPromptChat"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:inputType="text"

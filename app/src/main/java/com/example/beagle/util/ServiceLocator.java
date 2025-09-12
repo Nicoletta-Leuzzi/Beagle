@@ -3,6 +3,7 @@ package com.example.beagle.util;
 import android.app.Application;
 import android.content.Context;
 
+import com.example.beagle.database.DataRoomDatabase;
 import com.example.beagle.repository.user.IUserRepository;
 import com.example.beagle.repository.user.UserRepository;
 import com.example.beagle.source.user.BaseUserAuthenticationRemoteDataSource;
@@ -46,5 +47,12 @@ public class ServiceLocator {
             userRepository = new UserRepository(authDs);
         }
         return userRepository;
+    }
+
+
+
+
+    public DataRoomDatabase getDao(Application application) {
+        return DataRoomDatabase.getDatabase(application);
     }
 }
