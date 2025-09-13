@@ -38,6 +38,7 @@ public class MessageRecyclerAdapter extends RecyclerView.Adapter<MessageRecycler
         public TextView getTextViewAnswer() {
             return textViewAnswer;
         }
+
     }
 
 
