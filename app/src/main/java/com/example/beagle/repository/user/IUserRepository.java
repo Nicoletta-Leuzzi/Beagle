@@ -4,8 +4,9 @@ import androidx.lifecycle.MutableLiveData;
 
 import com.example.beagle.model.Result;
 import com.example.beagle.model.User;
+import com.google.android.gms.tasks.Task;
 
-/** Interfaccia repo utente – allineata allo stile del prof, solo auth. */
+/** Interfaccia repo utente */
 public interface IUserRepository {
 
     /** Entry point unificato: se isUserRegistered=true → login, altrimenti → signup. */
@@ -20,8 +21,14 @@ public interface IUserRepository {
     /** Utente attualmente loggato (se disponibile). */
     User getLoggedUser();
 
-    /** Operazioni “dirette” come nel prof (usate internamente dal repo). */
+    /** Operazioni “dirette”  */
     void signUp(String email, String password);
     void signIn(String email, String password);
     void signInWithGoogle(String token);
+
+    /** Reset password via email */
+    Task<Void> sendPasswordReset(String email);
+
+    /** Invio email di verifica all’utente corrente */
+    Task<Void> sendEmailVerification();
 }

@@ -36,24 +36,24 @@ erDiagram
 
   %%UNIQUE (idToken, name)
   PET {
-    String *petId
+    long *petId
     String idToken FK "NOT NULL, part of UK(idToken,name)"
     String name "NOT NULL, part of UK(idToken,name)"
-    String species "NOT NULL"
+    byte species "NOT NULL"
     String breed
   }
 
   CONVERSATION 0+..1 PET : "is about"
   CONVERSATION 1--0+ MESSAGE : contains
   CONVERSATION {
-  String *conversationId
-  String idToken FK "NOT NULL"
-  String petId FK "NOT NULL"
+  long *conversationId
+  long idToken FK "NOT NULL"
+  long petId FK "NOT NULL"
   long createdAt "NOT NULL"
   }
 
   MESSAGE {
-    string *chatId FK
+    long *conversationId FK
     int *seq
     long ts "NOT NULL"
     boolean fromUser "NOT NULL"

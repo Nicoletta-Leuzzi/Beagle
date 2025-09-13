@@ -38,6 +38,7 @@ public class MessageRecyclerAdapter extends RecyclerView.Adapter<MessageRecycler
         public TextView getTextViewAnswer() {
             return textViewAnswer;
         }
+
     }
 
 
@@ -63,12 +64,13 @@ public class MessageRecyclerAdapter extends RecyclerView.Adapter<MessageRecycler
 
         // Get element from your dataset at this position and replace the
         // contents of the view with that element
-        if (messageList.get(position).getUser()) {
-            viewHolder.getTextViewQuestion().setText(messageList.get(position).getMessage());
+        if (messageList.get(position).isFromUser()) {
+            viewHolder.getTextViewQuestion().setText(messageList.get(position).getMessageContent());
             viewHolder.textViewAnswer.setVisibility(View.GONE);
+        // Else message is AI reply
         } else {
             viewHolder.textViewQuestion.setVisibility(View.GONE);
-            viewHolder.getTextViewAnswer().setText(messageList.get(position).getMessage());
+            viewHolder.getTextViewAnswer().setText(messageList.get(position).getMessageContent());
         }
     }
 

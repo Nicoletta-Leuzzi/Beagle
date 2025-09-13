@@ -1,4 +1,4 @@
-package com.example.beagle.ui.welcome;
+package com.example.beagle.ui.welcome.fragment;
 
 import static com.example.beagle.util.Constants.USER_COLLISION_ERROR;
 import static com.example.beagle.util.Constants.WEAK_PASSWORD_ERROR;
@@ -6,11 +6,14 @@ import static com.example.beagle.util.Constants.WEAK_PASSWORD_ERROR;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Patterns;
+import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
 
 import androidx.annotation.Nullable;
-import androidx.appcompat.app.AppCompatActivity;
+import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
+import androidx.navigation.fragment.NavHostFragment;
 
 import com.example.beagle.R;
 import com.example.beagle.model.Result;
@@ -23,8 +26,7 @@ import com.example.beagle.util.ServiceLocator;
 import com.google.android.material.snackbar.Snackbar;
 import com.google.android.material.textfield.TextInputEditText;
 
-/** RegisterActivity — versione “prof-like” solo per autenticazione. */
-public class RegisterActivity extends AppCompatActivity {
+public class RegisterFragment extends Fragment {
 
     private UserViewModel userViewModel;
 
@@ -32,25 +34,39 @@ public class RegisterActivity extends AppCompatActivity {
     private TextInputEditText textInputPassword;
     private View signupButton;
     private View progressBar;
+    private View linkGoLogin;
+
+    public RegisterFragment() { /* empty */ }
 
     @Override
-    protected void onCreate(@Nullable Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_register);
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+        // Come per il login, per rapidità riuso activity_register (puoi duplicarlo come fragment_register).
+        return inflater.inflate(R.layout.fragment_register, container, false);
+    }
 
+    @Override
+    public void onViewCreated(View root, @Nullable Bundle savedInstanceState) {
         // --- Bind UI ---
-        textInputEmail    = findViewById(R.id.textInputEmail);
-        textInputPassword = findViewById(R.id.textInputPassword);
-        signupButton      = findViewById(R.id.signupButton);
-        progressBar       = findViewById(R.id.progressBar);
+        textInputEmail    = root.findViewById(R.id.textInputEmail);
+        textInputPassword = root.findViewById(R.id.textInputPassword);
+        signupButton      = root.findViewById(R.id.signupButton);
+        progressBar       = root.findViewById(R.id.progressBar);
 
-        // --- VM stile prof: ServiceLocator -> Repo -> Factory ---
-        IUserRepository repo =
-                ServiceLocator.getInstance().getUserRepository(getApplication());
-        userViewModel = new ViewModelProvider(
-                this,
-                new UserViewModelFactory(repo)
-        ).get(UserViewModel.class);
+        // eventuale TextView "Hai già un account? Accedi" se presente nel layout
+        int goLoginId = getResources().getIdentifier("tvGoLogin", "id", requireContext().getPackageName());
+        if (goLoginId != 0) {
+            linkGoLogin = root.findViewById(goLoginId);
+            if (linkGoLogin != null) {
+                linkGoLogin.setOnClickListener(v ->
+                        NavHostFragment.findNavController(this)
+                                .navigate(R.id.action_registerFragment_to_loginFragment));
+            }
+        }
+
+        // --- VM condivisa con Login ---
+        IUserRepository repo = ServiceLocator.getInstance().getUserRepository(requireActivity().getApplication());
+        userViewModel = new ViewModelProvider(requireActivity(), new UserViewModelFactory(repo))
+                .get(UserViewModel.class);
         userViewModel.setAuthenticationError(false);
 
         // --- Registrazione ---
@@ -61,7 +77,7 @@ public class RegisterActivity extends AppCompatActivity {
             if (isEmailOk(email) && isPasswordOk(pwd)) {
                 setLoading(true);
                 userViewModel.getUserMutableLiveData(email, pwd, /*isUserRegistered=*/false)
-                        .observe(this, result -> {
+                        .observe(getViewLifecycleOwner(), result -> {
                             setLoading(false);
                             if (result instanceof Result.UserSuccess) {
                                 User user = ((Result.UserSuccess) result).getData();
@@ -82,8 +98,8 @@ public class RegisterActivity extends AppCompatActivity {
     // ----------------- Helpers -----------------
 
     private void goNext() {
-        startActivity(new Intent(this, ChatActivity.class));
-        finish();
+        startActivity(new Intent(requireContext(), ChatActivity.class));
+        requireActivity().finish();
     }
 
     private String textOf(TextInputEditText et) {
@@ -92,21 +108,13 @@ public class RegisterActivity extends AppCompatActivity {
 
     private boolean isEmailOk(String email) {
         boolean ok = email != null && Patterns.EMAIL_ADDRESS.matcher(email).matches();
-        if (!ok && textInputEmail != null) {
-            textInputEmail.setError(getString(R.string.error_email_login));
-        } else if (textInputEmail != null) {
-            textInputEmail.setError(null);
-        }
+        if (textInputEmail != null) textInputEmail.setError(ok ? null : getString(R.string.error_email_login));
         return ok;
     }
 
     private boolean isPasswordOk(String password) {
         boolean ok = password != null && password.length() >= 6;
-        if (!ok && textInputPassword != null) {
-            textInputPassword.setError(getString(R.string.error_password_login));
-        } else if (textInputPassword != null) {
-            textInputPassword.setError(null);
-        }
+        if (textInputPassword != null) textInputPassword.setError(ok ? null : getString(R.string.error_password_login));
         return ok;
     }
 
@@ -116,7 +124,8 @@ public class RegisterActivity extends AppCompatActivity {
     }
 
     private void showSnack(String msg) {
-        Snackbar.make(findViewById(android.R.id.content), msg, Snackbar.LENGTH_SHORT).show();
+        View anchor = getView() != null ? getView() : requireActivity().findViewById(android.R.id.content);
+        Snackbar.make(anchor, msg, Snackbar.LENGTH_SHORT).show();
     }
 
     /** Mappa stringhe errore del repo/DS Firebase alle risorse UI. */

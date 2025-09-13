@@ -18,7 +18,6 @@ import com.google.firebase.auth.GoogleAuthProvider;
 
 /**
  * Gestione autenticazione Firebase (email/password + Google).
- * Allineata al modello del prof.
  */
 public class UserAuthenticationFirebaseDataSource extends BaseUserAuthenticationRemoteDataSource {
 
@@ -132,7 +131,7 @@ public class UserAuthenticationFirebaseDataSource extends BaseUserAuthentication
         });
     }
 
-    /** Mappa eccezioni Firebase in codici d'errore costanti (stile prof). */
+    /** Mappa eccezioni Firebase in codici d'errore costanti*/
     private String getErrorMessage(Exception e) {
         if (e instanceof FirebaseAuthWeakPasswordException) {
             return WEAK_PASSWORD_ERROR;

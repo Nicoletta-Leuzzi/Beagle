@@ -1,26 +1,82 @@
 package com.example.beagle.model;
 
-public class Message {
-    private String message;
-    private boolean user;
+import androidx.annotation.NonNull;
+import androidx.room.Entity;
+import androidx.room.ForeignKey;
+import androidx.room.Ignore;
+import androidx.room.Index;
 
+@Entity(
+    primaryKeys = {"conversationId", "seq"},
+    foreignKeys = @ForeignKey(
+            entity = Conversation.class,
+            parentColumns = "conversationId",
+            childColumns = "conversationId",
+            onDelete = ForeignKey.CASCADE,
+            onUpdate = ForeignKey.CASCADE)
+)
+public class Message {
+    private long conversationId; // chiave esterna
+    private int seq; // numero crescente
+    private long ts = 0L; // timestamp inizializzato
+    private boolean fromUser; // true se il messaggio è dell'utente
+    private String content;
+
+    // costruttore vuoto per firebase
+    @Ignore
     public Message() {
     }
 
-    public Message(String message, boolean user) {
-        this.message = message;
-        this.user = user;
+    public Message(long conversationId, int seq,
+                   boolean fromUser, String content) {
+        this.conversationId = conversationId;
+        this.seq = seq;
+        this.ts = System.currentTimeMillis();
+        this.fromUser = fromUser;
+        this.content = content;
     }
 
-    public String getMessage() {
-        return message;
+
+    public long getConversationId() {
+        return conversationId;
+    }
+    public void setConversationId(@NonNull long conversationId) {
+        this.conversationId = conversationId;
     }
 
-    public boolean getUser() {
-        return user;
+    public int getSeq() {
+        return seq;
+    }
+    public void setSeq(int seq) {
+        this.seq = seq;
     }
 
-    public void setMessage(String message) {
-        this.message = message;
+    public long getTs() {
+        return ts;
+    }
+    public void setTs(long ts) {
+        this.ts = ts;
+    }
+
+    public String getMessageContent() {
+        return content;
+    }
+    public void setMessageContent(String content) {
+        this.content = content;
+    }
+
+    public boolean isFromUser() {
+        return fromUser;
+    }
+    public void setFromUser(boolean fromUser) {
+        this.fromUser = fromUser;
+    }
+
+    public String getContent() {
+        return content;
+    }
+
+    public void setContent(String content) {
+        this.content = content;
     }
 }

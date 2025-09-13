@@ -3,16 +3,21 @@ package com.example.beagle.util;
 import android.app.Application;
 import android.content.Context;
 
+import com.example.beagle.database.DataRoomDatabase;
+import com.example.beagle.repository.message.MessageRepository;
 import com.example.beagle.repository.user.IUserRepository;
 import com.example.beagle.repository.user.UserRepository;
+import com.example.beagle.source.message.BaseMessageLocalDataSource;
+import com.example.beagle.source.message.BaseMessageRemoteDataSource;
+import com.example.beagle.source.message.MessageLocalDataSource;
+import com.example.beagle.source.message.MessageFirebaseDataSource;
 import com.example.beagle.source.user.BaseUserAuthenticationRemoteDataSource;
 import com.example.beagle.source.user.UserAuthenticationFirebaseDataSource;
 
 /**
- * ServiceLocator (stile prof) – versione minimale per AUTH (login/registrazione).
+ * ServiceLocator – versione per AUTH (login/registrazione).
  * - Singleton: getInstance()
  * - Fornisce il repository utente tramite getUserRepository(Application)
- * - Nessuna parte "news"/Room/Retrofit.
  */
 public class ServiceLocator {
 
@@ -22,7 +27,6 @@ public class ServiceLocator {
 
     private ServiceLocator() { }
 
-    /** Stile prof: nessun parametro. */
     public static ServiceLocator getInstance() {
         if (INSTANCE == null) {
             synchronized (ServiceLocator.class) {
@@ -41,14 +45,29 @@ public class ServiceLocator {
     }
 
     /**
-     * Restituisce il repository utente (solo autenticazione).
-     * Passa Application per coerenza col prof; qui non la usiamo.
-     */
+     * Restituisce il repository utente (solo autenticazione)*/
     public IUserRepository getUserRepository(Application application) {
         if (userRepository == null) {
             BaseUserAuthenticationRemoteDataSource authDs = new UserAuthenticationFirebaseDataSource();
             userRepository = new UserRepository(authDs);
         }
         return userRepository;
+    }
+
+
+
+
+    public DataRoomDatabase getDao(Application application) {
+        return DataRoomDatabase.getDatabase(application);
+    }
+
+    public MessageRepository getMessageRepository(Application application) {
+        BaseMessageRemoteDataSource messageRemoteDataSource;
+        BaseMessageLocalDataSource messageLocalDataSource;
+
+        messageRemoteDataSource = new MessageFirebaseDataSource();
+        messageLocalDataSource = new MessageLocalDataSource(getDao(application));
+
+        return new MessageRepository(messageRemoteDataSource, messageLocalDataSource);
     }
 }
