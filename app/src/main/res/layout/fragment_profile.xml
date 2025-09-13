@@ -52,7 +52,7 @@
 
             >
 
-            <AutoCompleteTextView
+            <com.google.android.material.textfield.MaterialAutoCompleteTextView
                 android:id="@+id/outlinedTextFieldDropDownMenu"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
@@ -82,6 +82,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="40dp"
                 android:hint="Name"
+                app:helperText=" "
                 android:enabled="false">
 
                 <com.google.android.material.textfield.TextInputEditText
@@ -105,12 +106,13 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="16dp"
                 android:hint="Species"
+                app:helperText=" "
                 android:enabled="false"
                 android:layout_weight="40"
                 android:layout_marginEnd="16dp"
                 >
 
-                <AutoCompleteTextView
+                <com.google.android.material.textfield.MaterialAutoCompleteTextView
                     android:id="@+id/autoCompleteSpecies"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
@@ -128,7 +130,9 @@
                 android:layout_marginTop="16dp"
                 android:hint="Breed"
                 android:enabled="false"
-                android:layout_weight="60">
+                android:layout_weight="60"
+                app:helperText=" "
+                >
 
                 <com.google.android.material.textfield.TextInputEditText
                     android:id="@+id/outlinedTextFieldBreed"
@@ -158,6 +162,7 @@
                     android:enabled="false"
                     android:layout_marginEnd="16dp"
                     android:layout_weight="70"
+                    app:helperText=" "
                     >
 
                     <com.google.android.material.textfield.TextInputEditText

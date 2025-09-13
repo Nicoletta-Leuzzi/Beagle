@@ -1,6 +1,5 @@
 package com.example.beagle.ui.profile.fragment;
 
-import static android.view.View.GONE;
 import static android.view.View.INVISIBLE;
 import static android.view.View.VISIBLE;
 
@@ -11,22 +10,19 @@ import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.fragment.app.Fragment;
 
 import android.text.Editable;
-import android.text.Layout;
-import android.text.TextUtils;
 import android.text.TextWatcher;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
-import android.widget.AutoCompleteTextView;
 import android.widget.Button;
-import android.widget.EditText;
 
 import com.example.beagle.R;
 import com.example.beagle.model.Pet;
 import com.google.android.material.datepicker.MaterialDatePicker;
 import com.google.android.material.datepicker.MaterialPickerOnPositiveButtonClickListener;
 import com.google.android.material.snackbar.Snackbar;
+import com.google.android.material.textfield.MaterialAutoCompleteTextView;
 import com.google.android.material.textfield.TextInputEditText;
 import com.google.android.material.textfield.TextInputLayout;
 
@@ -37,7 +33,6 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
-import java.util.TimeZone;
 
 public class ProfileFragment extends Fragment {
 
@@ -45,10 +40,9 @@ public class ProfileFragment extends Fragment {
     private Button btnSave, btnCancel, btnAdd, btnDelete;
     private ConstraintLayout btns_save_cancel;
     private SimpleDateFormat sdf;
-    private AutoCompleteTextView autoCompletePet, autoCompleteSpecies;
-    private TextInputLayout autoCompletePetLayout, nameLayout, speciesLayout, breedLayout, birthDateLayout, ageLayout;
-    private Pet pet, tempPet;
-    private int indexOfPet;
+    private MaterialAutoCompleteTextView autoCompletePet, autoCompleteSpecies;
+    private TextInputLayout autoCompletePetLayout, autoCompleteSpeciesLayout, nameLayout, speciesLayout, breedLayout, birthDateLayout, ageLayout;
+    private Pet pet;
     private boolean fieldsError;
     private List<Pet> animals = new ArrayList<>();
     private final List<String> species = new ArrayList<>();
@@ -88,6 +82,7 @@ public class ProfileFragment extends Fragment {
         btnDelete = view.findViewById(R.id.btn_delete);
         autoCompletePet = view.findViewById(R.id.outlinedTextFieldDropDownMenu);
         autoCompletePetLayout = view.findViewById(R.id.textInputLayoutDropDownMenu);
+        autoCompleteSpeciesLayout = view.findViewById(R.id.speciesLayoutDropDownMenu);
 
         fieldsError = false;
 
@@ -109,36 +104,24 @@ public class ProfileFragment extends Fragment {
 
             fieldsError = false;
             if(name.getText().toString().isEmpty()){
-                name.setError("Campo obbligatorio");
+                nameLayout.setError("Obbligatorio");
                 fieldsError = true;
             }
-//            else{
-//                name.setError(null);
-//            }
 
             if(autoCompleteSpecies.getText().toString().isEmpty()){
-                speciesLayout.setError("Campo obbligatorio");
+                speciesLayout.setError("Obbligatorio");
                 fieldsError = true;
             }
-//            else{
-//                autoCompleteSpecies.setError(null);
-//            }
 
             if(breed.getText().toString().isEmpty()){
-                breed.setError("Campo obbligatorio");
+                breedLayout.setError("Obbligatorio");
                 fieldsError = true;
-            }
-            else{
-                breed.setError(null);
             }
 
             if(birthDate.getText().toString().isEmpty()){
-                birthDate.setError("Campo obbligatorio");
+                birthDateLayout.setError("Obbligatorio");
                 fieldsError = true;
             }
-//            else{
-//                birthDate.setError(null);
-//            }
 
             if(!fieldsError) {
                 try {
@@ -153,7 +136,6 @@ public class ProfileFragment extends Fragment {
                     throw new RuntimeException(e);
                 }
 
-//                age.setText(pet.getAge());
                 animals.add(pet);
                 petAdapter.notifyDataSetChanged();
                 disableAllInputText();
@@ -180,7 +162,6 @@ public class ProfileFragment extends Fragment {
                 if (pet.getBirthDate() != 0) {
                     birthDate.setText(sdf.format(new Date(pet.getBirthDate())));
                 }
-//                age.setText(pet.getAge());
                 autoCompletePet.setText(pet.toString(), false);
                 btnDelete.setVisibility(VISIBLE);
                 enableDropDownMenu();
@@ -222,7 +203,7 @@ public class ProfileFragment extends Fragment {
             public void onTextChanged(CharSequence s, int start, int before, int count) {
 
                 if (!s.toString().isEmpty()) {
-                    birthDate.setError(null);
+                    birthDateLayout.setError(null);
                     try {
                         age.setText(calculateAge(sdf.parse(birthDate.getText().toString()).getTime()));
                     } catch (ParseException e) {
@@ -257,6 +238,44 @@ public class ProfileFragment extends Fragment {
             }
         });
 
+        name.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int i, int i1, int i2) {
+                if (!s.toString().isEmpty()) {
+                    nameLayout.setError(null);
+                }
+            }
+
+            @Override
+            public void afterTextChanged(Editable editable) {
+
+            }
+        });
+
+        breed.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int i, int i1, int i2) {
+                if (!s.toString().isEmpty()) {
+                    breedLayout.setError(null);
+                }
+            }
+
+            @Override
+            public void afterTextChanged(Editable editable) {
+
+            }
+        });
+
         btnAdd.setOnClickListener(v->{
             btnAdd.setVisibility(INVISIBLE);
             btns_save_cancel.setVisibility(VISIBLE);
@@ -275,8 +294,25 @@ public class ProfileFragment extends Fragment {
             }
         });
 
+        autoCompletePetLayout.setEndIconOnClickListener(null);
+        autoCompleteSpeciesLayout.setEndIconOnClickListener(null);
+
+        //DA ATIVARE SE I DROPDOWN VANNO IN CONFLITTO CON IL CAMBIO TEMA
+//        autoCompletePet.setOnClickListener(v-> {
+//            if (!autoCompletePet.getText().toString().isEmpty())
+//                petAdapter.getFilter().filter(null);
+//        });
+//
+//        autoCompleteSpecies.setOnClickListener(v-> {
+//            if (!autoCompleteSpecies.getText().toString().isEmpty())
+//                speciesAdapter.getFilter().filter(null);
+//        });
+
+
         return view;
     }
+
+
 
 
 
@@ -364,10 +400,10 @@ public class ProfileFragment extends Fragment {
     }
 
     private void resetErrors(){
-        name.setError(null);
+        nameLayout.setError(null);
         speciesLayout.setError(null);
-        breed.setError(null);
-        birthDate.setError(null);
+        breedLayout.setError(null);
+        birthDateLayout.setError(null);
     }
 
     private String calculateAge(long birthDateMillis) {

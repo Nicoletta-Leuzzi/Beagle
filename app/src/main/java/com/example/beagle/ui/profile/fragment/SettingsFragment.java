@@ -2,8 +2,7 @@ package com.example.beagle.ui.profile.fragment;
 
 import android.os.Bundle;
 
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
+
 import androidx.appcompat.app.AppCompatDelegate;
 import androidx.fragment.app.Fragment;
 
@@ -51,7 +50,6 @@ public class SettingsFragment extends Fragment {
         languages.add("Italiano");
         languageAdapter = new ArrayAdapter<>(getContext(), android.R.layout.simple_dropdown_item_1line, languages);
         autoCompleteLanguage.setAdapter(languageAdapter);
-//        languageAdapter.notifyDataSetChanged();
 
         themeSwitch.setOnCheckedChangeListener((buttonView, isChecked) -> {
             if (isChecked) {
@@ -69,33 +67,11 @@ public class SettingsFragment extends Fragment {
 
         textInputLayoutLanguage.setEndIconOnClickListener(null);
 
-//        textInputLayoutLanguage.setEndIconOnClickListener(v->{
-//            if(!autoCompleteLanguage.getText().toString().isEmpty())
-//                languageAdapter.getFilter().filter(null);
-//            if(!autoCompleteLanguage.isPopupShowing()){
-//                autoCompleteLanguage.showDropDown();
-//            }
-//            else{
-//                autoCompleteLanguage.dismissDropDown();
-//            }
-//        });
-
         autoCompleteLanguage.setOnClickListener(v->{
             if (!autoCompleteLanguage.getText().toString().isEmpty()) {
                 languageAdapter.getFilter().filter(null);
             }
-//            if(autoCompleteLanguage.isPopupShowing()){
-//                autoCompleteLanguage.dismissDropDown();
-//            }
-//            else{
-//                autoCompleteLanguage.showDropDown();
-//            }
         });
-
-
-
-
-
 
 
 
