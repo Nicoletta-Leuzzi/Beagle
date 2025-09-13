@@ -27,7 +27,6 @@
 
     <string name="history_description">history button</string>
     <string name="pet_profile_description">pet profile button</string>
-    <string name="chat_fragment_title">Beagle OSS</string>
 
     <!-- Errori Login/Register -->
     <string name="error_email_login">Inserisci un\'email valida.</string>
