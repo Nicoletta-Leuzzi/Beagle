@@ -4,8 +4,13 @@ import android.app.Application;
 import android.content.Context;
 
 import com.example.beagle.database.DataRoomDatabase;
+import com.example.beagle.repository.message.MessageRepository;
 import com.example.beagle.repository.user.IUserRepository;
 import com.example.beagle.repository.user.UserRepository;
+import com.example.beagle.source.message.BaseMessageLocalDataSource;
+import com.example.beagle.source.message.BaseMessageRemoteDataSource;
+import com.example.beagle.source.message.MessageLocalDataSource;
+import com.example.beagle.source.message.MessageFirebaseDataSource;
 import com.example.beagle.source.user.BaseUserAuthenticationRemoteDataSource;
 import com.example.beagle.source.user.UserAuthenticationFirebaseDataSource;
 
@@ -54,5 +59,15 @@ public class ServiceLocator {
 
     public DataRoomDatabase getDao(Application application) {
         return DataRoomDatabase.getDatabase(application);
+    }
+
+    public MessageRepository getMessageRepository(Application application) {
+        BaseMessageRemoteDataSource messageRemoteDataSource;
+        BaseMessageLocalDataSource messageLocalDataSource;
+
+        messageRemoteDataSource = new MessageFirebaseDataSource();
+        messageLocalDataSource = new MessageLocalDataSource(getDao(application));
+
+        return new MessageRepository(messageRemoteDataSource, messageLocalDataSource);
     }
 }

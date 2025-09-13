@@ -23,6 +23,17 @@ public abstract class Result {
         }
     }
 
+
+    public static final class MessageSuccess extends Result {
+        private final MessageAPIResponse messageAPIResponse;
+        public MessageSuccess(MessageAPIResponse messageAPIResponse) {
+            this.messageAPIResponse = messageAPIResponse;
+        }
+        public MessageAPIResponse getData() {return messageAPIResponse; }
+    }
+
+
+
     /**
      * Classe che rappresenta un errore verificatosi durante
      * l'autenticazione (login o registrazione).

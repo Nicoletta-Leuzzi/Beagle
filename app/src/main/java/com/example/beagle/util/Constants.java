@@ -23,4 +23,6 @@ public final class Constants {
     public static final String CONVERSATION_BUNDLE_KEY = "current_conversation";
     public static final String PET_BUNDLE_KEY = "current_pet";
 
+    public static final String FIREBASE_REALTIME_DATABASE = "https://beagle-3a3fc-default-rtdb.europe-west1.firebasedatabase.app/";
+
 }
