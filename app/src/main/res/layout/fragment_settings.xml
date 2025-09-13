@@ -4,7 +4,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    tools:context=".ui.profile.fragment.SettingsFragment">
+    tools:context=".ui.chat.fragment.SettingsFragment">
 
     <FrameLayout
         android:layout_width="match_parent"
@@ -92,7 +92,7 @@
             </com.google.android.material.textfield.TextInputLayout>
 
             <com.google.android.material.button.MaterialButton
-                android:id="@+id/btnLogoutSettings"
+                android:id="@+id/btnLogout"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="logout"

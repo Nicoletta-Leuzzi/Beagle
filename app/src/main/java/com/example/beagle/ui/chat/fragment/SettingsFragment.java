@@ -1,5 +1,7 @@
-package com.example.beagle.ui.profile.fragment;
+package com.example.beagle.ui.chat.fragment;
 
+import android.app.Activity;
+import android.content.Intent;
 import android.os.Bundle;
 
 
@@ -12,9 +14,12 @@ import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 
 import com.example.beagle.R;
+import com.example.beagle.ui.welcome.WelcomeActivity;
+import com.google.android.material.button.MaterialButton;
 import com.google.android.material.materialswitch.MaterialSwitch;
 import com.google.android.material.textfield.MaterialAutoCompleteTextView;
 import com.google.android.material.textfield.TextInputLayout;
+import com.google.firebase.auth.FirebaseAuth;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -26,6 +31,7 @@ public class SettingsFragment extends Fragment {
     private MaterialAutoCompleteTextView autoCompleteLanguage;
     private List<String> languages = new ArrayList<>();
     private ArrayAdapter<String> languageAdapter;
+    private MaterialButton btnLogout;
 
 
     public SettingsFragment() {
@@ -45,6 +51,7 @@ public class SettingsFragment extends Fragment {
         themeSwitch = view.findViewById(R.id.switchTheme);
         textInputLayoutLanguage = view.findViewById(R.id.textInputLayoutLanguage);
         autoCompleteLanguage = view.findViewById(R.id.materialAutoCompleteTextViewLanguage);
+        btnLogout = view.findViewById(R.id.btnLogout);
 
         languages.add("Inglese");
         languages.add("Italiano");
@@ -72,6 +79,20 @@ public class SettingsFragment extends Fragment {
                 languageAdapter.getFilter().filter(null);
             }
         });
+
+
+        btnLogout.setOnClickListener(v -> {
+            FirebaseAuth.getInstance().signOut();
+
+            Activity ctx = requireActivity();
+            Intent i = new Intent(ctx, WelcomeActivity.class);
+            i.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+            i.putExtra("from_logout", true);
+
+            startActivity(i);
+            ctx.finish();
+        });
+
 
 
 

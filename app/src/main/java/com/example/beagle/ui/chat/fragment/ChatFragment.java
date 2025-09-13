@@ -31,7 +31,6 @@ import com.example.beagle.adapter.MessageRecyclerAdapter;
 import com.example.beagle.model.Conversation;
 import com.example.beagle.model.Message;
 import com.example.beagle.model.Pet;
-import com.example.beagle.ui.profile.ProfileActivity;
 import com.example.beagle.util.Constants;
 import com.example.beagle.util.ServiceLocator;
 import com.google.android.material.textfield.TextInputEditText;
@@ -162,7 +161,8 @@ public class ChatFragment extends Fragment {
 
 
         addPetButton.setOnClickListener(v -> {
-            startActivity(new Intent(requireContext(), ProfileActivity.class));
+            Navigation.findNavController(v)
+                    .navigate(R.id.action_chatFragment_to_profileFragment);
         });
 
 
@@ -229,7 +229,8 @@ public class ChatFragment extends Fragment {
                     return true;
                 }
                 if (menuItem.getItemId() == R.id.action_pet_profile) {
-                    startActivity(new Intent(requireContext(), ProfileActivity.class));
+                    Navigation.findNavController(view)
+                            .navigate(R.id.action_chatFragment_to_profileFragment);
                 }
                 return false;
             }

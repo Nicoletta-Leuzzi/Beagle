@@ -1,4 +1,4 @@
-package com.example.beagle.ui.profile.fragment;
+package com.example.beagle.ui.chat.fragment;
 
 import static android.view.View.INVISIBLE;
 import static android.view.View.VISIBLE;
@@ -8,6 +8,7 @@ import android.os.Bundle;
 
 import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.fragment.app.Fragment;
+import androidx.navigation.Navigation;
 
 import android.text.Editable;
 import android.text.TextWatcher;
@@ -37,7 +38,7 @@ import java.util.Locale;
 public class ProfileFragment extends Fragment {
 
     private TextInputEditText name, breed, birthDate, age;
-    private Button btnSave, btnCancel, btnAdd, btnDelete;
+    private Button btnSave, btnCancel, btnAdd, btnDelete, btnSetings;
     private ConstraintLayout btns_save_cancel;
     private SimpleDateFormat sdf;
     private MaterialAutoCompleteTextView autoCompletePet, autoCompleteSpecies;
@@ -80,6 +81,7 @@ public class ProfileFragment extends Fragment {
         btnCancel = view.findViewById(R.id.btn_cancel);
         btnAdd = view.findViewById(R.id.btnAdd);
         btnDelete = view.findViewById(R.id.btn_delete);
+        btnSetings = view.findViewById(R.id.btnSettings);
         autoCompletePet = view.findViewById(R.id.outlinedTextFieldDropDownMenu);
         autoCompletePetLayout = view.findViewById(R.id.textInputLayoutDropDownMenu);
         autoCompleteSpeciesLayout = view.findViewById(R.id.speciesLayoutDropDownMenu);
@@ -307,6 +309,11 @@ public class ProfileFragment extends Fragment {
 //            if (!autoCompleteSpecies.getText().toString().isEmpty())
 //                speciesAdapter.getFilter().filter(null);
 //        });
+
+        btnSetings.setOnClickListener(v->{
+            Navigation.findNavController(v)
+                    .navigate(R.id.action_profileFragment_to_settingsFragment);
+        });
 
 
         return view;

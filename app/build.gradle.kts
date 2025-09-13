@@ -71,6 +71,7 @@ dependencies {
 
     // Room (Java: annotationProcessor)
     implementation(libs.room.runtime)
+    implementation(libs.androidx.lifecycle.viewmodel)
     annotationProcessor(libs.androidx.room.compiler)
 
     // Test
