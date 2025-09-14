@@ -33,25 +33,28 @@ import com.example.beagle.ui.chat.ChatActivity;
 import com.example.beagle.ui.welcome.viewmodel.UserViewModel;
 import com.example.beagle.ui.welcome.viewmodel.UserViewModelFactory;
 import com.example.beagle.util.ServiceLocator;
+import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.google.android.material.snackbar.Snackbar;
 import com.google.android.libraries.identity.googleid.GetSignInWithGoogleOption;
 import com.google.android.libraries.identity.googleid.GetGoogleIdOption;
 import com.google.android.libraries.identity.googleid.GoogleIdTokenCredential;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 
 public class LoginFragment extends Fragment {
 
     private static final String TAG = "LoginFragment";
 
     private EditText etEmail, etPassword;
-    private Button btnLogin, btnGoogle;
+    private Button btnLogin, btnGoogle, btnForgot;
     private TextView tvGoRegister;
 
     private UserViewModel userViewModel;
 
     // Credential Manager
     private CredentialManager credentialManager;
-    private GetSignInWithGoogleOption siwgOption;          // pulsante "Sign in with Google"
-    private GetGoogleIdOption googleIdAnyAccountOption;    // fallback chooser
+    private GetSignInWithGoogleOption siwgOption;
+    private GetGoogleIdOption googleIdAnyAccountOption;
 
     public LoginFragment() { /* empty */ }
 
@@ -81,8 +84,9 @@ public class LoginFragment extends Fragment {
         etEmail      = root.findViewById(R.id.etEmail);
         etPassword   = root.findViewById(R.id.etPassword);
         btnLogin     = root.findViewById(R.id.btnLogin);
-        tvGoRegister = root.findViewById(R.id.tvGoRegister);
         btnGoogle    = root.findViewById(R.id.btnGoogle);
+        btnForgot    = root.findViewById(R.id.btnForgot);
+        tvGoRegister = root.findViewById(R.id.tvGoRegister);
     }
 
     private void initViewModel() {
@@ -97,6 +101,12 @@ public class LoginFragment extends Fragment {
         tvGoRegister.setOnClickListener(v ->
                 NavHostFragment.findNavController(this)
                         .navigate(R.id.action_loginFragment_to_registerFragment));
+
+        if (btnForgot != null) {
+            btnForgot.setOnClickListener(v ->
+                    NavHostFragment.findNavController(this)
+                            .navigate(R.id.action_loginFragment_to_forgotPasswordFragment));
+        }
 
         if (btnGoogle != null) {
             btnGoogle.setOnClickListener(v -> performGoogleLogin());
@@ -127,6 +137,10 @@ public class LoginFragment extends Fragment {
                     setLoading(false);
                     if (result instanceof Result.UserSuccess) {
                         userViewModel.setAuthenticationError(false);
+                        if (!isEmailVerified()) {
+                            showVerifyDialog(); // <-- blocca qui se non verificata
+                            return;
+                        }
                         goNext();
                     } else if (result instanceof Result.Error) {
                         userViewModel.setAuthenticationError(true);
@@ -154,10 +168,7 @@ public class LoginFragment extends Fragment {
 
             credentialManager = CredentialManager.create(requireContext());
 
-            // Pulsante ufficiale "Sign in with Google"
             siwgOption = new GetSignInWithGoogleOption.Builder(webClientId).build();
-
-            // Fallback opzionale: chooser con qualsiasi account
             googleIdAnyAccountOption = new GetGoogleIdOption.Builder()
                     .setServerClientId(webClientId)
                     .setFilterByAuthorizedAccounts(false)
@@ -182,7 +193,6 @@ public class LoginFragment extends Fragment {
                 .addCredentialOption(googleIdAnyAccountOption)
                 .build();
 
-        // In Fragment, passiamo l'Activity corrente:
         credentialManager.getCredentialAsync(
                 requireActivity(),
                 request,
@@ -244,12 +254,67 @@ public class LoginFragment extends Fragment {
                     setLoading(false);
                     if (result instanceof Result.UserSuccess) {
                         userViewModel.setAuthenticationError(false);
+                        // Con Google, spesso l’email è già verificata, ma controlliamo lo stesso
+                        if (!isEmailVerified()) {
+                            showVerifyDialog();
+                            return;
+                        }
                         goNext();
                     } else if (result instanceof Result.Error) {
                         userViewModel.setAuthenticationError(true);
                         showError(((Result.Error) result).getMessage());
                     }
                 });
+    }
+
+    // ---------------- Email Verification helpers ----------------
+    private boolean isEmailVerified() {
+        FirebaseUser current = FirebaseAuth.getInstance().getCurrentUser();
+        return current != null && current.isEmailVerified();
+    }
+
+    private void showVerifyDialog() {
+        new MaterialAlertDialogBuilder(requireContext())
+                .setTitle(getStringSafe(R.string.verify_title, "Verifica email"))
+                .setMessage(getStringSafe(R.string.verify_needed, "Devi verificare la tua email per continuare."))
+                .setPositiveButton(getStringSafe(R.string.verify_resend, "Invia di nuovo"), (d, w) -> {
+                    userViewModel.resendEmailVerification().observe(getViewLifecycleOwner(), r -> {
+                        if (r instanceof Result.UserSuccess) {
+                            String email = FirebaseAuth.getInstance().getCurrentUser() != null
+                                    ? FirebaseAuth.getInstance().getCurrentUser().getEmail()
+                                    : "";
+                            Snackbar.make(requireView(),
+                                    getStringSafe(R.string.verify_sent, "Ti abbiamo inviato una email di verifica a %1$s.", email),
+                                    Snackbar.LENGTH_LONG).show();
+                        } else if (r instanceof Result.Error) {
+                            String msg = ((Result.Error) r).getMessage();
+                            Snackbar.make(requireView(),
+                                    msg != null ? msg : getString(R.string.error_generic),
+                                    Snackbar.LENGTH_LONG).show();
+                        }
+                    });
+                })
+                .setNegativeButton(getStringSafe(R.string.open_mail, "Apri Mail"), (d, w) -> {
+                    Intent intent = new Intent(Intent.ACTION_MAIN);
+                    intent.addCategory(Intent.CATEGORY_APP_EMAIL);
+                    intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                    try { startActivity(intent); } catch (Exception ignored) {}
+                })
+                .show();
+    }
+
+    // Se una stringa non esiste, usa il fallback literal passato.
+    private String getStringSafe(int resId, String fallback, Object... formatArgs) {
+        try {
+            return formatArgs != null && formatArgs.length > 0
+                    ? getString(resId, formatArgs)
+                    : getString(resId);
+        } catch (Exception e) {
+            if (formatArgs != null && formatArgs.length > 0) {
+                try { return String.format(fallback, formatArgs); } catch (Exception ignore) {}
+            }
+            return fallback;
+        }
     }
 
     // ---------------- Util ----------------
@@ -268,14 +333,13 @@ public class LoginFragment extends Fragment {
 
     private void setLoading(boolean loading) {
         btnLogin.setEnabled(!loading);
-        if (btnGoogle != null) {
-            btnGoogle.setEnabled(!loading);
-        }
+        if (btnGoogle != null) btnGoogle.setEnabled(!loading);
+        if (btnForgot != null) btnForgot.setEnabled(!loading);
     }
 
     private void showError(String message) {
         View anchor = getView() != null ? getView() : requireActivity().findViewById(android.R.id.content);
-        Snackbar.make(anchor, message, Snackbar.LENGTH_LONG).show();
+        Snackbar.make(anchor, message != null ? message : getString(R.string.error_generic), Snackbar.LENGTH_LONG).show();
     }
 
     private void goNext() {

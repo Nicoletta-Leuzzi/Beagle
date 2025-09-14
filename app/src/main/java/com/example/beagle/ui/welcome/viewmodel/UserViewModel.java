@@ -11,11 +11,19 @@ import com.example.beagle.repository.user.IUserRepository;
 import com.example.beagle.repository.user.UserRepository;
 
 /**
- * ViewModel per l'autenticazione (login/registrazione).*/
+ * ViewModel per l'autenticazione (login/registrazione).
+ */
 public class UserViewModel extends ViewModel {
 
     private final IUserRepository userRepository;
     private MutableLiveData<Result> userMutableLiveData;
+
+    // NEW: risultato del reset password
+    private final MutableLiveData<Result> resetResult = new MutableLiveData<>();
+
+    // NEW: risultato invio email di verifica
+    private final MutableLiveData<Result> verificationResult = new MutableLiveData<>();
+
     private boolean authenticationError = false;
 
     /** Costruttore di default (comodo per test/prototipi). */
@@ -82,4 +90,28 @@ public class UserViewModel extends ViewModel {
         this.authenticationError = authenticationError;
     }
 
+    // ========= RESET PASSWORD =========
+    public LiveData<Result> resetPassword(String email) {
+        userRepository.sendPasswordReset(email)
+                .addOnSuccessListener(v -> resetResult.postValue(new Result.UserSuccess(null)))
+                .addOnFailureListener(e -> resetResult.postValue(
+                        new Result.Error(e != null && e.getMessage() != null
+                                ? e.getMessage()
+                                : "Si è verificato un errore. Riprova.")
+                ));
+        return resetResult;
+    }
+
+    // ========= NEW: EMAIL VERIFICATION =========
+    /** Invia (o reinvia) l'email di verifica all'utente attualmente autenticato. */
+    public LiveData<Result> resendEmailVerification() {
+        userRepository.sendEmailVerification()
+                .addOnSuccessListener(v -> verificationResult.postValue(new Result.UserSuccess(null)))
+                .addOnFailureListener(e -> verificationResult.postValue(
+                        new Result.Error(e != null && e.getMessage() != null
+                                ? e.getMessage()
+                                : "Errore invio email di verifica")
+                ));
+        return verificationResult;
+    }
 }

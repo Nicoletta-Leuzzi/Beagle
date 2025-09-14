@@ -46,6 +46,8 @@ dependencies {
     implementation(libs.material)          // Material 3: usi Widget.Material3.* nei layout
     implementation(libs.activity)
     implementation(libs.constraintlayout)
+    implementation("com.google.android.material:material:1.13.0")
+
 
     // MVVM / Lifecycle
     implementation(libs.lifecycle.viewmodel.v284)
@@ -69,6 +71,7 @@ dependencies {
 
     // Room (Java: annotationProcessor)
     implementation(libs.room.runtime)
+    implementation(libs.androidx.lifecycle.viewmodel)
     annotationProcessor(libs.androidx.room.compiler)
 
     // Test

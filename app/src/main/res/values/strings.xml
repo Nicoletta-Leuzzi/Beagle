@@ -1,15 +1,18 @@
 <resources>
     <string name="app_name">Beagle</string>
 
-    <!-- UI: comuni -->
+    <!-- UI comuni -->
     <string name="hint_email">Email</string>
     <string name="hint_password">Password</string>
     <string name="btn_login">Login</string>
     <string name="btn_register">Create new account</string>
     <string name="btn_logout">Logout</string>
+    <string name="please_wait">Please wait</string>
     <string name="welcome">Welcome</string>
 
-    <!-- Navigazione testo -->
+    <!-- Navigazione / testi -->
+    <string name="already_registered">Hai già un account? Accedi</string>
+    <string name="have_account">Non hai un account?</string>
     <string name="tv_go_register">You don\'t have an account? Register</string>
     <string name="tv_home_text">You are in the Home page ✅</string>
     <string name="home_message">You are in the Home page ✅</string>
@@ -20,33 +23,45 @@
     <string name="no_text">Write a question to the AI regarding your pet</string>
 
     <!-- Messaggi di esito -->
+    <string name="login_success">Successful login!</string>
+    <string name="register_success">Registration completed!</string>
 
+    <!-- Pet / cronologia -->
     <string name="no_pet">No pets saved. Add one to get started.</string>
     <string name="add_pet_button">Add a new pet</string>
     <string name="conversations_history_title">Chat</string>
-
     <string name="history_description">history button</string>
     <string name="pet_profile_description">pet profile button</string>
 
     <!-- Errori Login/Register -->
-    <string name="error_email_login">Inserisci un\'email valida.</string>
-
-    <!-- Google Sign-In: verrà sovrascritto dal plugin se presente google-services.json -->
-    <string name="default_web_client_id">REPLACE_WITH_YOUR_WEB_CLIENT_ID</string>
-
-    <!-- Extra utili -->
-    <string name="hello_world">Hello World!</string>
-
-    <!-- Missing for login/register layouts -->
-    <string name="forgot_password">Forgot password?</string>
-    <string name="or">or</string>
-    <string name="continue_with_google">Continue with Google</string>
-    <string name="delete">Delete</string>
-    <string name="please_wait">Please wait...</string>
-    <string name="already_registered">Are you already registered? Log in</string>
-    <string name="login_success">Login Successful</string>
+    <string name="error_email_login">Provide a valid email address.</string>
     <string name="error_password_login">Password must contain at least 6 characters.</string>
     <string name="error_collision_user">This user is already registered.</string>
     <string name="error_unexpected">An unexpected error occurred. Please try again.</string>
+    <string name="error_invalid_email">Invalid email address.</string>
+    <string name="error_generic">An error has occurred. Try again.</string>
 
+    <!-- Google Sign-In -->
+    <string name="default_web_client_id">REPLACE_WITH_YOUR_WEB_CLIENT_ID</string>
+
+    <!-- Extra -->
+    <string name="hello_world">Hello World!</string>
+
+    <!-- Login extra -->
+    <string name="forgot_password">Forgot password?</string>
+    <string name="or">or</string>
+    <string name="continue_with_google">Continue with Google</string>
+
+    <!-- Forgot Password / Reset -->
+    <string name="forgot_title">Forgot password?</string>
+    <string name="forgot_reset">Reset</string>
+    <string name="forgot_return_login">BACK TO LOGIN</string>
+    <string name="forgot_email_sent">We\'ve sent you an email with instructions to %1$s.</string>
+
+    <!-- Email Verification -->
+    <string name="verify_title">Verify your email address</string>
+    <string name="verify_needed">You need to verify your email address.</string>
+    <string name="verify_resend">Resend verification Email</string>
+    <string name="open_mail">Open Mail</string>
+    <string name="verify_sent">We have sent an email to %1$s for verification.</string>
 </resources>

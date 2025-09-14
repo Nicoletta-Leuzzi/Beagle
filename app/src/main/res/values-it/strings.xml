@@ -1,33 +1,68 @@
-<?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name">Beagle</string>
+
+    <!-- UI comuni -->
     <string name="hint_email">Email</string>
     <string name="hint_password">Password</string>
     <string name="btn_login">Accedi</string>
-    <string name="tv_go_register">Non hai un account? Registrati</string>
-    <string name="btn_register">Crea account</string>
-    <string name="btn_logout">Logout</string>
-    <string name="home_message">Sei nella Home ✅</string>
-    <string name="tv_home_text">Sei nella Home ✅</string>
-    <string name="saluto_iniziale">Come sta %1$s?</string>
-    <string name="hint">Descrivi il problema</string>
-    <string name="no_text">Scrivi una domanda all\'AI riguardo il tuo animale</string>
-    <string name="add_pet_button">Aggiungi un nuovo animale domestico</string>
-    <string name="conversations_history_title">Chat</string>
-    <string name="hello_blank_fragment">Hello blank fragment</string>
-    <string name="hello_world">Hello World!</string>
-    <string name="no_pet">Non hai alcun animale domestico salvato, aggiungine uno per iniziare!</string>
-    <string name="history_description">bottone cronologia</string>
-    <string name="pet_profile_description">bottone profilo del pet</string>
-    <string name="continue_with_google">Accedi con Google</string>
-    <string name="delete">Elimina</string>
+    <string name="btn_register">Crea un nuovo account</string>
+    <string name="btn_logout">Esci</string>
     <string name="please_wait">Attendere…</string>
     <string name="welcome">Benvenuta/o</string>
+
+    <!-- Navigazione / testi -->
     <string name="already_registered">Hai già un account? Accedi</string>
+    <string name="have_account">Hai già un account?</string>
+    <string name="tv_go_register">Non hai un account? Registrati</string>
+    <string name="tv_home_text">Sei nella Home ✅</string>
+    <string name="home_message">Sei nella Home ✅</string>
+
+    <!-- Chat / copy -->
+    <string name="saluto_iniziale">Come sta %1$s?</string>
+    <string name="hint">Descrivi il problema</string>
+    <string name="no_text">Scrivi una domanda all’AI sul tuo pet</string>
+
+    <!-- Messaggi di esito -->
     <string name="login_success">Login effettuato!</string>
     <string name="register_success">Registrazione completata!</string>
+
+    <!-- Pet / cronologia -->
+    <string name="no_pet">Non hai ancora aggiunto un pet, aggiungilo</string>
+    <string name="add_pet_button">Aggiungi un nuovo pet</string>
+    <string name="conversations_history_title">Chat</string>
+    <string name="history_description">Pulsante cronologia</string>
+    <string name="pet_profile_description">Pulsante profilo pet</string>
+    <string name="chat_fragment_title">Beagle OSS</string>
+
+    <!-- Errori Login/Register -->
+    <string name="error_email_login">Inserisci un’email valida.</string>
     <string name="error_password_login">La password deve avere almeno 6 caratteri.</string>
-    <string name="error_collision_user">Utente già registrato</string>
+    <string name="error_collision_user">Utente già registrato.</string>
     <string name="error_unexpected">Si è verificato un errore inatteso. Riprova.</string>
+    <string name="error_invalid_email">Email non valida.</string>
+    <string name="error_generic">Si è verificato un errore. Riprova.</string>
+
+    <!-- Google Sign-In -->
+    <string name="default_web_client_id">REPLACE_WITH_YOUR_WEB_CLIENT_ID</string>
+
+    <!-- Extra -->
+    <string name="hello_world">Hello World!</string>
+
+    <!-- Login extra -->
+    <string name="forgot_password">Hai dimenticato la password?</string>
     <string name="or">oppure</string>
+    <string name="continue_with_google">Continua con Google</string>
+
+    <!-- Forgot Password / Reset -->
+    <string name="forgot_title">Hai dimenticato la password?</string>
+    <string name="forgot_reset">Reimposta</string>
+    <string name="forgot_return_login">TORNA AL LOGIN</string>
+    <string name="forgot_email_sent">Se esiste un account per %1$s, ti abbiamo inviato un’email con le istruzioni.</string>
+
+    <!-- Email Verification -->
+    <string name="verify_title">Verifica email</string>
+    <string name="verify_needed">Devi verificare la tua email per continuare.</string>
+    <string name="verify_resend">Invia di nuovo</string>
+    <string name="open_mail">Apri Mail</string>
+    <string name="verify_sent">Ti abbiamo inviato una email di verifica a %1$s.</string>
 </resources>

@@ -13,7 +13,7 @@
         android:label="@string/app_name"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
-        android:theme="@style/Theme.Beagle">
+        android:theme="@style/AppTheme">
 
         <!-- ENTRY POINT: Activity contenitore dei Fragment (Login/Register) -->
         <activity
@@ -29,11 +29,6 @@
         <!-- Chat -->
         <activity
             android:name=".ui.chat.ChatActivity"
-            android:exported="false" />
-
-        <!-- Profile -->
-        <activity
-            android:name=".ui.profile.ProfileActivity"
             android:exported="false" />
 
     </application>

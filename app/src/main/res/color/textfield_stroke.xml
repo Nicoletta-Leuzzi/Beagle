@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<selector xmlns:android="http://schemas.android.com/apk/res/android">
+    <!-- Focus / hover: bordo con colore primario -->
+    <item android:color="?attr/colorPrimary" android:state_focused="true"/>
+    <item android:color="?attr/colorPrimary" android:state_hovered="true"/>
+    <!-- Default: bordo outline -->
+    <item android:color="?attr/colorOutline"/>
+</selector>
