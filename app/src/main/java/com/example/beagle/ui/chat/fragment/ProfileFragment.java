@@ -21,6 +21,8 @@ import android.widget.Button;
 
 import com.example.beagle.R;
 import com.example.beagle.model.Pet;
+import com.google.android.material.datepicker.CalendarConstraints;
+import com.google.android.material.datepicker.DateValidatorPointBackward;
 import com.google.android.material.datepicker.MaterialDatePicker;
 import com.google.android.material.datepicker.MaterialPickerOnPositiveButtonClickListener;
 import com.google.android.material.snackbar.Snackbar;
@@ -217,12 +219,27 @@ public class ProfileFragment extends Fragment {
                     try {
                         years = (calculateAge(sdf.parse(birthDate.getText().toString()).getTime())/12);
                         remainingMonths = (calculateAge(sdf.parse(birthDate.getText().toString()).getTime())%12);
-                        if(years == 0){
-                            age.setText(remainingMonths + " Months");
+
+                        StringBuilder sb = new StringBuilder();
+
+                        // Gestione anni
+                        if (years > 0) {
+                            sb.append(years).append(years == 1 ? " Year" : " Years");
                         }
-                        else{
-                            age.setText(years + " Y " + remainingMonths + " m");
+
+                        // Gestione mesi (solo se > 0)
+                        if (remainingMonths > 0) {
+                            if (sb.length() > 0) sb.append(" "); // aggiunge spazio se c’è già "Year"
+                            sb.append(remainingMonths).append(remainingMonths == 1 ? " Month" : " Months");
                         }
+
+                        // Se entrambi 0 (caso raro: oggi è la data di nascita)
+                        if (sb.length() == 0) {
+                            sb.append("0 Months");
+                        }
+
+                        age.setText(sb.toString());
+
                     } catch (ParseException e) {
                         throw new RuntimeException(e);
                     }
@@ -344,6 +361,11 @@ public class ProfileFragment extends Fragment {
         // Costruzione del MaterialDatePicker
         MaterialDatePicker.Builder<Long> builder = MaterialDatePicker.Builder.datePicker();
         builder.setTitleText("Select Birth Date");
+
+        // Imposto il vincolo di non poter scegliere date future
+        CalendarConstraints.Builder constraintsBuilder = new CalendarConstraints.Builder();
+        constraintsBuilder.setValidator(DateValidatorPointBackward.now());
+        builder.setCalendarConstraints(constraintsBuilder.build());
 
         // Se c’è già una data scritta, impostala come selezione iniziale
         String currentText = birthDate.getText() != null ? birthDate.getText().toString() : "";
