@@ -49,7 +49,6 @@ dependencies {
 
 
     // MVVM / Lifecycle
-    implementation(libs.lifecycle.viewmodel.v284)
     implementation(libs.lifecycle.livedata.v284)
     implementation(libs.lifecycle.runtime)
 
