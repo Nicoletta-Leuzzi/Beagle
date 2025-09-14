@@ -56,6 +56,8 @@ public class ProfileFragment extends Fragment {
     private ArrayAdapter<Pet> petAdapter;
     private ArrayAdapter<String> speciesAdapter;
 
+    private int years = 0, remainingMonths = 0;
+
     public ProfileFragment() {
         // Required empty public constructor
     }
@@ -206,13 +208,21 @@ public class ProfileFragment extends Fragment {
 
             }
 
+            @RequiresApi(api = Build.VERSION_CODES.O)
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
 
                 if (!s.toString().isEmpty()) {
                     birthDateLayout.setError(null);
                     try {
-                        age.setText(calculateAge(sdf.parse(birthDate.getText().toString()).getTime()));
+                        years = (calculateAge(sdf.parse(birthDate.getText().toString()).getTime())/12);
+                        remainingMonths = (calculateAge(sdf.parse(birthDate.getText().toString()).getTime())%12);
+                        if(years == 0){
+                            age.setText(remainingMonths + " Months");
+                        }
+                        else{
+                            age.setText(years + " Y " + remainingMonths + " m");
+                        }
                     } catch (ParseException e) {
                         throw new RuntimeException(e);
                     }
@@ -419,7 +429,7 @@ public class ProfileFragment extends Fragment {
     }
 
         @RequiresApi(api = Build.VERSION_CODES.O)
-        private String calculateAge(long birthTimestamp) {
+        private int calculateAge(long birthTimestamp) {
             // Converte il timestamp in LocalDate
             LocalDate birthDate = Instant.ofEpochMilli(birthTimestamp)
                     .atZone(ZoneId.systemDefault())
@@ -439,7 +449,7 @@ public class ProfileFragment extends Fragment {
             // Sicurezza: non avere mesi negativi
             months = Math.max(months, 0);
 
-            return months + "";
+            return months;
         }
 
 
