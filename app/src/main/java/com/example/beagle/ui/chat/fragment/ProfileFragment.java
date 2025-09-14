@@ -6,6 +6,7 @@ import static android.view.View.VISIBLE;
 import android.os.Build;
 import android.os.Bundle;
 
+import androidx.annotation.RequiresApi;
 import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.fragment.app.Fragment;
 import androidx.navigation.Navigation;
@@ -29,6 +30,10 @@ import com.google.android.material.textfield.TextInputLayout;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.time.Instant;
+import java.time.LocalDate;
+import java.time.ZoneId;
+import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
@@ -413,22 +418,30 @@ public class ProfileFragment extends Fragment {
         birthDateLayout.setError(null);
     }
 
-    private String calculateAge(long birthDateMillis) {
-        Calendar birth = Calendar.getInstance();
-        birth.setTime(new Date(birthDateMillis));
+        @RequiresApi(api = Build.VERSION_CODES.O)
+        private String calculateAge(long birthTimestamp) {
+            // Converte il timestamp in LocalDate
+            LocalDate birthDate = Instant.ofEpochMilli(birthTimestamp)
+                    .atZone(ZoneId.systemDefault())
+                    .toLocalDate();
 
-        Calendar today = Calendar.getInstance();
+            LocalDate today = LocalDate.now();
 
-        int years = today.get(Calendar.YEAR) - birth.get(Calendar.YEAR);
+            // Calcola mesi totali tra anni e mesi
+            int months = (today.getYear() - birthDate.getYear()) * 12
+                    + (today.getMonthValue() - birthDate.getMonthValue());
 
-        if (today.get(Calendar.MONTH) < birth.get(Calendar.MONTH) ||
-                (today.get(Calendar.MONTH) == birth.get(Calendar.MONTH) &&
-                        today.get(Calendar.DAY_OF_MONTH) < birth.get(Calendar.DAY_OF_MONTH))) {
-            years--;
+            // Se il giorno odierno è prima del giorno di nascita, sottrai 1 mese
+            if (today.getDayOfMonth() < birthDate.getDayOfMonth()) {
+                months--;
+            }
+
+            // Sicurezza: non avere mesi negativi
+            months = Math.max(months, 0);
+
+            return months + "";
         }
 
-        return years+"";
-    }
 
     private byte mapSpeciesToCode(String label) {
         if (label == null) return -1;
