@@ -46,7 +46,6 @@ dependencies {
     implementation(libs.material)          // Material 3: usi Widget.Material3.* nei layout
     implementation(libs.activity)
     implementation(libs.constraintlayout)
-    implementation("com.google.android.material:material:1.13.0")
 
 
     // MVVM / Lifecycle
