@@ -24,7 +24,7 @@
         android:name="androidx.navigation.fragment.NavHostFragment"
         app:navGraph="@navigation/chat_nav_graph"
         app:defaultNavHost="true"
-        android:id="@+id/fragmentContainterViewChat"
+        android:id="@+id/fragmentContainerViewChat"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         app:layout_behavior="@string/appbar_scrolling_view_behavior" /> <!-- Comportamento app bar -->

@@ -28,7 +28,7 @@ public class Pet {
     private byte species; // TODO: da rivedere utilizzo
     private long birthDate;
 
-    public Pet(long petId, @NonNull String idToken, @NonNull String name, @NonNull byte species, String breed, long birthDate) {
+    public Pet(long petId, @NonNull String idToken, @NonNull String name, byte species, String breed, long birthDate) {
         this.petId = petId;
         this.idToken = idToken;
         this.name = name;
@@ -41,7 +41,7 @@ public class Pet {
     // Costruttore di comodo per creare un nuovo Pet prima dell'inserimento (senza id)
     @Ignore
     public Pet(@NonNull String idToken, @NonNull String name,
-               @NonNull byte species, String breed, long birthDate) {
+               byte species, String breed, long birthDate) {
         this.idToken = idToken;
         this.name = name;
         this.species = species;
@@ -74,6 +74,10 @@ public class Pet {
         return age;
     }
 
+    public void setAge(String age) {
+        this.age = age;
+    }
+
     public long getBirthDate() {
         return birthDate;
     }
@@ -83,8 +87,12 @@ public class Pet {
         this.age=calculateAge(getBirthDate());
     }
 
-    public String getidToken() {
+    public String getIdToken() {
         return idToken;
+    }
+
+    public void setIdToken(String idToken) {
+        this.idToken = idToken;
     }
 
     public String getName() {
@@ -99,11 +107,19 @@ public class Pet {
         return petId;
     }
 
+    public void setPetId(long petId) {
+        this.petId = petId;
+    }
+
     public String getSpeciesString() {
         if(species == 0)
             return "Cane";
         else
             return "Gatto";
+    }
+
+    public byte getSpecies() {
+        return species;
     }
 
     public void setSpecies(String species) {
@@ -112,6 +128,10 @@ public class Pet {
             this.species = 0;
         if(species.equalsIgnoreCase("Gatto"))
             this.species = 1;
+    }
+
+    public void setSpecies(byte species) {
+        this.species = species;
     }
 
     public String getBreed() {
@@ -144,36 +164,8 @@ public class Pet {
     }
 
     public boolean equals(Pet other){
+        if(other == null)
+            return false;
         return (this.name).equals(other.getName());
-    }
-
-
-
-
-
-
-
-
-    public void setPetId(long petId) {
-        this.petId = petId;
-    }
-
-    public String getIdToken() {
-        return idToken;
-    }
-
-    public void setIdToken(String idToken) {
-        this.idToken = idToken;
-    }
-
-    public void setAge(String age) {
-        this.age = age;
-    }
-
-    public byte getSpecies() {
-        return this.species;
-    }
-    public void setSpecies(byte species) {
-        this.species = species;
     }
 }

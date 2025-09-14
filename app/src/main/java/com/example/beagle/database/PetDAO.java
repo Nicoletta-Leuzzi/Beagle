@@ -16,8 +16,14 @@ public interface PetDAO {
     @Query("SELECT * FROM Pet")
     List<Pet> getAll();
 
-    @Insert(onConflict = OnConflictStrategy.IGNORE)
-    void insert(Pet... pets);
+    @Query("SELECT * FROM Pet WHERE petId IN (:petIds)")
+    List<Pet> loadAllByIds(long[] petIds);
+
+    @Query("SELECT * FROM Pet WHERE name LIKE :name LIMIT 1")
+    Pet findByName(String name);
+
+    @Insert
+    void insertAll(Pet... pets);
 
     @Delete
     void delete(Pet pet);

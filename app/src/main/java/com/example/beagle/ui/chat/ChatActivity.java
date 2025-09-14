@@ -26,7 +26,7 @@ public class ChatActivity extends AppCompatActivity {
         setSupportActionBar(topAppBar);
 
         NavHostFragment navHostFragment = (NavHostFragment) getSupportFragmentManager()
-                .findFragmentById(R.id.fragmentContainterViewChat);
+                .findFragmentById(R.id.fragmentContainerViewChat);
 
         if (navHostFragment != null) {
             NavController navController = navHostFragment.getNavController();

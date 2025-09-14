@@ -24,6 +24,7 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 
+import com.example.beagle.database.DataRoomDatabase;
 import com.example.beagle.model.Conversation;
 import com.example.beagle.util.Constants;
 import com.example.beagle.util.ServiceLocator;
@@ -47,7 +48,7 @@ public class ConversationsHistoryFragment extends Fragment {
         View view = inflater.inflate(R.layout.fragment_conversations_history, container, false);
 
         RecyclerView recyclerView = view.findViewById(R.id.recyclerConversations);
-        recyclerView.setLayoutManager(new LinearLayoutManager(requireContext()));
+        recyclerView.setLayoutManager(new LinearLayoutManager(view.getContext()));
 
 
         long petId = 420;
