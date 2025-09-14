@@ -31,11 +31,14 @@ import com.example.beagle.adapter.MessageRecyclerAdapter;
 import com.example.beagle.model.Conversation;
 import com.example.beagle.model.Message;
 import com.example.beagle.model.Pet;
+import com.example.beagle.source.chat.ChatCompletionResponse;
 import com.example.beagle.ui.profile.ProfileActivity;
 import com.example.beagle.util.Constants;
+import com.example.beagle.util.JSONParserUtils;
 import com.example.beagle.util.ServiceLocator;
 import com.google.android.material.textfield.TextInputEditText;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Objects;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -265,10 +268,22 @@ public class ChatFragment extends Fragment {
         adapter.notifyItemInserted(messageList.size() -1);
     }
 
-
+    private static final String TAG_API = ChatFragment.class.getName();
     // TODO: dovrebbe ritornare la reply dell'AI
     private String getMessageAPI_WIP() {
-        return "REPLY";
+        String REPLY = "";
+        /*
+        JSONParserUtils JSONParser = new JSONParserUtils(getContext());
+        // CODICE DA RIPENSARE E ADATTARE
+        try {
+            ChatCompletionResponse response = JSONParser.parseJSONResponseWithGson(Constants.SAMPLE_JSON_FILENAME);
+
+            Log.i(TAG, response.toString());
+
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        } */
+        return REPLY;
     }
 
 
