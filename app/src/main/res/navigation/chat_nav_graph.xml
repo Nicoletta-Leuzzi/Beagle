@@ -9,8 +9,7 @@
     <fragment
         android:id="@+id/chatFragment"
         android:name="com.example.beagle.ui.chat.fragment.ChatFragment"
-        tools:layout="@layout/fragment_chat"
-        android:label="@string/chat_fragment_title">
+        tools:layout="@layout/fragment_chat">
 
         <!-- Added: argument passed from intents or navigation to open a specific conversation -->
         <argument
