@@ -187,7 +187,8 @@ public class ProfileFragment extends Fragment {
             btns_save_cancel.setVisibility(INVISIBLE);
         });
 
-        autoCompletePet.setOnItemClickListener((parent, v, position, id) -> {
+        autoCompletePet.setOnItemClickListener(
+                (parent, v, position, id) -> {
 
             pet = (Pet) parent.getItemAtPosition(position);
             name.setText(pet.getName());
@@ -383,7 +384,8 @@ public class ProfileFragment extends Fragment {
         final MaterialDatePicker<Long> datePicker = builder.build();
 
         // Callback sul pulsante OK
-        datePicker.addOnPositiveButtonClickListener(new MaterialPickerOnPositiveButtonClickListener<Long>() {
+        datePicker.addOnPositiveButtonClickListener
+        (new MaterialPickerOnPositiveButtonClickListener<Long>() {
             @Override
             public void onPositiveButtonClick(Long selection) {
                 String formattedDate = sdf.format(new Date(selection));

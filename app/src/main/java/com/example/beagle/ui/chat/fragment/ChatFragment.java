@@ -38,6 +38,7 @@ import com.example.beagle.repository.message.MessageRepository;
 import com.example.beagle.ui.chat.viewmodel.MessageViewModel;
 import com.example.beagle.ui.chat.viewmodel.MessageViewModelFactory;
 import com.example.beagle.util.Constants;
+import com.example.beagle.util.JSONParserUtils;
 import com.example.beagle.util.ServiceLocator;
 import com.google.android.material.snackbar.Snackbar;
 import com.google.android.material.textfield.TextInputEditText;
@@ -47,6 +48,7 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -419,10 +421,22 @@ public class ChatFragment extends Fragment {
         adapter.notifyItemInserted(messageList.size() -1);
     }
 
-
+    private static final String TAG_API = ChatFragment.class.getName();
     // TODO: dovrebbe ritornare la reply dell'AI
     private String getMessageAPI_WIP() {
-        return "REPLY";
+        String REPLY = "";
+        /*
+        JSONParserUtils JSONParser = new JSONParserUtils(getContext());
+        // CODICE DA RIPENSARE E ADATTARE
+        try {
+            ChatCompletionResponse response = JSONParser.parseJSONResponseWithGson(Constants.SAMPLE_JSON_FILENAME);
+
+            Log.i(TAG, response.toString());
+
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        } */
+        return REPLY;
     }
 
 

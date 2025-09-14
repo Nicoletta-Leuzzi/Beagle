@@ -32,7 +32,6 @@
     <string name="conversations_history_title">Chat</string>
     <string name="history_description">Pulsante cronologia</string>
     <string name="pet_profile_description">Pulsante profilo pet</string>
-    <string name="chat_fragment_title">Beagle OSS</string>
 
     <!-- Errori Login/Register -->
     <string name="error_email_login">Inserisci un’email valida.</string>
@@ -65,4 +64,5 @@
     <string name="verify_resend">Invia di nuovo</string>
     <string name="open_mail">Apri Mail</string>
     <string name="verify_sent">Ti abbiamo inviato una email di verifica a %1$s.</string>
+    <string name="delete">Elimina</string>
 </resources>

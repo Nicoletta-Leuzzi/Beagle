@@ -33,4 +33,7 @@ public interface ConversationDAO {
 
     @Delete()
     void delete(Conversation conversation);
+
+    @Query("DELETE FROM Conversation WHERE petId = :petId")
+    void deleteAll(long petId);
 }

@@ -5,7 +5,7 @@ plugins {
 
 android {
     namespace = "com.example.beagle"
-    compileSdk = 35
+    compileSdk = 36
 
     defaultConfig {
         applicationId = "com.example.beagle"
@@ -46,11 +46,9 @@ dependencies {
     implementation(libs.material)          // Material 3: usi Widget.Material3.* nei layout
     implementation(libs.activity)
     implementation(libs.constraintlayout)
-    implementation("com.google.android.material:material:1.13.0")
 
 
     // MVVM / Lifecycle
-    implementation(libs.lifecycle.viewmodel.v284)
     implementation(libs.lifecycle.livedata.v284)
     implementation(libs.lifecycle.runtime)
 
@@ -78,4 +76,9 @@ dependencies {
     testImplementation(libs.junit)
     androidTestImplementation(libs.ext.junit)
     androidTestImplementation(libs.espresso.core)
+
+    // JSON
+    implementation(libs.gson)
+    implementation(libs.retrofit)
+    implementation(libs.converter.gson)
 }
