@@ -65,4 +65,5 @@
     <string name="verify_resend">Invia di nuovo</string>
     <string name="open_mail">Apri Mail</string>
     <string name="verify_sent">Ti abbiamo inviato una email di verifica a %1$s.</string>
+    <string name="delete">Elimina</string>
 </resources>
