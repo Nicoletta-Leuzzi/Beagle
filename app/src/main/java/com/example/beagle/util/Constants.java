@@ -23,4 +23,10 @@ public final class Constants {
     public static final String CONVERSATION_BUNDLE_KEY = "current_conversation";
     public static final String PET_BUNDLE_KEY = "current_pet";
 
+    // API
+    public static final String API_URL = "https://api.compactif.ai/v1/chat/completions";
+    public static final String SAMPLE_JSON_FILENAME = "sample_api_response.json";
+    public static final String MODEL = "gpt-oss-120b";
+
+
 }
