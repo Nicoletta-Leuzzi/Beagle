@@ -1,7 +1,5 @@
 package com.example.beagle.ui.chat.fragment;
 
-import android.content.Context;
-import android.content.Intent;
 import android.content.res.Resources;
 import android.os.Bundle;
 
@@ -35,20 +33,16 @@ import com.example.beagle.model.Message;
 import com.example.beagle.model.Pet;
 import com.example.beagle.model.Result;
 import com.example.beagle.repository.message.MessageRepository;
-import com.example.beagle.ui.chat.viewmodel.MessageViewModel;
-import com.example.beagle.ui.chat.viewmodel.MessageViewModelFactory;
+import com.example.beagle.ui.chat.viewmodel.message.MessageViewModel;
+import com.example.beagle.ui.chat.viewmodel.message.MessageViewModelFactory;
 import com.example.beagle.util.Constants;
-import com.example.beagle.util.JSONParserUtils;
 import com.example.beagle.util.ServiceLocator;
 import com.google.android.material.snackbar.Snackbar;
 import com.google.android.material.textfield.TextInputEditText;
-import com.google.firebase.database.DataSnapshot;
-import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -70,7 +64,8 @@ public class ChatFragment extends Fragment {
     // TODO: Rimuovere i log DOPO aver finito, ora mi servono ancora
     public String TAG = "TEST";
 
-    private long conversationId = 0;
+    private long conversationId;
+    private Conversation activeConversation;
 
     boolean active = true;
 
@@ -92,6 +87,8 @@ public class ChatFragment extends Fragment {
 
     private FirebaseDatabase database = FirebaseDatabase.getInstance(Constants.FIREBASE_REALTIME_DATABASE);
     private DatabaseReference dbRef;
+    ValueEventListener postListener;
+    Message lastMessage;
 
 
     public ChatFragment() {
@@ -126,6 +123,8 @@ public class ChatFragment extends Fragment {
         messageViewModel = new ViewModelProvider(
                 requireActivity(),
                 new MessageViewModelFactory(messageRepository)).get(MessageViewModel.class);
+
+
     }
 
 
@@ -135,8 +134,6 @@ public class ChatFragment extends Fragment {
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         Log.d(TAG, "onCreateView");
-        if (savedInstanceState != null)
-            Log.d(TAG, savedInstanceState.toString());
 
         View view = inflater.inflate(R.layout.fragment_chat, container, false);
 
@@ -147,6 +144,33 @@ public class ChatFragment extends Fragment {
 
         adapter = new MessageRecyclerAdapter(R.layout.message, messageList);
         recyclerView.setAdapter(adapter);
+
+
+
+        messageViewModel.getMessages(conversationId, false)
+                .observe(getViewLifecycleOwner(),
+                        result -> {
+                            Log.d(TAG, "getMessages");
+                            if (getViewLifecycleOwner().getLifecycle().getCurrentState() == Lifecycle.State.RESUMED) {
+                                if (result.isSuccess()) {
+                                    Log.d(TAG, "getMessagesObserver");
+                                    //int initialSize = this.messageList.size()
+                                    messageList.clear();
+                                    messageList.addAll(((Result.MessageSuccess) result).getData());
+                                    //adapter.notifyItemRangeInserted(0, messageList.size() - 1);
+                                    adapter.notifyDataSetChanged();
+
+                                    recyclerView.setVisibility(View.VISIBLE);
+                                    seq.set(adapter.getItemCount());
+
+
+                                    addPetButton.setVisibility(View.GONE);
+                                    setPromptEnabled(sendButton, editTextPrompt, true);
+                                }
+                            } else {
+                                Snackbar.make(view, "ERROR_RETRIVING_MESSAGES", Snackbar.LENGTH_SHORT).show();
+                            }
+                        });
 
 
 
@@ -161,7 +185,6 @@ public class ChatFragment extends Fragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         Log.d(TAG,"onViewCreated");
-        Log.d(TAG, "conversationId: " + conversationId);
 
         // Dichiarazione vari attributi
         seq = new AtomicInteger(0);
@@ -182,10 +205,12 @@ public class ChatFragment extends Fragment {
 
         } else {
             if (conversationId == 0) {
+                welcomeTextView.setVisibility(View.VISIBLE);
+                welcomeTextView.setText(String.format(res.getString(R.string.saluto_iniziale), pet.getName()));
                 Log.d(TAG, "App appena aperta, si crea nuova chat");
 
                 // Creazione nuova conversazione
-                Conversation activeConversation = new Conversation(petId);
+                activeConversation = new Conversation(petId);
 
                 // Salvataggio conversazione su DB
                 ServiceLocator.getInstance().getDao(requireActivity().getApplication()).conversationDao().insert(activeConversation);
@@ -194,80 +219,88 @@ public class ChatFragment extends Fragment {
                 // Recupero id della conversazione, in quanto autogenerata solo dopo il salvataggio su DB
                 conversationId = ServiceLocator.getInstance().getDao(requireActivity().getApplication()).conversationDao().getLastConversation(petId).getConversationId();
                 Log.d(TAG, "conversationId: " + conversationId + " dovrebbe essere id autogenerato");
-                welcomeTextView.setVisibility(View.VISIBLE);
+
                 welcomeTextView.setText(String.format(res.getString(R.string.saluto_iniziale),
                         pet.getName()));
+                welcomeTextView.setVisibility(View.VISIBLE);
 
                 addPetButton.setVisibility(View.GONE);
                 setPromptEnabled(sendButton, editTextPrompt, true);
 
             } else {
-                Log.d(TAG, "Else else");
+                Log.d(TAG, "Else conversazione aperta");
+                messageViewModel.getMessages(conversationId, false);
+                /*
                 // Carica messaggi relativi alla conversazione esistente
                 //messageList.addAll(ServiceLocator.getInstance().getDao(requireActivity().getApplication()).messageDao().getMessages(conversationId));
+                if (!messageViewModel.getMessages(conversationId, false).hasActiveObservers()) {
+                    messageViewModel.getMessages(conversationId, false)
+                            .observe(getViewLifecycleOwner(),
+                                    result -> {
+                                        if (getViewLifecycleOwner().getLifecycle().getCurrentState() == Lifecycle.State.RESUMED) {
+                                            if (result.isSuccess()) {
+                                                //int initialSize = this.messageList.size()
+                                                messageList.clear();
+                                                messageList.addAll(((Result.MessageSuccess) result).getData().getMessages());
+                                                //adapter.notifyItemRangeInserted(0, messageList.size() - 1);
+                                                adapter.notifyDataSetChanged();
+
+                                                recyclerView.setVisibility(View.VISIBLE);
+                                                seq.set(adapter.getItemCount());
 
 
-                messageViewModel.getMessages(conversationId, false).observe(getViewLifecycleOwner(),
-                        result -> {
-                            if (getViewLifecycleOwner().getLifecycle().getCurrentState() == Lifecycle.State.RESUMED) {
-                                if (result.isSuccess()) {
-                                    Log.d(TAG, "LOCAL DATA CHANGE");
-                                    //int initialSize = this.messageList.size()
-                                    messageList.clear();
-                                    messageList.addAll(((Result.MessageSuccess) result).getData().getMessages());
-                                    adapter.notifyItemRangeInserted(0, messageList.size() - 1);
+                                                addPetButton.setVisibility(View.GONE);
+                                                setPromptEnabled(sendButton, editTextPrompt, true);
+                                            }
+                                        } else {
+                                            Snackbar.make(view, "ERROR_RETRIVING_MESSAGES", Snackbar.LENGTH_SHORT).show();
+                                        }
+                                    });
+                } else {
+                    messageViewModel.getMessages(conversationId, false);
+                }
 
-                                    //recyclerView.setVisibility(View.VISIBLE);
-                                    seq.set(adapter.getItemCount());
 
-                                    Log.d(TAG, "AFTER NOTIFY");
-                                    Log.d(TAG, messageList.isEmpty() + "");
-                                    //Log.d(TAG, "View: " + view);
-
-                                    addPetButton.setVisibility(View.GONE);
-                                    setPromptEnabled(sendButton, editTextPrompt, true);
-
-                                } else {
-                                    Snackbar.make(view, "ERROR_RETRIVING_MESSAGES", Snackbar.LENGTH_SHORT).show();
-                                }
-                            }
-                        });
+*/
 
             }
-            Log.d(TAG, "BEFORE OR AFTER=");
 
         }
 
-
-
-
-
-/*
-        dbRef = FirebaseDatabase.getInstance().getReference("messages").child(Long.toString(conversationId));
-
-        ValueEventListener postListener = new ValueEventListener() {
+        dbRef = database.getReference("messages").child(Long.toString(conversationId));
+         // FIREROOM LISTENER
+        /*
+        postListener = new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
 
-                Log.d(TAG, "ONDATACHANGE FOR FIREBASE");
-                messageViewModel.getMessages(conversationId, true).observe(getViewLifecycleOwner(),
-                        result -> {
-                            if (getViewLifecycleOwner().getLifecycle().getCurrentState() == Lifecycle.State.RESUMED) {
-                                if (result.isSuccess()) {
-                                    Log.d(TAG, "REMOTE DATA CHANGE");
+                if(snapshot.exists()) {
 
-                                    messageList.clear();
-                                    messageList.addAll(((Result.MessageSuccess) result).getData().getMessages());
-                                    adapter.notifyItemRangeInserted(0, messageList.size() - 1);
 
-                                    recyclerView.setVisibility(View.VISIBLE);
-                                    seq.set(adapter.getItemCount());
-                                }
-                            }
-                        });
+                    if (!messageViewModel.getMessages(conversationId, true).hasActiveObservers()) {
+                        messageViewModel.getMessages(conversationId, true)
+                                .observe(getViewLifecycleOwner(),
+                                        result -> {
+                                            if (getViewLifecycleOwner().getLifecycle().getCurrentState() == Lifecycle.State.RESUMED) {
+                                                if (result.isSuccess()) {
+                                                    messageList.clear();
+                                                    messageList.addAll(((Result.MessageSuccess) result).getData().getMessages());
+
+                                                    adapter.notifyDataSetChanged();
+
+                                                    recyclerView.setVisibility(View.VISIBLE);
+                                                    seq.set(adapter.getItemCount());
+                                                }
+                                            }
+                                        });
+                    } else {
+                        messageViewModel.getMessages(conversationId, true);
+                    }
+
+
+
+                }
             }
-
-
 
             @Override
             public void onCancelled(@NonNull DatabaseError error) {
@@ -276,30 +309,13 @@ public class ChatFragment extends Fragment {
         };
         dbRef.addValueEventListener(postListener);
 
-
-
-
 */
-
-
-
 
 
         addPetButton.setOnClickListener(v -> {
             Navigation.findNavController(v)
                     .navigate(R.id.action_chatFragment_to_profileFragment);
         });
-
-
-        Log.d(TAG, requireActivity().toString());
-        Log.d(TAG, requireActivity().getApplication().toString());
-
-
-
-
-
-
-
 
 
         // TODO: finire codice
@@ -318,14 +334,15 @@ public class ChatFragment extends Fragment {
 
                 Message messageQuestion = createMessage(finalConversationId, seq.getAndIncrement(),
                         true, question);
+                lastMessage = messageQuestion;
+                int i = 0;
 
-                saveMessage(messageQuestion, getActivity());
-                // myRef.child(messageQuestion.getConversationId()+"").child(messageQuestion.getSeq()+"").setValue(messageQuestion);
+                saveMessage(messageQuestion, conversationId, seq, view);
 
                 // TODO: send to AI
                 sendMessage(messageQuestion); // con un listener nell'adapter?
                 // TODO: chiarire come deve mostrare il messaggio (da DB è più corretto?)
-                showMessage(messageQuestion, messageList, adapter);
+                //showMessage(messageQuestion, messageList, adapter);
 
 
 
@@ -334,10 +351,9 @@ public class ChatFragment extends Fragment {
                 String answer = getMessageAPI_WIP();
                 Message messageAnswer = createMessage(finalConversationId, seq.getAndIncrement(),
                         false, answer);
-                saveMessage(messageAnswer, getActivity());
-                showMessage(messageAnswer, messageList, adapter);
-
-                setPromptEnabled(sendButton, editTextPrompt, true);
+                // TODO: Commentato perchè troppo veloce e rovina i ViewModel
+                //saveMessage(messageAnswer, conversationId, seq, view);
+                //showMessage(messageAnswer, messageList, adapter);
 
             // Se il prompt è vuoto
             } else {
@@ -376,15 +392,30 @@ public class ChatFragment extends Fragment {
 
 
 
+    }
 
+    @Override
+    public void onPause() {
+        super.onPause();
+        /*
 
+        if (messageViewModel.getMessages(conversationId, false).hasActiveObservers()) {
+            messageViewModel.getMessages(conversationId, false).removeObservers(getViewLifecycleOwner());
+            Log.d(TAG, "RemovedGetMessagesObserver");
+        }
 
+         */
+        /*
 
+        if (messageViewModel.addMessage(lastMessage, conversationId, seq.get()).hasActiveObservers()) {
+            messageViewModel.addMessage(lastMessage, conversationId, seq.get()).removeObservers(getViewLifecycleOwner());
+            Log.d(TAG, "RemovedAddMessagesObserver");
+        }
 
+         */
 
 
     }
-
 
 
 
@@ -400,16 +431,43 @@ public class ChatFragment extends Fragment {
     }
 
 
-    private void saveMessage(Message message, Context context) {
+    private void saveMessage(Message message, long conversationId, AtomicInteger seq, View view) {
         Log.d(TAG, "SAVE MESSAGE" + message);
         //ServiceLocator.getInstance().getDao(requireActivity().getApplication()).messageDao().insert(message);
-        messageViewModel.addMessage(message);
+        //messageViewModel.addMessage(message, conversationId, seq.get());
+        //ServiceLocator.getInstance().getDao(requireActivity().getApplication()).messageDao().insert(message);
+        //List<Message> messageListTemp = ServiceLocator.getInstance().getDao(requireActivity().getApplication()).messageDao().getMessages(conversationId);
+        //messageList.clear();
+        //messageList.addAll(messageListTemp);
+        //adapter.notifyDataSetChanged();
 
 
-        //DatabaseReference myRef = database.getReference();
-        //myRef.child("messages").child(message.getConversationId()+"").child(message.getSeq()+"").setValue(message.getMessageContent());
+        if (!messageViewModel.addMessage(message, conversationId, seq.get()).hasActiveObservers()) {
+            Log.d(TAG, "saveMessage - Inside if");
+            messageViewModel.addMessage(message, conversationId, seq.get()).observe(getViewLifecycleOwner(),
+                    result -> {
+                        Log.d(TAG, "saveMessage - Inside observer");
+                        if (getViewLifecycleOwner().getLifecycle().getCurrentState() == Lifecycle.State.RESUMED) {
+                            if (result.isSuccess()) {
+                                messageList.clear();
+                                messageList.addAll(((Result.MessageSuccess) result).getData());
+                                adapter.notifyDataSetChanged();
+                                seq.set(adapter.getItemCount());
+                            } else {
+                                Snackbar.make(view, "ERROR_ADDING_MESSAGE", Snackbar.LENGTH_SHORT).show();
+
+                            }
+                        }
+                        setPromptEnabled(sendButton, editTextPrompt, true);
+                    });
+        } else {
+            Log.d(TAG, "saveMessage - Inside else");
+            messageViewModel.addMessage(message, conversationId, seq.get());
+        }
 
     }
+
+
     private void sendMessage(Message message) {
         // chiamata API
     }
@@ -417,14 +475,15 @@ public class ChatFragment extends Fragment {
     // Mostra il messaggio sulla schermata
     private void showMessage(Message message, List<Message> messageList,
                              MessageRecyclerAdapter adapter) {
-        messageList.add(message);
-        adapter.notifyItemInserted(messageList.size() -1);
+        //messageList.add(message);
+        //adapter.notifyItemInserted(messageList.size() -1);
     }
 
     private static final String TAG_API = ChatFragment.class.getName();
     // TODO: dovrebbe ritornare la reply dell'AI
     private String getMessageAPI_WIP() {
-        String REPLY = "";
+
+        String REPLY = "REPLY";
         /*
         JSONParserUtils JSONParser = new JSONParserUtils(getContext());
         // CODICE DA RIPENSARE E ADATTARE
@@ -452,13 +511,6 @@ public class ChatFragment extends Fragment {
         sendButton.setEnabled(b);
         sendButton.setSelected(b);
         editTextPrompt.setEnabled(b);
-    }
-
-    // Non penso sia più necessario, ma lo tengo per ora
-    private void populateChat(MessageRecyclerAdapter adapter, ArrayList<Message> messageList) {
-        for(int i = 0; i < messageList.size() - 1; i++) {
-            adapter.notifyDataSetChanged();
-        }
     }
 
 }

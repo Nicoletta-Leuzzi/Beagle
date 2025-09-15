@@ -16,5 +16,7 @@ public abstract class BaseMessageLocalDataSource {
 
     public abstract void insertMessages(List<Message> messageList);
 
-    public abstract void insertMessage(Message message);
+    public abstract void insertMessage(Message message, long conversationId);
+
+    public abstract void updateMessages(List<Message> messageList, long conversationId);
 }

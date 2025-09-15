@@ -1,4 +1,4 @@
-package com.example.beagle.ui.chat.viewmodel;
+package com.example.beagle.ui.chat.viewmodel.message;
 
 import androidx.annotation.NonNull;
 import androidx.lifecycle.ViewModel;
