@@ -19,4 +19,7 @@ public interface IMessageResponseCallback {
     void onSuccessWriteFromLocal(List<Message> messageList);
     void onFailureWriteFromLocal(Exception exception);
 
+    // DA CAMBIARE IL PARAMETRO CON LA RISPOSTA DELL'AI
+    void onSuccessFromAPI(String REPLY_WIP, long conversationId, int seq);
+
 }

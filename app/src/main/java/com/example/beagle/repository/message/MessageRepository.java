@@ -7,30 +7,39 @@ import androidx.lifecycle.MutableLiveData;
 import com.example.beagle.model.Message;
 import com.example.beagle.model.MessageAPIResponse;
 import com.example.beagle.model.Result;
+import com.example.beagle.source.message.BaseMessageAPIDataSource;
 import com.example.beagle.source.message.BaseMessageLocalDataSource;
 import com.example.beagle.source.message.BaseMessageRemoteDataSource;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class MessageRepository implements IMessageResponseCallback {
     private static final String TAG = MessageRepository.class.getSimpleName();
 
     private final MutableLiveData<Result> allMessagesMutableLiveData;
+    private final MutableLiveData<Result> messageAddedLiveData;
+    private final MutableLiveData<Result> messageAILiveData;
     private final BaseMessageRemoteDataSource messageRemoteDataSource;
     private final BaseMessageLocalDataSource messageLocalDataSource;
+    private final BaseMessageAPIDataSource messageAPIDataSource;
 
     public MessageRepository(BaseMessageRemoteDataSource messageRemoteDataSource,
-                             BaseMessageLocalDataSource messageLocalDataSource) {
+                             BaseMessageLocalDataSource messageLocalDataSource,
+                             BaseMessageAPIDataSource messageAPIDataSource) {
 
         allMessagesMutableLiveData = new MutableLiveData<>();
+        messageAddedLiveData = new MutableLiveData<>();
+        messageAILiveData = new MutableLiveData<>();
         this.messageRemoteDataSource = messageRemoteDataSource;
         this.messageLocalDataSource = messageLocalDataSource;
+        this.messageAPIDataSource = messageAPIDataSource;
         this.messageRemoteDataSource.setMessageCallback(this);
         this.messageLocalDataSource.setMessageCallback(this);
+        this.messageAPIDataSource.setMessageCallback(this);
     }
 
     public MutableLiveData<Result> fetchMessages(long conversationId, boolean fromRemote) {
-        Log.d("Test", "MESSAGE REPOSITORY " + fromRemote);
         if (fromRemote) {
             messageRemoteDataSource.getMessages(conversationId);
         } else {
@@ -39,11 +48,16 @@ public class MessageRepository implements IMessageResponseCallback {
         return  allMessagesMutableLiveData;
     }
 
-    public MutableLiveData<Result> addMessage(Message message, long conversationId, long seq) {
+    public MutableLiveData<Result> addMessage(Message message, long conversationId, int seq) {
         messageLocalDataSource.insertMessage(message, conversationId);
         // TODO: Come faccio ad inserire un messaggio sia su locale, sia su firebase?
         messageRemoteDataSource.insertMessage(message, conversationId, seq);
-        return allMessagesMutableLiveData;
+        return messageAddedLiveData;
+    }
+
+    public MutableLiveData<Result> getAIReply(long conversationId, int seq) {
+        messageAPIDataSource.getReply(conversationId, seq);
+        return messageAILiveData;
     }
 
 
@@ -60,7 +74,7 @@ public class MessageRepository implements IMessageResponseCallback {
 
     @Override
     public void onSuccessReadFromLocal(List<Message> messageList) {
-        Result.MessageSuccess result = new Result.MessageSuccess(messageList);
+        Result.MessageReadSuccess result = new Result.MessageReadSuccess(messageList);
         allMessagesMutableLiveData.postValue(result);
     }
 
@@ -72,8 +86,8 @@ public class MessageRepository implements IMessageResponseCallback {
 
     @Override
     public void onSuccessUpdateFromLocal(List<Message> messageList) {
-        Result.MessageSuccess result = new Result.MessageSuccess(messageList);
-        allMessagesMutableLiveData.postValue(result);
+        Result.MessageReadSuccess result = new Result.MessageReadSuccess(messageList);
+        messageAddedLiveData.postValue(result);
     }
 
     @Override
@@ -95,7 +109,9 @@ public class MessageRepository implements IMessageResponseCallback {
 
     @Override
     public void onSuccessWriteFromLocal(List<Message> messageList) {
-        Result.MessageSuccess result = new Result.MessageSuccess(messageList);
+        Result.MessageReadSuccess result = new Result.MessageReadSuccess(messageList);
+        messageAddedLiveData.postValue(result);
+
         allMessagesMutableLiveData.postValue(result);
     }
 
@@ -105,4 +121,17 @@ public class MessageRepository implements IMessageResponseCallback {
     }
 
 
+
+    // DA CAMBIARE IL PARAMETRO CON LA RISPOSTA DELL'AI
+    @Override
+    public void onSuccessFromAPI(String REPLY_WIP, long conversatioId, int seq) {
+        Message AIReply = new Message(conversatioId, seq, false, REPLY_WIP);
+
+        messageLocalDataSource.insertMessage(AIReply, conversatioId);
+        List<Message> test = new ArrayList<>();
+        test.add(AIReply);
+        Result.MessageReadSuccess result = new Result.MessageReadSuccess(test);
+        messageAILiveData.postValue(result);
+        //allMessagesMutableLiveData.postValue(result);
+    }
 }
