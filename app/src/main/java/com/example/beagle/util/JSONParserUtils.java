@@ -2,8 +2,7 @@ package com.example.beagle.util;
 
 import android.content.Context;
 
-import com.example.beagle.source.chat.ChatCompletionRequest;
-import com.example.beagle.source.chat.ChatCompletionResponse;
+import com.example.beagle.model.ChatCompletionResponse;
 import com.google.gson.Gson;
 
 import java.io.BufferedReader;
