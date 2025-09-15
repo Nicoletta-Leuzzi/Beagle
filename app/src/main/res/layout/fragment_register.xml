@@ -119,7 +119,7 @@
                 style="@style/TextAppearance.Material3.BodyMedium"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Hai già un account?" />
+                android:text="@string/already_registered" />
 
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/tvGoLogin"

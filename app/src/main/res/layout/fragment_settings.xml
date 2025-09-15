@@ -20,7 +20,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="10dp"
-                android:contentDescription="Back"
+                android:contentDescription="@string/back"
                 app:icon="@drawable/arrow_back"
                 app:iconTint="?attr/colorOnSurface"
                 app:layout_constraintStart_toStartOf="parent"
@@ -30,7 +30,7 @@
                 android:id="@+id/textSettings"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Impostazioni"
+                android:text="@string/settings"
 
                 app:layout_constraintStart_toEndOf="@id/btnBack"
                 app:layout_constraintTop_toTopOf="@id/btnBack"
@@ -41,7 +41,7 @@
                 android:id="@+id/textTheme"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Theme"
+                android:text="@string/theme"
                 android:layout_marginTop="36dp"
                 android:layout_marginStart="20dp"
                 app:layout_constraintTop_toBottomOf="@id/textSettings"
@@ -64,7 +64,7 @@
                 android:id="@+id/textLanguage"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Language"
+                android:text="@string/language"
                 app:layout_constraintTop_toTopOf="@id/textInputLayoutLanguage"
                 app:layout_constraintBottom_toBottomOf="@id/textInputLayoutLanguage"
                 app:layout_constraintStart_toStartOf="@id/textTheme"
@@ -85,7 +85,6 @@
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:contentDescription="@null"
-
                     android:cursorVisible="false"
                     android:inputType="none"
                     />
@@ -95,38 +94,12 @@
                 android:id="@+id/btnLogout"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="logout"
+                android:text="@string/btn_logout"
                 app:layout_constraintTop_toBottomOf="@id/textInputLayoutLanguage"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 android:layout_marginTop="46dp"
                 />
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
         </androidx.constraintlayout.widget.ConstraintLayout>
 

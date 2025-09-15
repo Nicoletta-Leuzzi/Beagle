@@ -46,7 +46,6 @@ import com.google.firebase.database.ValueEventListener;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
-import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
 
 /**
@@ -220,7 +219,7 @@ public class ChatFragment extends Fragment {
         } else {
             if (conversationId == 0) {
                 welcomeTextView.setVisibility(View.VISIBLE);
-                welcomeTextView.setText(String.format(res.getString(R.string.saluto_iniziale), pet.getName()));
+                welcomeTextView.setText(String.format(res.getString(R.string.initial_greeting), pet.getName()));
                 Log.d(TAG, "App appena aperta, si crea nuova chat");
 
                 // Creazione nuova conversazione
@@ -234,7 +233,7 @@ public class ChatFragment extends Fragment {
                 conversationId = ServiceLocator.getInstance().getDao(requireActivity().getApplication()).conversationDao().getLastConversation(petId).getConversationId();
                 Log.d(TAG, "conversationId: " + conversationId + " dovrebbe essere id autogenerato");
 
-                welcomeTextView.setText(String.format(res.getString(R.string.saluto_iniziale),
+                welcomeTextView.setText(String.format(res.getString(R.string.initial_greeting),
                         pet.getName()));
                 welcomeTextView.setVisibility(View.VISIBLE);
 

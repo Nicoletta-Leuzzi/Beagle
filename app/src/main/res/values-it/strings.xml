@@ -11,27 +11,25 @@
     <string name="welcome">Benvenuta/o</string>
 
     <!-- Navigazione / testi -->
-    <string name="already_registered">Hai già un account? Accedi</string>
-    <string name="have_account">Hai già un account?</string>
-    <string name="tv_go_register">Non hai un account? Registrati</string>
-    <string name="tv_home_text">Sei nella Home ✅</string>
+    <string name="already_registered">Hai già un account?</string>
+    <string name="have_account">Non hai un account? Registrati</string>
     <string name="home_message">Sei nella Home ✅</string>
 
     <!-- Chat / copy -->
-    <string name="saluto_iniziale">Come sta %1$s?</string>
+    <string name="initial_greeting">Come sta %1$s?</string>
     <string name="hint">Descrivi il problema</string>
-    <string name="no_text">Scrivi una domanda all’AI sul tuo pet</string>
+    <string name="no_text">Scrivi una domanda all’AI sul tuo animale</string>
 
     <!-- Messaggi di esito -->
     <string name="login_success">Login effettuato!</string>
     <string name="register_success">Registrazione completata!</string>
 
     <!-- Pet / cronologia -->
-    <string name="no_pet">Non hai ancora aggiunto un pet, aggiungilo</string>
-    <string name="add_pet_button">Aggiungi un nuovo pet</string>
+    <string name="no_pet">Non hai ancora aggiunto un animale, aggiungilo</string>
+    <string name="add_pet_button">Aggiungi un nuovo animale</string>
     <string name="conversations_history_title">Chat</string>
     <string name="history_description">Pulsante cronologia</string>
-    <string name="pet_profile_description">Pulsante profilo pet</string>
+    <string name="pet_profile_description">Pulsante profilo animale</string>
 
     <!-- Errori Login/Register -->
     <string name="error_email_login">Inserisci un’email valida.</string>
@@ -45,11 +43,10 @@
     <string name="default_web_client_id">REPLACE_WITH_YOUR_WEB_CLIENT_ID</string>
 
     <!-- Extra -->
-    <string name="hello_world">Hello World!</string>
 
     <!-- Login extra -->
     <string name="forgot_password">Hai dimenticato la password?</string>
-    <string name="or">oppure</string>
+    <string name="or">Oppure</string>
     <string name="continue_with_google">Continua con Google</string>
 
     <!-- Forgot Password / Reset -->
@@ -62,7 +59,27 @@
     <string name="verify_title">Verifica email</string>
     <string name="verify_needed">Devi verificare la tua email per continuare.</string>
     <string name="verify_resend">Invia di nuovo</string>
-    <string name="open_mail">Apri Mail</string>
+    <string name="open_mail">Apri email</string>
     <string name="verify_sent">Ti abbiamo inviato una email di verifica a %1$s.</string>
     <string name="delete">Elimina</string>
+    <string name="settings">Impostazioni</string>
+    <string name="add">Aggiungi</string>
+    <string name="your_pets">I tuoi animali</string>
+    <string name="name">Nome</string>
+    <string name="species">Specie</string>
+    <string name="breed">Razza</string>
+    <string name="date_of_birth">Data di nascita</string>
+    <string name="age">Età</string>
+    <string name="cancel">Annulla</string>
+    <string name="save">Salva</string>
+    <string name="back">Indietro</string>
+    <string name="theme">Tema</string>
+    <string name="language">Lingua</string>
+    <string name="conversation_title_test">Titolo di conversazione di prova</string>
+    <string name="answer">Risposta</string>
+    <string name="question">Domanda</string>
+    <string name="dog">Cane</string>
+    <string name="cat">Gatto</string>
+    <string name="english">Inglese</string>
+    <string name="italian">Italiano</string>
 </resources>

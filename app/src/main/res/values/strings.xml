@@ -11,14 +11,12 @@
     <string name="welcome">Welcome</string>
 
     <!-- Navigazione / testi -->
-    <string name="already_registered">Hai già un account? Accedi</string>
-    <string name="have_account">Non hai un account?</string>
-    <string name="tv_go_register">You don\'t have an account? Register</string>
-    <string name="tv_home_text">You are in the Home page ✅</string>
+    <string name="already_registered">Already have an account?</string>
+    <string name="have_account">Don\'t you have an account? Register</string>
     <string name="home_message">You are in the Home page ✅</string>
 
     <!-- Chat / copy -->
-    <string name="saluto_iniziale">How is %1$s doing?</string>
+    <string name="initial_greeting">How is %1$s doing?</string>
     <string name="hint">Describe your problem</string>
     <string name="no_text">Write a question to the AI regarding your pet</string>
 
@@ -30,8 +28,8 @@
     <string name="no_pet">No pets saved. Add one to get started.</string>
     <string name="add_pet_button">Add a new pet</string>
     <string name="conversations_history_title">Chat</string>
-    <string name="history_description">history button</string>
-    <string name="pet_profile_description">pet profile button</string>
+    <string name="history_description">History button</string>
+    <string name="pet_profile_description">Pet profile button</string>
 
     <!-- Errori Login/Register -->
     <string name="error_email_login">Provide a valid email address.</string>
@@ -45,11 +43,10 @@
     <string name="default_web_client_id">REPLACE_WITH_YOUR_WEB_CLIENT_ID</string>
 
     <!-- Extra -->
-    <string name="hello_world">Hello World!</string>
 
     <!-- Login extra -->
     <string name="forgot_password">Forgot password?</string>
-    <string name="or">or</string>
+    <string name="or">Or</string>
     <string name="continue_with_google">Continue with Google</string>
 
     <!-- Forgot Password / Reset -->
@@ -62,7 +59,27 @@
     <string name="verify_title">Verify your email address</string>
     <string name="verify_needed">You need to verify your email address.</string>
     <string name="verify_resend">Resend verification Email</string>
-    <string name="open_mail">Open Mail</string>
+    <string name="open_mail">Open email</string>
     <string name="verify_sent">We have sent an email to %1$s for verification.</string>
     <string name="delete">Delete</string>
+    <string name="settings">Settings</string>
+    <string name="add">Add</string>
+    <string name="your_pets">Your pets</string>
+    <string name="name">Name</string>
+    <string name="species">Species</string>
+    <string name="breed">Breed</string>
+    <string name="date_of_birth">Date of birth</string>
+    <string name="age">Age</string>
+    <string name="cancel">Cancel</string>
+    <string name="save">Save</string>
+    <string name="back">Back</string>
+    <string name="theme">Theme</string>
+    <string name="language">Language</string>
+    <string name="conversation_title_test">Conversation title test</string>
+    <string name="answer">Answer</string>
+    <string name="question">Question</string>
+    <string name="dog">Dog</string>
+    <string name="cat">Cat</string>
+    <string name="english">English</string>
+    <string name="italian">Italian</string>
 </resources>

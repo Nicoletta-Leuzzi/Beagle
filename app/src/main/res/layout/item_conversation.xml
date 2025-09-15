@@ -31,7 +31,7 @@
             android:maxLines="1"
             android:textSize="16sp"
             android:textStyle="bold"
-            android:text="Titolo conversazione di prova"
+            android:text="@string/conversation_title_test"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintBottom_toTopOf="@id/tvLastModified"

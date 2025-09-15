@@ -49,7 +49,7 @@ public class ProfileFragment extends Fragment {
     private ConstraintLayout btns_save_cancel;
     private SimpleDateFormat sdf;
     private MaterialAutoCompleteTextView autoCompletePet, autoCompleteSpecies;
-    private TextInputLayout autoCompletePetLayout, autoCompleteSpeciesLayout, nameLayout, speciesLayout, breedLayout, birthDateLayout, ageLayout;
+    private TextInputLayout autoCompletePetLayout, autoCompleteSpeciesLayout, nameLayout, breedLayout, birthDateLayout, ageLayout;
     private Pet pet;
     private boolean fieldsError;
     private List<Pet> animals = new ArrayList<>();
@@ -78,7 +78,6 @@ public class ProfileFragment extends Fragment {
         name = view.findViewById(R.id.outlinedTextFieldName);
         nameLayout = view.findViewById(R.id.nameLayout);
         autoCompleteSpecies = view.findViewById(R.id.autoCompleteSpecies);
-        speciesLayout = view.findViewById(R.id.speciesLayoutDropDownMenu);
         breed = view.findViewById(R.id.outlinedTextFieldBreed);
         breedLayout = view.findViewById(R.id.breedLayout);
         birthDate = view.findViewById(R.id.outlinedTextFieldBirthDate);
@@ -102,8 +101,8 @@ public class ProfileFragment extends Fragment {
 
         speciesAdapter = new ArrayAdapter<>(getContext(), android.R.layout.simple_dropdown_item_1line, species);
         autoCompleteSpecies.setAdapter(speciesAdapter);
-        species.add("Cane");
-        species.add("Gatto");
+        species.add(getString(R.string.dog));
+        species.add(getString(R.string.cat));
         speciesAdapter.notifyDataSetChanged();
 
         if(animals.isEmpty()){
@@ -120,7 +119,7 @@ public class ProfileFragment extends Fragment {
             }
 
             if(autoCompleteSpecies.getText().toString().isEmpty()){
-                speciesLayout.setError("Obbligatorio");
+                autoCompleteSpeciesLayout.setError("Obbligatorio");
                 fieldsError = true;
             }
 
@@ -263,7 +262,7 @@ public class ProfileFragment extends Fragment {
             public void onTextChanged(CharSequence s, int start, int before, int count) {
 
                 if (!s.toString().isEmpty()) {
-                    speciesLayout.setError(null);
+                    autoCompleteSpeciesLayout.setError(null);
                 }
             }
 
@@ -405,14 +404,14 @@ public class ProfileFragment extends Fragment {
 
     private void enableAllInputText(){
         nameLayout.setEnabled(true);
-        speciesLayout.setEnabled(true);
+        autoCompleteSpeciesLayout.setEnabled(true);
         breedLayout.setEnabled(true);
         birthDateLayout.setEnabled(true);
     }
 
     private void disableAllInputText(){
         nameLayout.setEnabled(false);
-        speciesLayout.setEnabled(false);
+        autoCompleteSpeciesLayout.setEnabled(false);
         breedLayout.setEnabled(false);
         birthDateLayout.setEnabled(false);
     }
@@ -447,7 +446,7 @@ public class ProfileFragment extends Fragment {
 
     private void resetErrors(){
         nameLayout.setError(null);
-        speciesLayout.setError(null);
+        autoCompleteSpeciesLayout.setError(null);
         breedLayout.setError(null);
         birthDateLayout.setError(null);
     }
