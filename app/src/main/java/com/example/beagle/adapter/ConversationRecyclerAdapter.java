@@ -9,7 +9,6 @@ import android.widget.TextView;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.beagle.R;
-import com.example.beagle.database.DataRoomDatabase;
 import com.example.beagle.model.Conversation;
 
 import java.util.List;
@@ -21,15 +20,15 @@ public class ConversationRecyclerAdapter extends RecyclerView.Adapter<Conversati
         void onClick(Conversation conversation);
     }
 
-    private int layout;
-    private List<Conversation> conversationList;
+    private final int layout;
+    private final List<Conversation> conversationList;
     private Context context;
     private final OnItemClickListener onItemClickListener;
 
 
 
     public class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener{
-        private final TextView tvTitle;
+        private final TextView tvConversationTitle;
         private final TextView tvActivePet;
         private final TextView tvLastModified;
 
@@ -37,7 +36,7 @@ public class ConversationRecyclerAdapter extends RecyclerView.Adapter<Conversati
             super(view);
             // Define click listener for the ViewHolder's View
 
-            tvTitle = view.findViewById(R.id.tvTitle);
+            tvConversationTitle = view.findViewById(R.id.tvConversationTitle);
             tvActivePet = view.findViewById(R.id.tvActivePet);
             tvLastModified = view.findViewById(R.id.tvLastModified);
 
@@ -45,8 +44,8 @@ public class ConversationRecyclerAdapter extends RecyclerView.Adapter<Conversati
 
         }
 
-        public TextView getTvTitle() {
-            return tvTitle;
+        public TextView getTvConversationTitle() {
+            return tvConversationTitle;
         }
 
         public TextView getTvActivePet() {
@@ -90,7 +89,7 @@ public class ConversationRecyclerAdapter extends RecyclerView.Adapter<Conversati
 
     @Override
     public void onBindViewHolder(ViewHolder viewHolder, final int position) {
-        viewHolder.getTvTitle().setText(""+conversationList.get(position).getConversationTitle());
+        viewHolder.getTvConversationTitle().setText(""+conversationList.get(position).getConversationTitle());
         viewHolder.getTvActivePet().setText(""+conversationList.get(position).getPetId()); // TODO: deve ritornare nome pet, non id
         viewHolder.getTvLastModified().setText(""+conversationList.get(position).getCreatedAt()); // TODO: deve ritornare data ultimo messaggio in formato "DD month YYYY"
 
