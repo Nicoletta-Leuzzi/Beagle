@@ -1,4 +1,4 @@
-package com.example.beagle.source.chat;
+package com.example.beagle.model;
 
 import java.util.List;
 
