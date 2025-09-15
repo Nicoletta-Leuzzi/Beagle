@@ -36,7 +36,7 @@ public class UserAuthenticationFirebaseDataSource extends BaseUserAuthentication
         return new User(
                 fu.getDisplayName(),         // name
                 fu.getEmail(),               // email
-                fu.getUid()                  // idToken: usiamo UID come nel prof
+                fu.getUid()                  // idToken
         );
     }
 
