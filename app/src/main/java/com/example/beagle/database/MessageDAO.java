@@ -5,6 +5,7 @@ import androidx.room.Delete;
 import androidx.room.Insert;
 import androidx.room.OnConflictStrategy;
 import androidx.room.Query;
+import androidx.room.Update;
 
 import com.example.beagle.model.Message;
 
@@ -27,6 +28,9 @@ public interface MessageDAO {
 
     @Insert(onConflict = OnConflictStrategy.IGNORE)
     void insert(Message... messages);
+
+    @Update
+    void updateMessages(List<Message> messages);
 
     @Delete
     void delete(Message message);

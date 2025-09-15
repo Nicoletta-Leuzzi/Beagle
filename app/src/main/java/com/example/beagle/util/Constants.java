@@ -20,6 +20,11 @@ public final class Constants {
     public static final int DATABASE_VERSION = 1;
     public static final String SAVED_DATABASE = "saved_db";
     public static final String FIREBASE_REALTIME_DATABASE = "https://beagle-3a3fc-default-rtdb.europe-west1.firebasedatabase.app/";
+    public static final String FIREBASE_MESSAGES_COLLECTION = "messages";
+    public static final String FIREBASE_CONVERSATION_COLLECTION = "conversations";
+    public static final String FIREBASE_PET_COLLECTION = "pets";
+    public static final String FIREBASE_USERS_COLLECTION = "users";
+
 
     public static final String CONVERSATION_BUNDLE_KEY = "current_conversation";
     public static final String PET_BUNDLE_KEY = "current_pet";

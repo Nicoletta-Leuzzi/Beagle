@@ -3,7 +3,6 @@ package com.example.beagle.database;
 import androidx.room.Dao;
 import androidx.room.Delete;
 import androidx.room.Insert;
-import androidx.room.OnConflictStrategy;
 import androidx.room.Query;
 
 import com.example.beagle.model.Pet;
@@ -23,7 +22,10 @@ public interface PetDAO {
     Pet findByName(String name);
 
     @Insert
-    void insertAll(Pet... pets);
+    void insert(Pet... pets);
+
+    @Insert
+    void insertAll(List<Pet> petList);
 
     @Delete
     void delete(Pet pet);
