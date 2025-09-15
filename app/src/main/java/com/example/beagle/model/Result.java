@@ -25,9 +25,25 @@ public abstract class Result {
         }
     }
 
-    public static final class MessageSuccess extends Result {
+    public static final class MessageReadSuccess extends Result {
         private final List<Message> messageList;
-        public MessageSuccess (List<Message> messageList) {
+        public MessageReadSuccess (List<Message> messageList) {
+            this.messageList = messageList;
+        }
+        public List<Message> getData() {return messageList; }
+    }
+
+    public static final class MessageWriteSuccess extends Result {
+        private final List<Message> messageList;
+        public MessageWriteSuccess (List<Message> messageList) {
+            this.messageList = messageList;
+        }
+        public List<Message> getData() {return messageList; }
+    }
+
+    public static final class MessageAISuccess extends Result {
+        private final List<Message> messageList;
+        public MessageAISuccess (List<Message> messageList) {
             this.messageList = messageList;
         }
         public List<Message> getData() {return messageList; }

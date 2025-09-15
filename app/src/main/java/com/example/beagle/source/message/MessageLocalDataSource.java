@@ -21,7 +21,6 @@ public class MessageLocalDataSource extends BaseMessageLocalDataSource {
     @Override
     public void getMessages(long conversationId) {
         DataRoomDatabase.databaseWriteExecutor.execute(() -> {
-            Log.d("TIMING", "GETMESSAGES");
             messageCallback.onSuccessReadFromLocal(messageDAO.getMessages(conversationId));
         });
     }
@@ -41,7 +40,6 @@ public class MessageLocalDataSource extends BaseMessageLocalDataSource {
     @Override
     public void insertMessage(Message message, long conversationId) {
         DataRoomDatabase.databaseWriteExecutor.execute(() -> {
-            Log.d("asd", "InsertLocalMessage");
             messageDAO.insert(message);
             List<Message> messageAddedList = new ArrayList<>();
             messageAddedList.addAll(messageDAO.getMessages(conversationId));
@@ -53,7 +51,6 @@ public class MessageLocalDataSource extends BaseMessageLocalDataSource {
     public void updateMessages(List<Message> messageList, long conversationId) {
         DataRoomDatabase.databaseWriteExecutor.execute(() -> {
             messageDAO.updateMessages(messageList);
-            Log.d("TIMING", "UPDATEMESSAGES");
             List<Message> updatedMessageList = messageDAO.getMessages(conversationId);
             messageCallback.onSuccessUpdateFromLocal(updatedMessageList);
         });

@@ -55,7 +55,7 @@ public class MessageFirebaseDataSource extends BaseMessageRemoteDataSource {
     }
 
     @Override
-    public void insertMessage(Message message, long conversationId, long seq) {
-        databaseReference.child(Long.toString(conversationId)).child(Long.toString(seq)).setValue(message);
+    public void insertMessage(Message message, long conversationId, int seq) {
+        databaseReference.child(Long.toString(conversationId)).child(Integer.toString(seq)).setValue(message);
     }
 }
