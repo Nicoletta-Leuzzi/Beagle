@@ -14,4 +14,6 @@ public abstract class BaseConversationRemoteDataSource {
     public abstract void getConversations(long petId);
 
     public abstract void insertConversation(Conversation conversation, long petId);
+
+    public abstract void deleteConversation(long conversationId, long petId);
 }

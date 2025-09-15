@@ -50,6 +50,17 @@ public class ConversationRepository implements IConversationResponseCallback {
     }
 
     @Override
+    public void onSuccessReadFromRemote(List <Conversation> conversationList, long petId) {
+        conversationLocalDataSource.insertConversations(conversationList, petId);
+    }
+
+    @Override
+    public void onFailureReadFromRemote(Exception exception) {
+        Result.Error result = new Result.Error(exception.getMessage());
+        conversationsMutableLiveData.postValue(result);
+    }
+
+    @Override
     public void onSuccessFromLocal(List<Conversation> conversationList) {
         Result.ConversationSuccess result = new Result.ConversationSuccess(conversationList);
         conversationsMutableLiveData.postValue(result);
@@ -57,6 +68,17 @@ public class ConversationRepository implements IConversationResponseCallback {
 
     @Override
     public void onFailureFromLocal(Exception exception) {
+        Result.Error result = new Result.Error(exception.getMessage());
+        conversationsMutableLiveData.postValue(result);
+    }
+
+    @Override
+    public void onSuccessDeleteFromRemote() {
+        // TODO
+    }
+
+    @Override
+    public void onFailureDeleteFromRemote(Exception exception) {
         Result.Error result = new Result.Error(exception.getMessage());
         conversationsMutableLiveData.postValue(result);
     }

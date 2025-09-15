@@ -25,10 +25,10 @@ public interface ConversationDAO {
     @Query("SELECT * FROM CONVERSATION WHERE petId = :petId AND conversationId = :conversationId")
     Conversation getSingleConversation(long petId, long conversationId);
 
-    @Insert(onConflict = OnConflictStrategy.IGNORE)
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
     void insertAll(List<Conversation> conversations);
 
-    @Insert(onConflict = OnConflictStrategy.IGNORE)
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
     void insert(Conversation... conversations);
 
     @Delete()
