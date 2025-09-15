@@ -24,7 +24,6 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 
-import com.example.beagle.database.DataRoomDatabase;
 import com.example.beagle.model.Conversation;
 import com.example.beagle.util.Constants;
 import com.example.beagle.util.ServiceLocator;
@@ -80,6 +79,7 @@ public class ConversationsHistoryFragment extends Fragment {
             public void onCreateMenu(@NonNull Menu menu, @NonNull MenuInflater menuInflater) {
                 menu.clear();
                 menuInflater.inflate(R.menu.menu_conversations_history, menu);
+                // TODO: gestire menu_item_conversation
             }
 
             @Override
