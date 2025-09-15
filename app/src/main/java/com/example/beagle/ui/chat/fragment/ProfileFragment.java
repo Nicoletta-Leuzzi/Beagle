@@ -45,7 +45,7 @@ import java.util.Locale;
 public class ProfileFragment extends Fragment {
 
     private TextInputEditText name, breed, birthDate, age;
-    private Button btnSave, btnCancel, btnAdd, btnDelete, btnSetings;
+    private Button btnSave, btnCancel, btnAdd, btnDelete, btnSettings;
     private ConstraintLayout btns_save_cancel;
     private SimpleDateFormat sdf;
     private MaterialAutoCompleteTextView autoCompletePet, autoCompleteSpecies;
@@ -89,7 +89,7 @@ public class ProfileFragment extends Fragment {
         btnCancel = view.findViewById(R.id.btn_cancel);
         btnAdd = view.findViewById(R.id.btnAdd);
         btnDelete = view.findViewById(R.id.btn_delete);
-        btnSetings = view.findViewById(R.id.btnSettings);
+        btnSettings = view.findViewById(R.id.btnSettings);
         autoCompletePet = view.findViewById(R.id.outlinedTextFieldDropDownMenu);
         autoCompletePetLayout = view.findViewById(R.id.textInputLayoutDropDownMenu);
         autoCompleteSpeciesLayout = view.findViewById(R.id.speciesLayoutDropDownMenu);
@@ -156,6 +156,7 @@ public class ProfileFragment extends Fragment {
                     autoCompletePet.setText(pet.toString(), false);
                 }
                 btnAdd.setVisibility(VISIBLE);
+                btnSettings.setVisibility(VISIBLE);
                 btnDelete.setVisibility(VISIBLE);
                 btns_save_cancel.setVisibility(INVISIBLE);
             }
@@ -183,6 +184,7 @@ public class ProfileFragment extends Fragment {
             resetErrors();
             disableAllInputText();
             btnAdd.setVisibility(VISIBLE);
+            btnSettings.setVisibility(VISIBLE);
             btns_save_cancel.setVisibility(INVISIBLE);
         });
 
@@ -312,6 +314,7 @@ public class ProfileFragment extends Fragment {
 
         btnAdd.setOnClickListener(v->{
             btnAdd.setVisibility(INVISIBLE);
+            btnSettings.setVisibility(INVISIBLE);
             btns_save_cancel.setVisibility(VISIBLE);
             btnDelete.setVisibility(INVISIBLE);
             disableDropDownMenu();
@@ -342,7 +345,7 @@ public class ProfileFragment extends Fragment {
 //                speciesAdapter.getFilter().filter(null);
 //        });
 
-        btnSetings.setOnClickListener(v->{
+        btnSettings.setOnClickListener(v->{
             Navigation.findNavController(v)
                     .navigate(R.id.action_profileFragment_to_settingsFragment);
         });
