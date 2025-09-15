@@ -161,7 +161,7 @@
                     app:startIconDrawable="@drawable/outline_calendar_month_24"
                     android:enabled="false"
                     android:layout_marginEnd="16dp"
-                    android:layout_weight="70"
+                    android:layout_weight="50"
                     app:helperText=" "
                     >
 
@@ -185,7 +185,7 @@
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintTop_toTopOf="parent"
                     android:enabled="false"
-                    android:layout_weight="30"
+                    android:layout_weight="50"
                     >
 
                     <com.google.android.material.textfield.TextInputEditText

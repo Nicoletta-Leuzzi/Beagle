@@ -39,37 +39,70 @@ public class MessageRepository implements IMessageResponseCallback {
         return  allMessagesMutableLiveData;
     }
 
-    public void addMessage(Message message) {
-        messageLocalDataSource.insertMessage(message);
+    public MutableLiveData<Result> addMessage(Message message, long conversationId, long seq) {
+        messageLocalDataSource.insertMessage(message, conversationId);
         // TODO: Come faccio ad inserire un messaggio sia su locale, sia su firebase?
-        messageRemoteDataSource.insertMessage(message);
+        messageRemoteDataSource.insertMessage(message, conversationId, seq);
+        return allMessagesMutableLiveData;
     }
 
 
-
-    public void onSuccessFromRemote(List<Message> messageList) {
-        messageLocalDataSource.insertMessages(messageList);
-    }
-
-    public void onFailureFromRemote(String exception) {
-        Result.Error result = new Result.Error(exception);
-        allMessagesMutableLiveData.postValue(result);
+    @Override
+    public void onSuccessReadFromRemote(List<Message> messageList, long conversationId) {
+        messageLocalDataSource.updateMessages(messageList, conversationId);
     }
 
     @Override
-    public void onSuccessFromLocal(List<Message> messageList) {
-        Result.MessageSuccess result = new Result.MessageSuccess(new MessageAPIResponse(messageList));
-        allMessagesMutableLiveData.postValue(result);
-    }
-
-    @Override
-    public void onFailureFromLocal(Exception exception) {
+    public void onFailureReadFromRemote(Exception exception) {
         Result.Error result = new Result.Error(exception.getMessage());
         allMessagesMutableLiveData.postValue(result);
     }
 
     @Override
-    public void onMessageAdded(Message message) {
-        messageLocalDataSource.insertMessage(message);
+    public void onSuccessReadFromLocal(List<Message> messageList) {
+        Result.MessageSuccess result = new Result.MessageSuccess(messageList);
+        allMessagesMutableLiveData.postValue(result);
     }
+
+    @Override
+    public void onFailureReadFromLocal(Exception exception) {
+        Result.Error result = new Result.Error(exception.getMessage());
+        allMessagesMutableLiveData.postValue(result);
+    }
+
+    @Override
+    public void onSuccessUpdateFromLocal(List<Message> messageList) {
+        Result.MessageSuccess result = new Result.MessageSuccess(messageList);
+        allMessagesMutableLiveData.postValue(result);
+    }
+
+    @Override
+    public void onFailureUpdateFromLocal(Exception exception) {
+        Result.Error result = new Result.Error(exception.getMessage());
+        allMessagesMutableLiveData.postValue(result);
+    }
+
+
+    @Override
+    public void onSuccessWriteFromRemote(Message message) {
+
+    }
+
+    @Override
+    public void onFailureWriteFromRemote(String exception) {
+
+    }
+
+    @Override
+    public void onSuccessWriteFromLocal(List<Message> messageList) {
+        Result.MessageSuccess result = new Result.MessageSuccess(messageList);
+        allMessagesMutableLiveData.postValue(result);
+    }
+
+    @Override
+    public void onFailureWriteFromLocal(Exception exception) {
+
+    }
+
+
 }

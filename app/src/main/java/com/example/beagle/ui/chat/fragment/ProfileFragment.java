@@ -6,6 +6,7 @@ import static android.view.View.VISIBLE;
 import android.os.Build;
 import android.os.Bundle;
 
+import androidx.annotation.RequiresApi;
 import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.fragment.app.Fragment;
 import androidx.navigation.Navigation;
@@ -20,6 +21,8 @@ import android.widget.Button;
 
 import com.example.beagle.R;
 import com.example.beagle.model.Pet;
+import com.google.android.material.datepicker.CalendarConstraints;
+import com.google.android.material.datepicker.DateValidatorPointBackward;
 import com.google.android.material.datepicker.MaterialDatePicker;
 import com.google.android.material.datepicker.MaterialPickerOnPositiveButtonClickListener;
 import com.google.android.material.snackbar.Snackbar;
@@ -29,6 +32,10 @@ import com.google.android.material.textfield.TextInputLayout;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.time.Instant;
+import java.time.LocalDate;
+import java.time.ZoneId;
+import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
@@ -50,6 +57,8 @@ public class ProfileFragment extends Fragment {
     // 0 = cane, 1 = gatto
     private ArrayAdapter<Pet> petAdapter;
     private ArrayAdapter<String> speciesAdapter;
+
+    private int years = 0, remainingMonths = 0;
 
     public ProfileFragment() {
         // Required empty public constructor
@@ -202,14 +211,36 @@ public class ProfileFragment extends Fragment {
 
             }
 
+            @RequiresApi(api = Build.VERSION_CODES.O)
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
 
                 if (!s.toString().isEmpty()) {
                     birthDateLayout.setError(null);
                     try {
-                        age.setText(calculateAge(sdf.parse(birthDate.getText()
-                        .toString()).getTime()));
+                        years = (calculateAge(sdf.parse(birthDate.getText().toString()).getTime())/12);
+                        remainingMonths = (calculateAge(sdf.parse(birthDate.getText().toString()).getTime())%12);
+
+                        StringBuilder sb = new StringBuilder();
+
+                        // Gestione anni
+                        if (years > 0) {
+                            sb.append(years).append(years == 1 ? " Year" : " Years");
+                        }
+
+                        // Gestione mesi (solo se > 0)
+                        if (remainingMonths > 0) {
+                            if (sb.length() > 0) sb.append(" "); // aggiunge spazio se c’è già "Year"
+                            sb.append(remainingMonths).append(remainingMonths == 1 ? " Month" : " Months");
+                        }
+
+                        // Se entrambi 0 (caso raro: oggi è la data di nascita)
+                        if (sb.length() == 0) {
+                            sb.append("0 Months");
+                        }
+
+                        age.setText(sb.toString());
+
                     } catch (ParseException e) {
                         throw new RuntimeException(e);
                     }
@@ -332,6 +363,11 @@ public class ProfileFragment extends Fragment {
         MaterialDatePicker.Builder<Long> builder = MaterialDatePicker.Builder.datePicker();
         builder.setTitleText("Select Birth Date");
 
+        // Imposto il vincolo di non poter scegliere date future
+        CalendarConstraints.Builder constraintsBuilder = new CalendarConstraints.Builder();
+        constraintsBuilder.setValidator(DateValidatorPointBackward.now());
+        builder.setCalendarConstraints(constraintsBuilder.build());
+
         // Se c’è già una data scritta, impostala come selezione iniziale
         String currentText = birthDate.getText() != null ? birthDate.getText().toString() : "";
         if (!currentText.isEmpty()) {
@@ -416,22 +452,30 @@ public class ProfileFragment extends Fragment {
         birthDateLayout.setError(null);
     }
 
-    private String calculateAge(long birthDateMillis) {
-        Calendar birth = Calendar.getInstance();
-        birth.setTime(new Date(birthDateMillis));
+        @RequiresApi(api = Build.VERSION_CODES.O)
+        private int calculateAge(long birthTimestamp) {
+            // Converte il timestamp in LocalDate
+            LocalDate birthDate = Instant.ofEpochMilli(birthTimestamp)
+                    .atZone(ZoneId.systemDefault())
+                    .toLocalDate();
 
-        Calendar today = Calendar.getInstance();
+            LocalDate today = LocalDate.now();
 
-        int years = today.get(Calendar.YEAR) - birth.get(Calendar.YEAR);
+            // Calcola mesi totali tra anni e mesi
+            int months = (today.getYear() - birthDate.getYear()) * 12
+                    + (today.getMonthValue() - birthDate.getMonthValue());
 
-        if (today.get(Calendar.MONTH) < birth.get(Calendar.MONTH) ||
-                (today.get(Calendar.MONTH) == birth.get(Calendar.MONTH) &&
-                        today.get(Calendar.DAY_OF_MONTH) < birth.get(Calendar.DAY_OF_MONTH))) {
-            years--;
+            // Se il giorno odierno è prima del giorno di nascita, sottrai 1 mese
+            if (today.getDayOfMonth() < birthDate.getDayOfMonth()) {
+                months--;
+            }
+
+            // Sicurezza: non avere mesi negativi
+            months = Math.max(months, 0);
+
+            return months;
         }
 
-        return years+"";
-    }
 
     private byte mapSpeciesToCode(String label) {
         if (label == null) return -1;

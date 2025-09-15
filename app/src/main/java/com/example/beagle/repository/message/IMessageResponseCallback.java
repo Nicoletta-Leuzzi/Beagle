@@ -5,9 +5,18 @@ import com.example.beagle.model.Message;
 import java.util.List;
 
 public interface IMessageResponseCallback {
-    void onSuccessFromRemote(List<Message> messageList);
-    void onFailureFromRemote(String exception);
-    void onSuccessFromLocal(List<Message> messageList);
-    void onFailureFromLocal(Exception exception);
-    void onMessageAdded(Message message);
+    void onSuccessReadFromRemote(List<Message> messageList, long conversationId);
+    void onFailureReadFromRemote(Exception exception);
+    void onSuccessReadFromLocal(List<Message> messageList);
+    void onFailureReadFromLocal(Exception exception);
+
+    void onSuccessUpdateFromLocal(List<Message> messageList);
+    void onFailureUpdateFromLocal(Exception exception);
+
+
+    void onSuccessWriteFromRemote(Message message);
+    void onFailureWriteFromRemote(String exception);
+    void onSuccessWriteFromLocal(List<Message> messageList);
+    void onFailureWriteFromLocal(Exception exception);
+
 }

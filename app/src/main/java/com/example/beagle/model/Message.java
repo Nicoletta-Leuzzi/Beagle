@@ -39,6 +39,7 @@ public class Message {
     public long getConversationId() {
         return conversationId;
     }
+
     public void setConversationId(@NonNull long conversationId) {
         this.conversationId = conversationId;
     }
@@ -49,21 +50,12 @@ public class Message {
     public void setSeq(int seq) {
         this.seq = seq;
     }
-
     public long getTs() {
         return ts;
     }
     public void setTs(long ts) {
         this.ts = ts;
     }
-
-    public String getMessageContent() {
-        return content;
-    }
-    public void setMessageContent(String content) {
-        this.content = content;
-    }
-
     public boolean isFromUser() {
         return fromUser;
     }

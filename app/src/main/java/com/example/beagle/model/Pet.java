@@ -1,9 +1,16 @@
 package com.example.beagle.model;
 
+import android.os.Build;
+
+import java.time.Instant;
+import java.time.LocalDate;
+import java.time.ZoneId;
+import java.time.temporal.ChronoUnit;
 import java.util.Calendar;
 import java.util.Date;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.RequiresApi;
 import androidx.room.Entity;
 import androidx.room.ForeignKey;
 import androidx.room.Ignore;
@@ -142,21 +149,28 @@ public class Pet {
         this.breed = breed;
     }
 
-    private String calculateAge(long birthDateMillis) {
-        Calendar birth = Calendar.getInstance();
-        birth.setTime(new Date(birthDateMillis));
+    @RequiresApi(api = Build.VERSION_CODES.O)
+    private String calculateAge(long birthTimestamp) {
+        // Converte il timestamp in LocalDate
+        LocalDate birthDate = Instant.ofEpochMilli(birthTimestamp)
+                .atZone(ZoneId.systemDefault())
+                .toLocalDate();
 
-        Calendar today = Calendar.getInstance();
+        LocalDate today = LocalDate.now();
 
-        int years = today.get(Calendar.YEAR) - birth.get(Calendar.YEAR);
+        // Calcola mesi totali tra anni e mesi
+        int months = (today.getYear() - birthDate.getYear()) * 12
+                + (today.getMonthValue() - birthDate.getMonthValue());
 
-        if (today.get(Calendar.MONTH) < birth.get(Calendar.MONTH) ||
-                (today.get(Calendar.MONTH) == birth.get(Calendar.MONTH) &&
-                        today.get(Calendar.DAY_OF_MONTH) < birth.get(Calendar.DAY_OF_MONTH))) {
-            years--;
+        // Se il giorno odierno è prima del giorno di nascita, sottrai 1 mese
+        if (today.getDayOfMonth() < birthDate.getDayOfMonth()) {
+            months--;
         }
 
-        return years+"";
+        // Sicurezza: non avere mesi negativi
+        months = Math.max(months, 0);
+
+        return months + "";
     }
 
     public String toString(){

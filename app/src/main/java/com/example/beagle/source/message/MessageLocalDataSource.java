@@ -1,9 +1,12 @@
 package com.example.beagle.source.message;
 
+import android.util.Log;
+
 import com.example.beagle.database.DataRoomDatabase;
 import com.example.beagle.database.MessageDAO;
 import com.example.beagle.model.Message;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class MessageLocalDataSource extends BaseMessageLocalDataSource {
@@ -18,7 +21,8 @@ public class MessageLocalDataSource extends BaseMessageLocalDataSource {
     @Override
     public void getMessages(long conversationId) {
         DataRoomDatabase.databaseWriteExecutor.execute(() -> {
-            messageCallback.onSuccessFromLocal(messageDAO.getMessages(conversationId));
+            Log.d("TIMING", "GETMESSAGES");
+            messageCallback.onSuccessReadFromLocal(messageDAO.getMessages(conversationId));
         });
     }
 
@@ -29,17 +33,29 @@ public class MessageLocalDataSource extends BaseMessageLocalDataSource {
             messageDAO.insertAll(messageList);
             List<Message> updatedMessageList = messageDAO.getAll();
 
-            messageCallback.onSuccessFromLocal(updatedMessageList);
+            messageCallback.onSuccessReadFromLocal(updatedMessageList);
         });
     }
 
 
     @Override
-    public void insertMessage(Message message) {
+    public void insertMessage(Message message, long conversationId) {
         DataRoomDatabase.databaseWriteExecutor.execute(() -> {
+            Log.d("asd", "InsertLocalMessage");
             messageDAO.insert(message);
-            Message messageAdded = messageDAO.getSingleMessage(message.getConversationId(), message.getSeq());
-            messageCallback.onMessageAdded(messageAdded);
+            List<Message> messageAddedList = new ArrayList<>();
+            messageAddedList.addAll(messageDAO.getMessages(conversationId));
+            messageCallback.onSuccessWriteFromLocal(messageAddedList);
+        });
+    }
+
+    @Override
+    public void updateMessages(List<Message> messageList, long conversationId) {
+        DataRoomDatabase.databaseWriteExecutor.execute(() -> {
+            messageDAO.updateMessages(messageList);
+            Log.d("TIMING", "UPDATEMESSAGES");
+            List<Message> updatedMessageList = messageDAO.getMessages(conversationId);
+            messageCallback.onSuccessUpdateFromLocal(updatedMessageList);
         });
     }
 }
