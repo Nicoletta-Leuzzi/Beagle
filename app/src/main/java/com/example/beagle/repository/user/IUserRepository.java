@@ -29,6 +29,5 @@ public interface IUserRepository {
     /** Reset password via email */
     Task<Void> sendPasswordReset(String email);
 
-    /** Invio email di verifica all’utente corrente */
-    Task<Void> sendEmailVerification();
+
 }

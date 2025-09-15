@@ -7,16 +7,14 @@ import com.example.beagle.model.User;
 import com.example.beagle.source.user.BaseUserAuthenticationRemoteDataSource;
 import com.example.beagle.source.user.UserAuthenticationFirebaseDataSource;
 import com.google.android.gms.tasks.Task;
-import com.google.android.gms.tasks.Tasks;
 import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.FirebaseUser;
 
 public class UserRepository implements IUserRepository {
 
     private final BaseUserAuthenticationRemoteDataSource userRemoteDataSource;
     private final MutableLiveData<Result> userMutableLiveData = new MutableLiveData<>();
 
-    // di default Firebase
+    // Puoi passare l'impl che vuoi; di default Firebase
     public UserRepository() {
         this(new UserAuthenticationFirebaseDataSource());
     }
@@ -26,7 +24,7 @@ public class UserRepository implements IUserRepository {
         this.userRemoteDataSource.setUserResponseCallback(callback);
     }
 
-    // ----- CALLBACK UNICO -----
+    // ----- CALLBACK UNICO  -----
     private final UserResponseCallback callback = new UserResponseCallback() {
         @Override
         public void onSuccessFromAuthentication(User user) {
@@ -53,6 +51,7 @@ public class UserRepository implements IUserRepository {
             userMutableLiveData.postValue(new Result.UserSuccess(null));
         }
     };
+    // ----- FINE CALLBACK -----
 
     @Override
     public MutableLiveData<Result> getGoogleUser(String idToken) {
@@ -96,19 +95,11 @@ public class UserRepository implements IUserRepository {
         return userRemoteDataSource.getLoggedUser();
     }
 
-    // Reset password
+    // --- Reset password ---
     @Override
     public Task<Void> sendPasswordReset(String email) {
         return FirebaseAuth.getInstance().sendPasswordResetEmail(email);
     }
 
-    // Invio email di verifica
-    @Override
-    public Task<Void> sendEmailVerification() {
-        FirebaseUser current = FirebaseAuth.getInstance().getCurrentUser();
-        if (current == null) {
-            return Tasks.forException(new IllegalStateException("Nessun utente autenticato"));
-        }
-        return current.sendEmailVerification();
-    }
+
 }
