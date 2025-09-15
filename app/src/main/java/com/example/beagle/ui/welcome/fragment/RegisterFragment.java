@@ -40,7 +40,7 @@ public class RegisterFragment extends Fragment {
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        // Come per il login, per rapidità riuso activity_register (puoi duplicarlo come fragment_register).
+        // Come per il login, per rapidità riuso activity_register
         return inflater.inflate(R.layout.fragment_register, container, false);
     }
 

@@ -16,7 +16,7 @@ public class UserRepository implements IUserRepository {
     private final BaseUserAuthenticationRemoteDataSource userRemoteDataSource;
     private final MutableLiveData<Result> userMutableLiveData = new MutableLiveData<>();
 
-    // Puoi passare l'impl che vuoi; di default Firebase
+    // di default Firebase
     public UserRepository() {
         this(new UserAuthenticationFirebaseDataSource());
     }
@@ -26,7 +26,7 @@ public class UserRepository implements IUserRepository {
         this.userRemoteDataSource.setUserResponseCallback(callback);
     }
 
-    // ----- CALLBACK UNICO stile prof -----
+    // ----- CALLBACK UNICO -----
     private final UserResponseCallback callback = new UserResponseCallback() {
         @Override
         public void onSuccessFromAuthentication(User user) {
@@ -53,7 +53,6 @@ public class UserRepository implements IUserRepository {
             userMutableLiveData.postValue(new Result.UserSuccess(null));
         }
     };
-    // ----- FINE CALLBACK -----
 
     @Override
     public MutableLiveData<Result> getGoogleUser(String idToken) {
@@ -97,13 +96,13 @@ public class UserRepository implements IUserRepository {
         return userRemoteDataSource.getLoggedUser();
     }
 
-    // --- Reset password ---
+    // Reset password
     @Override
     public Task<Void> sendPasswordReset(String email) {
         return FirebaseAuth.getInstance().sendPasswordResetEmail(email);
     }
 
-    // --- NUOVO: invio email di verifica ---
+    // Invio email di verifica
     @Override
     public Task<Void> sendEmailVerification() {
         FirebaseUser current = FirebaseAuth.getInstance().getCurrentUser();

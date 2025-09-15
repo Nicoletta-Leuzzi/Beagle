@@ -18,10 +18,10 @@ public class UserViewModel extends ViewModel {
     private final IUserRepository userRepository;
     private MutableLiveData<Result> userMutableLiveData;
 
-    // NEW: risultato del reset password
+    // risultato del reset password
     private final MutableLiveData<Result> resetResult = new MutableLiveData<>();
 
-    // NEW: risultato invio email di verifica
+    // risultato invio email di verifica
     private final MutableLiveData<Result> verificationResult = new MutableLiveData<>();
 
     private boolean authenticationError = false;
@@ -36,7 +36,7 @@ public class UserViewModel extends ViewModel {
         this.userRepository = userRepository;
     }
 
-    /** Entry point stile prof: se isUserRegistered==true -> login, altrimenti -> signup. */
+    /** Entry point: se isUserRegistered==true -> login, altrimenti -> signup. */
     public LiveData<Result> getUserMutableLiveData(String email, String password, boolean isUserRegistered) {
         if (userMutableLiveData == null) {
             userMutableLiveData = userRepository.getUser(email, password, isUserRegistered);
@@ -102,7 +102,7 @@ public class UserViewModel extends ViewModel {
         return resetResult;
     }
 
-    // ========= NEW: EMAIL VERIFICATION =========
+    // ========= EMAIL VERIFICATION =========
     /** Invia (o reinvia) l'email di verifica all'utente attualmente autenticato. */
     public LiveData<Result> resendEmailVerification() {
         userRepository.sendEmailVerification()

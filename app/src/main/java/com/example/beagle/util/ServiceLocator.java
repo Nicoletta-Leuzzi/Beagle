@@ -38,14 +38,13 @@ public class ServiceLocator {
         return INSTANCE;
     }
 
-    /** Compat per vecchi punti chiamanti: ignora il parametro. */
     @Deprecated
     public static ServiceLocator getInstance(Context ignored) {
         return getInstance();
     }
 
-    /**
-     * Restituisce il repository utente (solo autenticazione)*/
+
+    // Restituisce il repository utente (solo autenticazione)
     public IUserRepository getUserRepository(Application application) {
         if (userRepository == null) {
             BaseUserAuthenticationRemoteDataSource authDs = new UserAuthenticationFirebaseDataSource();
