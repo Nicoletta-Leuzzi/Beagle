@@ -79,7 +79,7 @@ public class ConversationFirebaseDataSource extends BaseConversationRemoteDataSo
                 .removeValue();
 
         Tasks.whenAll(delConversation, delMessages)
-                .addOnCompleteListener( task -> {
+                .addOnCompleteListener(task -> {
                     boolean ok = delConversation.isSuccessful() && delMessages.isSuccessful();
                     if (ok) {
                         conversationCallback.onSuccessDeleteFromRemote();
