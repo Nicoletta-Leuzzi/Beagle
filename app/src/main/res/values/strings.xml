@@ -12,7 +12,7 @@
 
     <!-- Navigazione / testi -->
     <string name="already_registered">Already have an account?</string>
-    <string name="have_account">Don\'t you have an account? Register</string>
+    <string name="have_account">Don\'t you have an account?</string>
     <string name="home_message">You are in the Home page ✅</string>
 
     <!-- Chat / copy -->
