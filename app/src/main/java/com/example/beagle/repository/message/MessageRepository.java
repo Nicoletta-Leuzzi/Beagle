@@ -52,8 +52,6 @@ public class MessageRepository implements IMessageResponseCallback {
     public MutableLiveData<Result> addMessage(Message message, long conversationId, int seq) {
         Log.d("test", "ADDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDMES");
         messageLocalDataSource.insertMessage(message, conversationId);
-        // TODO: Come faccio ad inserire un messaggio sia su locale, sia su firebase?
-        //messageRemoteDataSource.insertMessage(message, conversationId, seq);
         return messageAddedLiveData;
     }
 
@@ -120,12 +118,9 @@ public class MessageRepository implements IMessageResponseCallback {
         //messageList.add(message);
         Result.MessageReadSuccess result = new Result.MessageReadSuccess(allMessages);
         messageAddedLiveData.postValue(result);
-        allMessagesMutableLiveData.postValue(result);
-        messageRemoteDataSource.insertMessage(message, conversationId, seq);
-
-
-
+        // Commentato perchè la lettura creava problemi con il MockAPI
         //allMessagesMutableLiveData.postValue(result);
+        messageRemoteDataSource.insertMessage(message, conversationId, seq);
     }
 
     @Override
