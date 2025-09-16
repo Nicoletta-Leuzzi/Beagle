@@ -6,8 +6,11 @@ import android.os.Bundle;
 
 
 import androidx.appcompat.app.AppCompatDelegate;
+import androidx.core.os.LocaleListCompat;
 import androidx.fragment.app.Fragment;
 
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -59,13 +62,14 @@ public class SettingsFragment extends Fragment {
         autoCompleteLanguage.setAdapter(languageAdapter);
 
         themeSwitch.setOnCheckedChangeListener((buttonView, isChecked) -> {
+            autoCompleteLanguage.dismissDropDown();
+            autoCompleteLanguage.clearFocus();
             if (isChecked) {
-                autoCompleteLanguage.clearFocus();
+
                 // Tema scuro
                 AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES);
                 themeSwitch.setThumbIconResource(R.drawable.dark_mode);
             } else {
-                autoCompleteLanguage.clearFocus();
                 // Tema chiaro
                 AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO);
                 themeSwitch.setThumbIconResource(R.drawable.light_mode);
@@ -74,12 +78,24 @@ public class SettingsFragment extends Fragment {
 
         textInputLayoutLanguage.setEndIconOnClickListener(null);
 
-        autoCompleteLanguage.setOnClickListener(v->{
+        autoCompleteLanguage.setOnClickListener(v -> {
             if (!autoCompleteLanguage.getText().toString().isEmpty()) {
                 languageAdapter.getFilter().filter(null);
             }
         });
 
+        autoCompleteLanguage.setOnItemClickListener((parent, v, position, id) -> {
+            autoCompleteLanguage.dismissDropDown();
+            autoCompleteLanguage.clearFocus();
+
+            String selected = (String) parent.getItemAtPosition(position);
+
+            if (selected.equalsIgnoreCase(getString(R.string.english))) {
+                AppCompatDelegate.setApplicationLocales(LocaleListCompat.forLanguageTags("en"));
+            } else if (selected.equalsIgnoreCase(getString(R.string.italian))) {
+                AppCompatDelegate.setApplicationLocales(LocaleListCompat.forLanguageTags("it"));
+            }
+        });
 
         btnLogout.setOnClickListener(v -> {
             FirebaseAuth.getInstance().signOut();
@@ -94,26 +110,13 @@ public class SettingsFragment extends Fragment {
         });
 
 
-
-
-
-
-
-
-
         return view;
     }
-}
-
-
-
-
 
 
 //METODI
 
-
-
+}
 
 
 
