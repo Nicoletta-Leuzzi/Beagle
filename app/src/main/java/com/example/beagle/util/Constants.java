@@ -28,6 +28,7 @@ public final class Constants {
 
 
     public static final String CONVERSATION_BUNDLE_KEY = "current_conversation";
+    public static final String CONVERSATION_DELETED_BUNDLE_KEY = "deleted_conversation";
     public static final String PET_BUNDLE_KEY = "current_pet";
 
     // API

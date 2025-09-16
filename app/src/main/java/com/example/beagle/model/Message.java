@@ -35,6 +35,15 @@ public class Message {
         this.content = content;
     }
 
+    // costruttore per il messaggio dell'AI
+    public Message(APIMessage AImessage, long conversationId, int seq) {
+        this.conversationId = conversationId;
+        this.seq = seq;
+        this.ts = System.currentTimeMillis();
+        this.content = AImessage.getContent();
+        this.fromUser = false;
+    }
+
 
     public long getConversationId() {
         return conversationId;

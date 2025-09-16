@@ -25,4 +25,8 @@ public class ConversationViewModel extends ViewModel {
         conversationRepository.addConversation(conversation, petId);
     }
 
+    public void deleteConversation(Conversation conversation, long petId) {
+        conversationRepository.deleteConversation(conversation, petId);
+    }
+
 }

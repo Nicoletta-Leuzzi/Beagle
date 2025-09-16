@@ -7,7 +7,6 @@ import com.example.beagle.model.Result;
 import com.example.beagle.source.conversation.BaseConversationLocalDataSource;
 import com.example.beagle.source.conversation.BaseConversationRemoteDataSource;
 
-import java.util.ArrayList;
 import java.util.List;
 
 public class ConversationRepository implements IConversationResponseCallback {
@@ -36,6 +35,11 @@ public class ConversationRepository implements IConversationResponseCallback {
 
     public void addConversation(Conversation conversation, long petId){
         conversationLocalDataSource.insertConversation(conversation, petId);
+    }
+
+    public void deleteConversation(Conversation conversation, long petId) {
+        conversationLocalDataSource.deleteConversation(conversation, petId);
+        conversationRemoteDataSource.deleteConversation(conversation.getConversationId(), petId);
     }
 
     @Override
@@ -75,6 +79,7 @@ public class ConversationRepository implements IConversationResponseCallback {
     @Override
     public void onSuccessDeleteFromRemote() {
         // TODO
+
     }
 
     @Override

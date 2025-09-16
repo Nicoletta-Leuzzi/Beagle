@@ -35,4 +35,7 @@ public interface MessageDAO {
     @Delete
     void delete(Message message);
 
+    @Query("DELETE FROM Message WHERE conversationId = :conversationId")
+    void deleteByConversation(long conversationId);
+
 }
