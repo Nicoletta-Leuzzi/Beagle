@@ -109,11 +109,12 @@ public class MessageRepository implements IMessageResponseCallback {
     }
 
     @Override
-    public void onSuccessWriteFromLocal(Message message, long conversationId, int seq) {
-        List<Message> messageList = new ArrayList<>();
-        messageList.add(message);
-        Result.MessageReadSuccess result = new Result.MessageReadSuccess(messageList);
+    public void onSuccessWriteFromLocal(List<Message> allMessages, Message message, long conversationId, int seq) {
+        //List<Message> messageList = new ArrayList<>();
+        //messageList.add(message);
+        Result.MessageReadSuccess result = new Result.MessageReadSuccess(allMessages);
         messageAddedLiveData.postValue(result);
+        allMessagesMutableLiveData.postValue(result);
         messageRemoteDataSource.insertMessage(message, conversationId, seq);
 
 
@@ -143,9 +144,10 @@ public class MessageRepository implements IMessageResponseCallback {
     }
 
     @Override
-    public void onSuccessWriteAIFromLocal(List<Message> messageList) {
+    public void onSuccessWriteAIFromLocal(List<Message> messageList, Message message) {
         Result.MessageReadSuccess result = new Result.MessageReadSuccess(messageList);
         messageAILiveData.postValue(result);
         allMessagesMutableLiveData.postValue(result);
+        messageRemoteDataSource.insertMessage(message, message.getConversationId(), message.getSeq());
     }
 }

@@ -16,13 +16,13 @@ public interface IMessageResponseCallback {
 
     void onSuccessWriteFromRemote(Message message);
     void onFailureWriteFromRemote(String exception);
-    void onSuccessWriteFromLocal(Message message, long conversationId, int seq);
+    void onSuccessWriteFromLocal(List<Message> allMessages, Message message, long conversationId, int seq);
     void onFailureWriteFromLocal(Exception exception);
 
     // DA CAMBIARE IL PARAMETRO CON LA RISPOSTA DELL'AI
     void onSuccessFromAPI(String REPLY_WIP, long conversationId, int seq);
 
-    void onSuccessWriteAIFromLocal(List<Message> messageList);
+    void onSuccessWriteAIFromLocal(List<Message> allMessages, Message message);
 
 
 }
