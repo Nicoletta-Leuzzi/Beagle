@@ -84,6 +84,10 @@ public class ConversationsHistoryFragment extends Fragment {
 
             @Override
             public boolean onMenuItemSelected(@NonNull MenuItem menuItem) {
+                if (menuItem.getItemId() == R.id.action_new_chat) {
+                    Navigation.findNavController(view)
+                            .navigate(R.id.action_conversationsHistoryFragment_to_chatFragment);
+                }
                 return false;
             }
         }, getViewLifecycleOwner(), Lifecycle.State.RESUMED);
