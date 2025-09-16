@@ -14,7 +14,6 @@ public class MessageViewModel extends ViewModel {
     private final MessageRepository messageRepository;
     private MutableLiveData<Result> messageListLiveData;
     private MutableLiveData<Result> messageAddLiveData;
-    private MutableLiveData<Result> messageAILiveData;
 
     public MessageViewModel(MessageRepository messageRepository) {
         this.messageRepository = messageRepository;
@@ -33,10 +32,5 @@ public class MessageViewModel extends ViewModel {
         return messageAddLiveData;
     }
 
-    public MutableLiveData<Result> getAIReply(long conversationId, int seq) {
-        messageAILiveData = messageRepository.getAIReply(conversationId, seq);
-        Log.d("test", "Returning messageAILiveData");
-        return messageAILiveData;
-    }
 
 }

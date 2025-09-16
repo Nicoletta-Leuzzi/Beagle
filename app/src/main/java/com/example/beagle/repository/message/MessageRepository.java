@@ -127,11 +127,19 @@ public class MessageRepository implements IMessageResponseCallback {
     public void onSuccessFromAPI(String REPLY_WIP, long conversatioId, int seq) {
         Message AIReply = new Message(conversatioId, seq, false, REPLY_WIP);
 
-        messageLocalDataSource.insertMessage(AIReply, conversatioId);
-        List<Message> test = new ArrayList<>();
-        test.add(AIReply);
-        Result.MessageReadSuccess result = new Result.MessageReadSuccess(test);
-        messageAILiveData.postValue(result);
+
+        messageLocalDataSource.insertAIMessage(AIReply, conversatioId);
+        //List<Message> test = new ArrayList<>();
+        //test.add(AIReply);
+        //Result.MessageReadSuccess result = new Result.MessageReadSuccess(test);
+        //messageAILiveData.postValue(result);
         //allMessagesMutableLiveData.postValue(result);
+    }
+
+    @Override
+    public void onSuccessWriteAIFromLocal(List<Message> messageList) {
+        Result.MessageReadSuccess result = new Result.MessageReadSuccess(messageList);
+        messageAILiveData.postValue(result);
+        allMessagesMutableLiveData.postValue(result);
     }
 }

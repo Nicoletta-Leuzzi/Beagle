@@ -33,6 +33,8 @@ import com.example.beagle.model.Message;
 import com.example.beagle.model.Pet;
 import com.example.beagle.model.Result;
 import com.example.beagle.repository.message.MessageRepository;
+import com.example.beagle.ui.chat.viewmodel.message.AIReplyViewModel;
+import com.example.beagle.ui.chat.viewmodel.message.AIReplyViewModelFactory;
 import com.example.beagle.ui.chat.viewmodel.message.MessageViewModel;
 import com.example.beagle.ui.chat.viewmodel.message.MessageViewModelFactory;
 import com.example.beagle.util.Constants;
@@ -73,6 +75,7 @@ public class ChatFragment extends Fragment {
     private MessageRecyclerAdapter adapter;
     private RecyclerView recyclerView;
     private MessageViewModel messageViewModel;
+    private AIReplyViewModel aiReplyViewModel;
 
 
     // Dichiarazione vari attributi
@@ -118,14 +121,23 @@ public class ChatFragment extends Fragment {
         MessageRepository messageRepository =
                 ServiceLocator.getInstance().getMessageRepository(
                         requireActivity().getApplication(),
-                        requireActivity().getApplication().getResources().getBoolean(R.bool.debug_mode)
+                        requireActivity()
+                                .getApplication().getResources().getBoolean(R.bool.debug_mode)
                 );
 
         // SetUp ViewModel
         messageViewModel = new ViewModelProvider(
                 requireActivity(),
-                new MessageViewModelFactory(messageRepository)).get(MessageViewModel.class);
+                new MessageViewModelFactory(messageRepository))
+                .get(MessageViewModel.class);
 
+        Log.d(TAG, "BAKFOASJ");
+        aiReplyViewModel = new ViewModelProvider(
+                requireActivity(),
+                new AIReplyViewModelFactory(messageRepository))
+                .get(AIReplyViewModel.class);
+
+        Log.d(TAG, "CREATO");
 
     }
 
@@ -481,6 +493,37 @@ public class ChatFragment extends Fragment {
                                  */
 
 
+                                if (!aiReplyViewModel.getAIReply(conversationId, seq.get()).hasActiveObservers()) {
+                                    Log.d(TAG, "getAIReply has no active observer");
+                                    aiReplyViewModel.getAIReply(conversationId, seq.get()).observe(getViewLifecycleOwner(),
+                                            replyResult -> {
+                                                Log.d(TAG, "getAIReply - Inside observer");
+                                                if (getViewLifecycleOwner().getLifecycle().getCurrentState() == Lifecycle.State.RESUMED) {
+                                                    Log.d(TAG, "getAIReply - RESUMED");
+                                                    if (replyResult.isSuccess()) {
+                                                        Log.d(TAG, "getAIReply - RESUMED - SUCCESS");
+                                                        //messageViewModel.addMessage(((Result.MessageReadSuccess) replyResult).getData().get(0), conversationId, seq.get());
+                                                        //messageList.clear();
+                                                        //messageList.addAll(((Result.MessageReadSuccess) replyResult).getData());
+                                                        //adapter.notifyDataSetChanged();
+                                                        //seq.set(adapter.getItemCount());
+
+                                                        //messageViewModel.getMessages(conversationId, false);
+                                                    } else {
+                                                        Log.d(TAG, "getAIReply - RESUMED - FAILURE");
+                                                        Snackbar.make(view, "ERROR_GETTING_AI_REPLY", Snackbar.LENGTH_SHORT).show();
+                                                    }
+                                                } else {
+                                                    Log.d(TAG, "getAIReply - NOT RESUMED");
+                                                }
+                                                Log.d(TAG, "getAIReply - END");
+                                                //ssd.set(true);
+                                            });
+                                } else {
+                                    Log.d(TAG, "getAIReply has active observer");
+                                }
+
+
                             } else {
                                 Log.d(TAG, "saveMessage - RESUMED - FAILURE");
                                 Snackbar.make(view, "ERROR_ADDING_MESSAGE", Snackbar.LENGTH_SHORT).show();
@@ -496,35 +539,7 @@ public class ChatFragment extends Fragment {
         }
 
         //AtomicBoolean ssd = new AtomicBoolean(false);
-        if (!messageViewModel.getAIReply(conversationId, seq.get()).hasActiveObservers()) {
-            Log.d(TAG, "getAIReply has no active observer");
-            messageViewModel.getAIReply(conversationId, seq.get()).observe(getViewLifecycleOwner(),
-                    replyResult -> {
-                        Log.d(TAG, "getAIReply - Inside observer");
-                        if (getViewLifecycleOwner().getLifecycle().getCurrentState() == Lifecycle.State.RESUMED) {
-                            Log.d(TAG, "getAIReply - RESUMED");
-                            if (replyResult.isSuccess()) {
-                                Log.d(TAG, "getAIReply - RESUMED - SUCCESS");
-                                //messageViewModel.addMessage(((Result.MessageReadSuccess) replyResult).getData().get(0), conversationId, seq.get());
-                                //messageList.clear();
-                                //messageList.addAll(((Result.MessageReadSuccess) replyResult).getData());
-                                //adapter.notifyDataSetChanged();
-                                //seq.set(adapter.getItemCount());
 
-                                //messageViewModel.getMessages(conversationId, false);
-                            } else {
-                                Log.d(TAG, "getAIReply - RESUMED - FAILURE");
-                                Snackbar.make(view, "ERROR_GETTING_AI_REPLY", Snackbar.LENGTH_SHORT).show();
-                            }
-                        } else {
-                            Log.d(TAG, "getAIReply - NOT RESUMED");
-                        }
-                        Log.d(TAG, "getAIReply - END");
-                        //ssd.set(true);
-                    });
-        } else {
-            Log.d(TAG, "getAIReply has active observer");
-        }
     }
 
 
