@@ -11,6 +11,8 @@ public interface IConversationResponseCallback {
     void onFailureReadFromRemote(Exception exception);
     void onSuccessFromLocal(List<Conversation> conversationList);
     void onFailureFromLocal(Exception exception);
+
+    void onSuccessWriteFromLocal(Conversation conversation);
     void onSuccessDeleteFromRemote();
     void onFailureDeleteFromRemote(Exception exception);
 

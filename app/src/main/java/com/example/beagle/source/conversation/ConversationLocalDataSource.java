@@ -30,8 +30,9 @@ public class ConversationLocalDataSource extends BaseConversationLocalDataSource
     public void insertConversation(Conversation conversation, long petId) {
         DataRoomDatabase.databaseWriteExecutor.execute(() -> {
             conversationDAO.insert(conversation);
-            List<Conversation> conversationList = conversationDAO.getConversations(petId);
-            conversationCallback.onSuccessFromLocal(conversationList);
+            Conversation conversationAdded = conversationDAO.getLastConversation(petId);
+            //List<Conversation> conversationList = conversationDAO.getConversations(petId);
+            conversationCallback.onSuccessWriteFromLocal(conversationAdded);
         });
     }
 

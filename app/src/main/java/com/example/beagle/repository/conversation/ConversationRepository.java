@@ -7,6 +7,7 @@ import com.example.beagle.model.Result;
 import com.example.beagle.source.conversation.BaseConversationLocalDataSource;
 import com.example.beagle.source.conversation.BaseConversationRemoteDataSource;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class ConversationRepository implements IConversationResponseCallback {
@@ -33,8 +34,9 @@ public class ConversationRepository implements IConversationResponseCallback {
         return conversationsMutableLiveData;
     }
 
-    public void addConversation(Conversation conversation, long petId){
+    public MutableLiveData addConversation(Conversation conversation, long petId){
         conversationLocalDataSource.insertConversation(conversation, petId);
+        return conversationsMutableLiveData;
     }
 
     public void deleteConversation(Conversation conversation, long petId) {
@@ -71,10 +73,20 @@ public class ConversationRepository implements IConversationResponseCallback {
     }
 
     @Override
+    public void onSuccessWriteFromLocal(Conversation conversation) {
+        List<Conversation> conversationList = new ArrayList<>();
+        conversationList.add(conversation);
+        Result.ConversationSuccess result = new Result.ConversationSuccess(conversationList);
+        conversationsMutableLiveData.postValue(result);
+    }
+
+    @Override
     public void onFailureFromLocal(Exception exception) {
         Result.Error result = new Result.Error(exception.getMessage());
         conversationsMutableLiveData.postValue(result);
     }
+
+
 
     @Override
     public void onSuccessDeleteFromRemote() {

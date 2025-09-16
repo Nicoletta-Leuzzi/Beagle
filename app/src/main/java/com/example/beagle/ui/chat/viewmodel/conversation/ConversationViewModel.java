@@ -11,6 +11,7 @@ public class ConversationViewModel extends ViewModel {
 
     private final ConversationRepository conversationRepository;
     private MutableLiveData<Result> conversationListLiveData;
+    private MutableLiveData<Result> conversationAddedLiveData;
 
     public ConversationViewModel(ConversationRepository conversationRepository) {
         this.conversationRepository = conversationRepository;
@@ -21,8 +22,9 @@ public class ConversationViewModel extends ViewModel {
         return conversationListLiveData;
     }
 
-    public void addConversation(Conversation conversation, long petId) {
-        conversationRepository.addConversation(conversation, petId);
+    public MutableLiveData<Result> addConversation(Conversation conversation, long petId) {
+        conversationAddedLiveData = conversationRepository.addConversation(conversation, petId);
+        return conversationAddedLiveData;
     }
 
     public void deleteConversation(Conversation conversation, long petId) {

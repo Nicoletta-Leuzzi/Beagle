@@ -46,6 +46,8 @@
         <!-- Cronologia -> Chat -->
         <action
             android:id="@+id/action_conversationsHistoryFragment_to_chatFragment"
+            app:popUpToInclusive="true"
+            app:popUpTo="@id/chatFragment"
             app:destination="@id/chatFragment"
             app:enterAnim="@anim/slide_in_left"
             app:exitAnim="@anim/hold"
@@ -55,6 +57,8 @@
         <!-- Cronologia -> Profile -->
         <action
             android:id="@+id/action_conversationsHistoryFragment_to_profileFragment"
+            app:popUpToInclusive="true"
+            app:popUpTo="@id/chatFragment"
             app:destination="@id/profileFragment"
             app:enterAnim="@anim/slide_in_left"
             app:exitAnim="@anim/hold"
