@@ -21,19 +21,14 @@ public class ConversationRecyclerAdapter extends RecyclerView.Adapter<Conversati
         void onClick(Conversation conversation);
     }
 
-    public interface OnItemLongClickListener {
-        void onLongClick(View view, Conversation conversation);
-    }
-
     private final int layout;
     private final List<Conversation> conversationList;
     private Context context;
     private final OnItemClickListener onItemClickListener;
-    private final OnItemLongClickListener onItemLongClickListener;
 
 
 
-    public class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener, View.OnLongClickListener{
+    public class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener{
         private final TextView tvConversationTitle;
         private final TextView tvActivePet;
         private final TextView tvLastModified;
@@ -47,7 +42,6 @@ public class ConversationRecyclerAdapter extends RecyclerView.Adapter<Conversati
             tvLastModified = view.findViewById(R.id.tvLastModified);
 
             view.setOnClickListener(this);
-            view.setOnLongClickListener(this);
 
         }
 
@@ -71,34 +65,15 @@ public class ConversationRecyclerAdapter extends RecyclerView.Adapter<Conversati
 
         @Override
         public void onClick(View view) {
-            int position = getAdapterPosition();
-            if (position != RecyclerView.NO_POSITION) {
-                onItemClickListener.onClick(conversationList.get(position));
-            }
-        }
-
-        @Override
-        public boolean onLongClick(View view) {
-            if (onItemLongClickListener == null) {
-                return false;
-            }
-            int position = getAdapterPosition();
-            if (position == RecyclerView.NO_POSITION) {
-                return false;
-            }
-            onItemLongClickListener.onLongClick(view, conversationList.get(position));
-            return true;
+            onItemClickListener.onClick(conversationList.get(getAdapterPosition()));
         }
     }
 
 
-    public ConversationRecyclerAdapter(int layout, List<Conversation> conversationList,
-                                       OnItemClickListener onItemClickListener,
-                                       OnItemLongClickListener onItemLongClickListener) {
+    public ConversationRecyclerAdapter(int layout, List<Conversation> conversationList, OnItemClickListener onItemClickListener) {
         this.layout = layout;
         this.conversationList = conversationList;
         this.onItemClickListener = onItemClickListener;
-        this.onItemLongClickListener = onItemLongClickListener;
     }
 
 
