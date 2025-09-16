@@ -52,16 +52,15 @@ public class RegisterFragment extends Fragment {
         signupButton      = root.findViewById(R.id.signupButton);
         progressBar       = root.findViewById(R.id.progressBar);
 
-        // eventuale TextView "Hai già un account? Accedi" se presente nel layout
-        int goLoginId = getResources().getIdentifier("tvGoLogin", "id", requireContext().getPackageName());
-        if (goLoginId != 0) {
-            linkGoLogin = root.findViewById(goLoginId);
-            if (linkGoLogin != null) {
-                linkGoLogin.setOnClickListener(v ->
-                        NavHostFragment.findNavController(this)
-                                .navigate(R.id.action_registerFragment_to_loginFragment));
-            }
+        // Link "Hai già un account? Accedi" (se il view esiste nel layout attuale)
+        linkGoLogin = root.findViewById(R.id.tvGoLogin);
+        if (linkGoLogin != null) {
+            linkGoLogin.setOnClickListener(v ->
+                    NavHostFragment.findNavController(this)
+                            .navigate(R.id.action_registerFragment_to_loginFragment)
+            );
         }
+
 
         // --- VM condivisa con Login ---
         IUserRepository repo = ServiceLocator.getInstance().getUserRepository(requireActivity().getApplication());
