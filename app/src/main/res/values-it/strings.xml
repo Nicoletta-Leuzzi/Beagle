@@ -80,6 +80,4 @@
     <string name="question">Domanda</string>
     <string name="dog">Cane</string>
     <string name="cat">Gatto</string>
-    <string name="english">Inglese</string>
-    <string name="italian">Italiano</string>
 </resources>
