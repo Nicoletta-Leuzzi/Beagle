@@ -34,7 +34,8 @@ public class ConversationRepository implements IConversationResponseCallback {
         return conversationsMutableLiveData;
     }
 
-    public MutableLiveData addConversation(Conversation conversation, long petId){
+
+    public MutableLiveData<Result> addConversation(Conversation conversation, long petId){
         conversationLocalDataSource.insertConversation(conversation, petId);
         return conversationsMutableLiveData;
     }

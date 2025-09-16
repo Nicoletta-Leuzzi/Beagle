@@ -1,5 +1,7 @@
 package com.example.beagle.source.conversation;
 
+import android.util.Log;
+
 import com.example.beagle.database.ConversationDAO;
 import com.example.beagle.database.DataRoomDatabase;
 import com.example.beagle.database.MessageDAO;
@@ -31,6 +33,7 @@ public class ConversationLocalDataSource extends BaseConversationLocalDataSource
         DataRoomDatabase.databaseWriteExecutor.execute(() -> {
             conversationDAO.insert(conversation);
             Conversation conversationAdded = conversationDAO.getLastConversation(petId);
+            Log.d("asd", "PRESA CONVERSAZIONE DA DB: " + conversationAdded.getConversationId());
             //List<Conversation> conversationList = conversationDAO.getConversations(petId);
             conversationCallback.onSuccessWriteFromLocal(conversationAdded);
         });
