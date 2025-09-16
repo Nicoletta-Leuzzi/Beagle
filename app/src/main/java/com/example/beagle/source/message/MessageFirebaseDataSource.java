@@ -24,7 +24,7 @@ public class MessageFirebaseDataSource extends BaseMessageRemoteDataSource {
     public MessageFirebaseDataSource() {
         FirebaseDatabase firebaseDatabase = FirebaseDatabase.getInstance(FIREBASE_REALTIME_DATABASE);
         user = FirebaseAuth.getInstance().getCurrentUser().getUid();
-        this.databaseReference = firebaseDatabase.getReference().getRef()
+        databaseReference = firebaseDatabase.getReference().getRef()
                 .child(FIREBASE_USERS_COLLECTION)
                 .child(user)
                 .child(FIREBASE_MESSAGES_COLLECTION);
@@ -56,6 +56,7 @@ public class MessageFirebaseDataSource extends BaseMessageRemoteDataSource {
 
     @Override
     public void insertMessage(Message message, long conversationId, int seq) {
+        Log.d("test", "FIREBAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAASE");
         databaseReference.child(Long.toString(conversationId)).child(Integer.toString(seq)).setValue(message);
     }
 }
