@@ -6,16 +6,13 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:fitsSystemWindows="true"
-    android:animateLayoutChanges="true"
-    android:background="?attr/colorSurface"
     tools:context=".ui.welcome.WelcomeActivity">
 
     <androidx.fragment.app.FragmentContainerView
         android:id="@+id/nav_host_welcome"
         android:name="androidx.navigation.fragment.NavHostFragment"
-        app:navGraph="@navigation/nav_welcome"
-        app:defaultNavHost="true"
         android:layout_width="match_parent"
-        android:layout_height="match_parent" />
-
+        android:layout_height="match_parent"
+        app:navGraph="@navigation/nav_welcome"
+        app:defaultNavHost="true" />
 </FrameLayout>
