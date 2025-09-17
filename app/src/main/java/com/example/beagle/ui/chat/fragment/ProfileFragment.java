@@ -68,7 +68,7 @@ public class ProfileFragment extends Fragment {
     private TextInputLayout autoCompletePetLayout, autoCompleteSpeciesLayout, nameLayout, breedLayout, birthDateLayout, ageLayout;
     private Pet pet;
     private boolean fieldsError;
-    private List<Pet> animals = new ArrayList<>();
+    private final List<Pet> animals = new ArrayList<>();
     private final List<String> species = new ArrayList<>();
     // 0 = cane, 1 = gatto
     private ArrayAdapter<Pet> petAdapter;
