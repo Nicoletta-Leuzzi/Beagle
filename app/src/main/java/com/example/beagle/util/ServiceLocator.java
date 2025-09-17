@@ -11,6 +11,7 @@ import com.example.beagle.repository.message.MessageRepository;
 import com.example.beagle.repository.pet.PetRepository;
 import com.example.beagle.repository.user.IUserRepository;
 import com.example.beagle.repository.user.UserRepository;
+import com.example.beagle.service.ResponseAPIService;
 import com.example.beagle.source.conversation.BaseConversationLocalDataSource;
 import com.example.beagle.source.conversation.BaseConversationRemoteDataSource;
 import com.example.beagle.source.conversation.ConversationFirebaseDataSource;
@@ -28,6 +29,11 @@ import com.example.beagle.source.pet.PetFirebaseDataSource;
 import com.example.beagle.source.pet.PetLocalDataSource;
 import com.example.beagle.source.user.BaseUserAuthenticationRemoteDataSource;
 import com.example.beagle.source.user.UserAuthenticationFirebaseDataSource;
+
+import okhttp3.OkHttpClient;
+import okhttp3.Request;
+import retrofit2.Retrofit;
+import retrofit2.converter.gson.GsonConverterFactory;
 
 /**
  * ServiceLocator – versione per AUTH (login/registrazione).
@@ -52,6 +58,15 @@ public class ServiceLocator {
         }
         return INSTANCE;
     }
+
+    OkHttpClient client = new OkHttpClient.Builder()
+            .addInterceptor(chain -> {
+                Request request = chain.request().newBuilder()
+                        .header("User-Agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36")
+                        .build();
+                return chain.proceed(request);
+            })
+            .build();
 
     @Deprecated
     public static ServiceLocator getInstance(Context ignored) {
@@ -86,7 +101,7 @@ public class ServiceLocator {
             JSONParserUtils jsonParserUtils = new JSONParserUtils(application);
             messageAPIDataSource = new MessageAPIMockDataSource(jsonParserUtils);
         } else {
-            messageAPIDataSource = new MessageAPIDataSource(application.getString(R.string.API_KEY));
+            messageAPIDataSource = new MessageAPIDataSource(getDao(application), application.getString(R.string.API_KEY));
         }
 
         return new MessageRepository(messageRemoteDataSource,
@@ -115,4 +130,11 @@ public class ServiceLocator {
     }
 
 
+    public ResponseAPIService getResponseAPIService() {
+        Retrofit retrofit = new Retrofit.Builder()
+                .baseUrl(Constants.API_URL)
+                .client(client)
+                .addConverterFactory(GsonConverterFactory.create()).build();
+        return retrofit.create(ResponseAPIService.class);
+    }
 }
