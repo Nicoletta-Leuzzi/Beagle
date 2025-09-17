@@ -23,6 +23,8 @@ import androidx.credentials.GetCredentialResponse;
 import androidx.credentials.exceptions.GetCredentialException;
 import androidx.credentials.exceptions.NoCredentialException;
 import androidx.fragment.app.Fragment;
+import androidx.lifecycle.LiveData;
+import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.navigation.fragment.NavHostFragment;
 
@@ -33,21 +35,22 @@ import com.example.beagle.ui.chat.ChatActivity;
 import com.example.beagle.ui.welcome.viewmodel.UserViewModel;
 import com.example.beagle.ui.welcome.viewmodel.UserViewModelFactory;
 import com.example.beagle.util.ServiceLocator;
-import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.google.android.material.snackbar.Snackbar;
+import com.google.android.material.textfield.TextInputLayout;
 import com.google.android.libraries.identity.googleid.GetSignInWithGoogleOption;
 import com.google.android.libraries.identity.googleid.GetGoogleIdOption;
 import com.google.android.libraries.identity.googleid.GoogleIdTokenCredential;
-import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.FirebaseUser;
 
 public class LoginFragment extends Fragment {
 
     private static final String TAG = "LoginFragment";
 
     private EditText etEmail, etPassword;
+    private TextInputLayout tilEmail, tilPassword;
     private Button btnLogin, btnGoogle, btnForgot;
     private TextView tvGoRegister;
+
+    private Snackbar currentSnackbar;
 
     private UserViewModel userViewModel;
 
@@ -56,7 +59,6 @@ public class LoginFragment extends Fragment {
     private GetSignInWithGoogleOption siwgOption;
     private GetGoogleIdOption googleIdAnyAccountOption;
 
-    public LoginFragment() { /* empty */ }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -76,11 +78,15 @@ public class LoginFragment extends Fragment {
             return;
         }
 
+        setupTypingClearErrors();
         setupListeners();
         setupGoogleSignIn();
     }
 
     private void initViews(View root) {
+        tilEmail    = root.findViewById(R.id.tilEmail);
+        tilPassword = root.findViewById(R.id.tilPassword);
+
         etEmail      = root.findViewById(R.id.etEmail);
         etPassword   = root.findViewById(R.id.etPassword);
         btnLogin     = root.findViewById(R.id.btnLogin);
@@ -113,43 +119,79 @@ public class LoginFragment extends Fragment {
         }
     }
 
+    // EMAIL/PASSWORD
+
     private void performEmailLogin() {
         String email = textOf(etEmail);
         String password = textOf(etPassword);
 
         if (!isEmailValid(email)) {
-            etEmail.setError(getString(R.string.error_email_login));
+            if (tilEmail != null) {
+                tilEmail.setError(getString(R.string.error_email_login));
+                tilEmail.setErrorEnabled(true);
+            } else if (etEmail != null) {
+                etEmail.setError(getString(R.string.error_email_login));
+            }
             etEmail.requestFocus();
             return;
         }
         if (!isPasswordValid(password)) {
-            etPassword.setError(getString(R.string.error_password_login));
+            if (tilPassword != null) {
+                tilPassword.setError(getString(R.string.error_password_login));
+                tilPassword.setErrorEnabled(true);
+            } else if (etPassword != null) {
+                etPassword.setError(getString(R.string.error_password_login));
+            }
             etPassword.requestFocus();
             return;
         }
 
-        etEmail.setError(null);
-        etPassword.setError(null);
+        clearFieldErrors();
         setLoading(true);
 
-        userViewModel.getUserMutableLiveData(email, password, /*isUserRegistered=*/true)
-                .observe(getViewLifecycleOwner(), result -> {
-                    setLoading(false);
-                    if (result instanceof Result.UserSuccess) {
-                        userViewModel.setAuthenticationError(false);
-                        if (!isEmailVerified()) {
-                            showVerifyDialog(); // <-- blocca qui se non verificata
-                            return;
-                        }
-                        goNext();
-                    } else if (result instanceof Result.Error) {
-                        userViewModel.setAuthenticationError(true);
-                        showError(((Result.Error) result).getMessage());
+        LiveData<Result> live = userViewModel.getUserMutableLiveData(email, password, /*isUserRegistered=*/true);
+
+        // Evita observer duplicati
+        live.removeObservers(getViewLifecycleOwner());
+
+        // Se ha già un valore (es. l'errore del tentativo precedente), ignoriamo SOLO la prima emissione
+        final boolean ignoreFirst = (live.getValue() != null);
+
+        Observer<Result> wrapper = new Observer<>() {
+            boolean first = true;
+
+            @Override
+            public void onChanged(Result result) {
+                if (ignoreFirst && first) {
+                    first = false;
+                    return;
+                }
+
+                setLoading(false);
+
+                if (result instanceof Result.UserSuccess) {
+                    userViewModel.setAuthenticationError(false);
+                    clearFieldErrors();
+                    // ✅ NIENTE controllo isEmailVerified: vai direttamente avanti
+                    goNext();
+                } else if (result instanceof Result.Error) {
+                    userViewModel.setAuthenticationError(true);
+                    String msg = ((Result.Error) result).getMessage();
+                    showError(msg);
+                    if (tilPassword != null) {
+                        tilPassword.setError(msg != null ? msg : getString(R.string.error_generic));
+                        tilPassword.setErrorEnabled(true);
                     }
-                });
+                }
+
+                live.removeObserver(this); // one-shot
+            }
+        };
+
+        live.observe(getViewLifecycleOwner(), wrapper);
     }
 
-    // ---------------- GOOGLE SIGN-IN (Credential Manager) ----------------
+    //GOOGLE SIGN-IN (Credential Manager)
 
     private void setupGoogleSignIn() {
         if (btnGoogle == null) {
@@ -198,7 +240,7 @@ public class LoginFragment extends Fragment {
                 request,
                 null,
                 ContextCompat.getMainExecutor(requireContext()),
-                new CredentialManagerCallback<GetCredentialResponse, GetCredentialException>() {
+                new CredentialManagerCallback<>() {
                     @Override
                     public void onResult(GetCredentialResponse response) {
                         setLoading(false);
@@ -223,8 +265,7 @@ public class LoginFragment extends Fragment {
         try {
             Credential cred = response.getCredential();
 
-            if (cred instanceof CustomCredential) {
-                CustomCredential custom = (CustomCredential) cred;
+            if (cred instanceof CustomCredential custom) {
 
                 if (GoogleIdTokenCredential.TYPE_GOOGLE_ID_TOKEN_CREDENTIAL.equals(custom.getType())) {
                     GoogleIdTokenCredential googleCred =
@@ -249,75 +290,44 @@ public class LoginFragment extends Fragment {
     private void authenticateWithGoogle(String idToken) {
         setLoading(true);
 
-        userViewModel.getGoogleUserMutableLiveData(idToken)
-                .observe(getViewLifecycleOwner(), result -> {
-                    setLoading(false);
-                    if (result instanceof Result.UserSuccess) {
-                        userViewModel.setAuthenticationError(false);
-                        // Con Google, spesso l’email è già verificata, ma controlliamo lo stesso
-                        if (!isEmailVerified()) {
-                            showVerifyDialog();
-                            return;
-                        }
-                        goNext();
-                    } else if (result instanceof Result.Error) {
-                        userViewModel.setAuthenticationError(true);
-                        showError(((Result.Error) result).getMessage());
-                    }
-                });
-    }
+        LiveData<Result> live = userViewModel.getGoogleUserMutableLiveData(idToken);
 
-    // ---------------- Email Verification helpers ----------------
-    private boolean isEmailVerified() {
-        FirebaseUser current = FirebaseAuth.getInstance().getCurrentUser();
-        return current != null && current.isEmailVerified();
-    }
+        // Evita observer duplicati
+        live.removeObservers(getViewLifecycleOwner());
 
-    private void showVerifyDialog() {
-        new MaterialAlertDialogBuilder(requireContext())
-                .setTitle(getStringSafe(R.string.verify_title, "Verifica email"))
-                .setMessage(getStringSafe(R.string.verify_needed, "Devi verificare la tua email per continuare."))
-                .setPositiveButton(getStringSafe(R.string.verify_resend, "Invia di nuovo"), (d, w) -> {
-                    userViewModel.resendEmailVerification().observe(getViewLifecycleOwner(), r -> {
-                        if (r instanceof Result.UserSuccess) {
-                            String email = FirebaseAuth.getInstance().getCurrentUser() != null
-                                    ? FirebaseAuth.getInstance().getCurrentUser().getEmail()
-                                    : "";
-                            Snackbar.make(requireView(),
-                                    getStringSafe(R.string.verify_sent, "Ti abbiamo inviato una email di verifica a %1$s.", email),
-                                    Snackbar.LENGTH_LONG).show();
-                        } else if (r instanceof Result.Error) {
-                            String msg = ((Result.Error) r).getMessage();
-                            Snackbar.make(requireView(),
-                                    msg != null ? msg : getString(R.string.error_generic),
-                                    Snackbar.LENGTH_LONG).show();
-                        }
-                    });
-                })
-                .setNegativeButton(getStringSafe(R.string.open_mail, "Apri Mail"), (d, w) -> {
-                    Intent intent = new Intent(Intent.ACTION_MAIN);
-                    intent.addCategory(Intent.CATEGORY_APP_EMAIL);
-                    intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                    try { startActivity(intent); } catch (Exception ignored) {}
-                })
-                .show();
-    }
+        final boolean ignoreFirst = (live.getValue() != null);
 
-    // Se una stringa non esiste, usa il fallback literal passato.
-    private String getStringSafe(int resId, String fallback, Object... formatArgs) {
-        try {
-            return formatArgs != null && formatArgs.length > 0
-                    ? getString(resId, formatArgs)
-                    : getString(resId);
-        } catch (Exception e) {
-            if (formatArgs != null && formatArgs.length > 0) {
-                try { return String.format(fallback, formatArgs); } catch (Exception ignore) {}
+        Observer<Result> wrapper = new Observer<>() {
+            boolean first = true;
+
+            @Override
+            public void onChanged(Result result) {
+                if (ignoreFirst && first) {
+                    first = false;
+                    return;
+                }
+
+                setLoading(false);
+
+                if (result instanceof Result.UserSuccess) {
+                    userViewModel.setAuthenticationError(false);
+                    clearFieldErrors();
+                    // NIENTE verifica email: entra direttamente
+                    goNext();
+                } else if (result instanceof Result.Error) {
+                    userViewModel.setAuthenticationError(true);
+                    String msg = ((Result.Error) result).getMessage();
+                    showError(msg);
+                }
+
+                live.removeObserver(this);
             }
-            return fallback;
-        }
+        };
+
+        live.observe(getViewLifecycleOwner(), wrapper);
     }
 
-    // ---------------- Util ----------------
+    //Util
 
     private String textOf(EditText editText) {
         return editText.getText() == null ? "" : editText.getText().toString().trim();
@@ -339,12 +349,57 @@ public class LoginFragment extends Fragment {
 
     private void showError(String message) {
         View anchor = getView() != null ? getView() : requireActivity().findViewById(android.R.id.content);
-        Snackbar.make(anchor, message != null ? message : getString(R.string.error_generic), Snackbar.LENGTH_LONG).show();
+        if (currentSnackbar != null) currentSnackbar.dismiss();
+        currentSnackbar = Snackbar.make(anchor, message != null ? message : getString(R.string.error_generic), Snackbar.LENGTH_LONG);
+        currentSnackbar.show();
     }
 
     private void goNext() {
         Log.i(TAG, "Navigo a ChatActivity");
+        clearFieldErrors();
+        if (currentSnackbar != null) {
+            currentSnackbar.dismiss();
+            currentSnackbar = null;
+        }
         startActivity(new Intent(requireContext(), ChatActivity.class));
         requireActivity().finish();
+    }
+
+    private void setupTypingClearErrors() {
+        SimpleTextWatcher clearWatcher = new SimpleTextWatcher() {
+            @Override public void afterTextChanged(android.text.Editable s) {
+                if (etEmail != null)    etEmail.setError(null);
+                if (etPassword != null) etPassword.setError(null);
+                if (tilEmail != null)   { tilEmail.setError(null); tilEmail.setErrorEnabled(false); }
+                if (tilPassword != null){ tilPassword.setError(null); tilPassword.setErrorEnabled(false); }
+            }
+        };
+        etEmail.addTextChangedListener(clearWatcher);
+        etPassword.addTextChangedListener(clearWatcher);
+    }
+
+    private void clearFieldErrors() {
+        if (etEmail != null)    etEmail.setError(null);
+        if (etPassword != null) etPassword.setError(null);
+
+        if (tilEmail != null) {
+            tilEmail.setError(null);
+            tilEmail.setErrorEnabled(false);
+        }
+        if (tilPassword != null) {
+            tilPassword.setError(null);
+            tilPassword.setErrorEnabled(false);
+        }
+
+        if (currentSnackbar != null) {
+            currentSnackbar.dismiss();
+            currentSnackbar = null;
+        }
+    }
+
+    // TextWatcher "vuoto" di utilità
+    public abstract static class SimpleTextWatcher implements android.text.TextWatcher {
+        @Override public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
+        @Override public void onTextChanged(CharSequence s, int start, int before, int count) {}
     }
 }

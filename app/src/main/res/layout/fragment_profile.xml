@@ -7,12 +7,12 @@
     xmlns:android="http://schemas.android.com/apk/res/android" >
 <FrameLayout
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="wrap_content">
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        tools:context=".ui.profile.fragment.ProfileFragment">
+        tools:context=".ui.chat.fragment.ProfileFragment">
 
         <com.google.android.material.button.MaterialButton
             android:id="@+id/btnSettings"
@@ -20,7 +20,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_margin="10dp"
-            android:contentDescription="Settings"
+            android:contentDescription="@string/settings"
             app:icon="@drawable/settings_icon"
             app:iconTint="?attr/colorOnSurface"
             app:layout_constraintEnd_toEndOf="parent"
@@ -32,7 +32,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="10dp"
-            android:contentDescription="Add"
+            android:contentDescription="@string/add"
             app:icon="@drawable/add_icon"
             app:iconTint="?attr/colorOnSurface"
             app:layout_constraintEnd_toStartOf="@+id/btnSettings"
@@ -44,15 +44,15 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:maxWidth="270dp"
-            android:minWidth="150dp"
+            android:minWidth="170dp"
             android:layout_marginStart="16dp"
-            android:hint="Your pets"
+            android:hint="@string/your_pets"
             app:layout_constraintTop_toBottomOf="@id/btnAdd"
             app:layout_constraintStart_toStartOf="parent"
 
             >
 
-            <AutoCompleteTextView
+            <com.google.android.material.textfield.MaterialAutoCompleteTextView
                 android:id="@+id/outlinedTextFieldDropDownMenu"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
@@ -81,7 +81,8 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="40dp"
-                android:hint="Name"
+                android:hint="@string/name"
+                app:helperText=" "
                 android:enabled="false">
 
                 <com.google.android.material.textfield.TextInputEditText
@@ -95,6 +96,7 @@
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
+                android:baselineAligned="false"
                 android:orientation="horizontal"
                 >
 
@@ -104,13 +106,14 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="16dp"
-                android:hint="Species"
+                android:hint="@string/species"
+                app:helperText=" "
                 android:enabled="false"
                 android:layout_weight="40"
                 android:layout_marginEnd="16dp"
                 >
 
-                <AutoCompleteTextView
+                <com.google.android.material.textfield.MaterialAutoCompleteTextView
                     android:id="@+id/autoCompleteSpecies"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
@@ -126,9 +129,11 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="16dp"
-                android:hint="Breed"
+                android:hint="@string/breed"
                 android:enabled="false"
-                android:layout_weight="60">
+                android:layout_weight="60"
+                app:helperText=" "
+                >
 
                 <com.google.android.material.textfield.TextInputEditText
                     android:id="@+id/outlinedTextFieldBreed"
@@ -144,7 +149,7 @@
                 android:id="@+id/dateAgeLineraLayout"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="horizontal"
+                android:baselineAligned="false" android:orientation="horizontal"
                 android:layout_marginTop="16dp"
                 >
 
@@ -153,11 +158,12 @@
                     style="@style/Widget.Material3.TextInputLayout.OutlinedBox"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:hint="Date of birth"
+                    android:hint="@string/date_of_birth"
                     app:startIconDrawable="@drawable/outline_calendar_month_24"
                     android:enabled="false"
                     android:layout_marginEnd="16dp"
-                    android:layout_weight="70"
+                    android:layout_weight="50"
+                    app:helperText=" "
                     >
 
                     <com.google.android.material.textfield.TextInputEditText
@@ -176,11 +182,11 @@
                     style="@style/Widget.Material3.TextInputLayout.OutlinedBox"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:hint="Age"
+                    android:hint="@string/age"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintTop_toTopOf="parent"
                     android:enabled="false"
-                    android:layout_weight="30"
+                    android:layout_weight="50"
                     >
 
                     <com.google.android.material.textfield.TextInputEditText
@@ -205,8 +211,8 @@
                     style="@style/Widget.Material3.Button"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Delete"
-                    app:backgroundTint="#d90000"
+                    android:text="@string/delete"
+                    app:backgroundTint="@color/md_theme_error"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent" />
 
@@ -226,7 +232,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginEnd="12dp"
-                        android:text="Cancel"
+                        android:text="@string/cancel"
                         app:layout_constraintEnd_toStartOf="@+id/btn_save"
                         app:layout_constraintTop_toTopOf="parent" />
 
@@ -235,7 +241,7 @@
                         style="@style/Widget.Material3.Button"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="Save"
+                        android:text="@string/save"
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintTop_toTopOf="parent" />
 

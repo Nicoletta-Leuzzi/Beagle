@@ -6,6 +6,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
+import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.beagle.R;
@@ -20,41 +21,47 @@ public class ConversationRecyclerAdapter extends RecyclerView.Adapter<Conversati
         void onClick(Conversation conversation);
     }
 
-    private int layout;
-    private List<Conversation> conversationList;
+    private final int layout;
+    private final List<Conversation> conversationList;
     private Context context;
     private final OnItemClickListener onItemClickListener;
 
 
 
     public class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener{
-        private final TextView tvTitle;
-        private final TextView tvSubtitle;
-        private final TextView tvTime;
+        private final TextView tvConversationTitle;
+        private final TextView tvActivePet;
+        private final TextView tvLastModified;
 
         public ViewHolder(View view) {
             super(view);
             // Define click listener for the ViewHolder's View
 
-            tvTitle = view.findViewById(R.id.tvTitle);
-            tvSubtitle = view.findViewById(R.id.tvSubtitle);
-            tvTime = view.findViewById(R.id.tvTime);
+            tvConversationTitle = view.findViewById(R.id.tvConversationTitle);
+            tvActivePet = view.findViewById(R.id.tvActivePet);
+            tvLastModified = view.findViewById(R.id.tvLastModified);
 
             view.setOnClickListener(this);
 
         }
 
-        public TextView getTvTitle() {
-            return tvTitle;
+        public TextView getTvConversationTitle() {
+            return tvConversationTitle;
         }
 
-        public TextView getTvSubtitle() {
-            return tvSubtitle;
+        public TextView getTvActivePet() {
+            return tvActivePet;
         }
 
-        public TextView getTvTime() {
-            return tvTime;
+        public TextView getTvLastModified() {
+            return tvLastModified;
         }
+
+        // TODO: funzionalità elimina conversazione
+        /* public void onButtonPressed(DeleteButton deleteButton, boolean isPressed) {
+            if (isPressed)
+                DataRoomDatabase.getDatabase(viewHolder.getContext()).ConversationDAO.delete(conversationList.get(position));
+        } */
 
         @Override
         public void onClick(View view) {
@@ -70,6 +77,7 @@ public class ConversationRecyclerAdapter extends RecyclerView.Adapter<Conversati
     }
 
 
+    @NonNull
     @Override
     public ViewHolder onCreateViewHolder(ViewGroup viewGroup, int viewType) {
         // Create a new view, which defines the UI of the list item
@@ -83,9 +91,9 @@ public class ConversationRecyclerAdapter extends RecyclerView.Adapter<Conversati
 
     @Override
     public void onBindViewHolder(ViewHolder viewHolder, final int position) {
-        viewHolder.getTvTitle().setText(""+conversationList.get(position).getConversationId());
-        viewHolder.getTvSubtitle().setText(""+conversationList.get(position).getPetId());
-        viewHolder.getTvTime().setText(""+conversationList.get(position).getCreatedAt());
+        viewHolder.getTvConversationTitle().setText(""+conversationList.get(position).getConversationTitle());
+        viewHolder.getTvActivePet().setText(""+conversationList.get(position).getPetId()); // TODO: deve ritornare nome pet, non id
+        viewHolder.getTvLastModified().setText(""+conversationList.get(position).getCreatedAt()); // TODO: deve ritornare data ultimo messaggio in formato "DD month YYYY"
 
 
     }
@@ -96,5 +104,4 @@ public class ConversationRecyclerAdapter extends RecyclerView.Adapter<Conversati
         return conversationList.size();
     }
 }
-
 

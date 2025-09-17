@@ -1,0 +1,88 @@
+package com.example.beagle.repository.conversation;
+
+import androidx.lifecycle.MutableLiveData;
+
+import com.example.beagle.model.Conversation;
+import com.example.beagle.model.Result;
+import com.example.beagle.source.conversation.BaseConversationLocalDataSource;
+import com.example.beagle.source.conversation.BaseConversationRemoteDataSource;
+
+import java.util.ArrayList;
+import java.util.List;
+
+public class ConversationRepository implements IConversationResponseCallback {
+
+    private final MutableLiveData<Result> conversationsMutableLiveData;
+    private final BaseConversationRemoteDataSource conversationRemoteDataSource;
+    private final BaseConversationLocalDataSource conversationLocalDataSource;
+
+
+    public ConversationRepository(BaseConversationRemoteDataSource conversationRemoteDataSource,
+                                  BaseConversationLocalDataSource conversationLocalDataSource) {
+        this.conversationsMutableLiveData = new MutableLiveData<>();
+        this.conversationRemoteDataSource = conversationRemoteDataSource;
+        this.conversationLocalDataSource = conversationLocalDataSource;
+        this.conversationRemoteDataSource.setConversationCallback(this);
+        this.conversationLocalDataSource.setConversationCallback(this);
+    }
+
+    public MutableLiveData<Result> fetchConversations(long petId, boolean fromRemote) {
+        if (fromRemote) {
+            conversationRemoteDataSource.getConversations(petId);
+        } else {
+            conversationLocalDataSource.getConversations(petId);
+        }
+        return conversationsMutableLiveData;
+    }
+
+
+    public MutableLiveData<Result> addConversation(Conversation conversation, long petId){
+        conversationLocalDataSource.insertConversation(conversation, petId);
+        return conversationsMutableLiveData;
+    }
+
+    public void deleteConversation(Conversation conversation, long petId) {
+        conversationLocalDataSource.deleteConversation(conversation, petId);
+        conversationRemoteDataSource.deleteConversation(conversation.getConversationId(), petId);
+    }
+
+    @Override
+    public void onSuccessReadFromRemote(List <Conversation> conversationList, long petId) {
+        conversationLocalDataSource.insertConversations(conversationList, petId);
+    }
+
+    @Override
+    public void onFailureReadFromRemote(Exception exception) {
+        Result.Error result = new Result.Error(exception.getMessage());
+        conversationsMutableLiveData.postValue(result);
+    }
+
+    @Override
+    public void onSuccessFromLocal(List<Conversation> conversationList) {
+        Result.ConversationSuccess result = new Result.ConversationSuccess(conversationList);
+        conversationsMutableLiveData.postValue(result);
+    }
+
+    @Override
+    public void onSuccessWriteFromLocal(Conversation conversation) {
+        List<Conversation> conversationList = new ArrayList<>();
+        conversationList.add(conversation);
+        Result.ConversationSuccess result = new Result.ConversationSuccess(conversationList);
+        conversationsMutableLiveData.postValue(result);
+    }
+
+    @Override
+    public void onSuccessDeleteFromRemote(long conversationId, long petId) {
+        conversationLocalDataSource.getConversations(petId);
+    }
+
+    @Override
+    public void onFailureDeleteFromRemote(long conversationId, long petId, Exception exception) {
+        conversationsMutableLiveData.postValue(new Result.Error(exception.getMessage()));
+    }
+
+    @Override
+    public void onFailureDeleteFromLocal(long conversationId, long petId, Exception exception) {
+        conversationsMutableLiveData.postValue(new Result.Error(exception.getMessage()));
+    }
+}

@@ -7,9 +7,7 @@ import com.example.beagle.model.User;
 import com.example.beagle.source.user.BaseUserAuthenticationRemoteDataSource;
 import com.example.beagle.source.user.UserAuthenticationFirebaseDataSource;
 import com.google.android.gms.tasks.Task;
-import com.google.android.gms.tasks.Tasks;
 import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.FirebaseUser;
 
 public class UserRepository implements IUserRepository {
 
@@ -23,37 +21,37 @@ public class UserRepository implements IUserRepository {
 
     public UserRepository(BaseUserAuthenticationRemoteDataSource authDs) {
         this.userRemoteDataSource = authDs;
+        // ----- CALLBACK UNICO  -----
+        UserResponseCallback callback = new UserResponseCallback() {
+            @Override
+            public void onSuccessFromAuthentication(User user) {
+                userMutableLiveData.postValue(new Result.UserSuccess(user));
+            }
+
+            @Override
+            public void onFailureFromAuthentication(String message) {
+                userMutableLiveData.postValue(new Result.Error(message));
+            }
+
+            @Override
+            public void onSuccessFromRemoteDatabase(User user) {
+                userMutableLiveData.postValue(new Result.UserSuccess(user));
+            }
+
+            @Override
+            public void onFailureFromRemoteDatabase(String message) {
+                userMutableLiveData.postValue(new Result.Error(message));
+            }
+
+            @Override
+            public void onSuccessLogout() {
+                userMutableLiveData.postValue(new Result.UserSuccess(null));
+            }
+        };
         this.userRemoteDataSource.setUserResponseCallback(callback);
     }
 
-    // ----- CALLBACK UNICO stile prof -----
-    private final UserResponseCallback callback = new UserResponseCallback() {
-        @Override
-        public void onSuccessFromAuthentication(User user) {
-            userMutableLiveData.postValue(new Result.UserSuccess(user));
-        }
-
-        @Override
-        public void onFailureFromAuthentication(String message) {
-            userMutableLiveData.postValue(new Result.Error(message));
-        }
-
-        @Override
-        public void onSuccessFromRemoteDatabase(User user) {
-            userMutableLiveData.postValue(new Result.UserSuccess(user));
-        }
-
-        @Override
-        public void onFailureFromRemoteDatabase(String message) {
-            userMutableLiveData.postValue(new Result.Error(message));
-        }
-
-        @Override
-        public void onSuccessLogout() {
-            userMutableLiveData.postValue(new Result.UserSuccess(null));
-        }
-    };
-    // ----- FINE CALLBACK -----
+    //FINE CALLBACK
 
     @Override
     public MutableLiveData<Result> getGoogleUser(String idToken) {
@@ -97,19 +95,11 @@ public class UserRepository implements IUserRepository {
         return userRemoteDataSource.getLoggedUser();
     }
 
-    // --- Reset password ---
+    //Reset password
     @Override
     public Task<Void> sendPasswordReset(String email) {
         return FirebaseAuth.getInstance().sendPasswordResetEmail(email);
     }
 
-    // --- NUOVO: invio email di verifica ---
-    @Override
-    public Task<Void> sendEmailVerification() {
-        FirebaseUser current = FirebaseAuth.getInstance().getCurrentUser();
-        if (current == null) {
-            return Tasks.forException(new IllegalStateException("Nessun utente autenticato"));
-        }
-        return current.sendEmailVerification();
-    }
+
 }

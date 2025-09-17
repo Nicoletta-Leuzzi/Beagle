@@ -12,5 +12,5 @@ public abstract class BaseMessageRemoteDataSource {
 
     public abstract void getMessages(long conversationId);
 
-    public abstract void insertMessage(Message message);
+    public abstract void insertMessage(Message message, long conversationId, int seq);
 }

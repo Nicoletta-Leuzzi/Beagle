@@ -4,7 +4,6 @@ import androidx.annotation.NonNull;
 import androidx.room.Entity;
 import androidx.room.ForeignKey;
 import androidx.room.Ignore;
-import androidx.room.Index;
 
 @Entity(
     primaryKeys = {"conversationId", "seq"},
@@ -36,10 +35,20 @@ public class Message {
         this.content = content;
     }
 
+    // costruttore per il messaggio dell'AI
+    public Message(APIMessage AImessage, long conversationId, int seq) {
+        this.conversationId = conversationId;
+        this.seq = seq;
+        this.ts = System.currentTimeMillis();
+        this.content = AImessage.getContent();
+        this.fromUser = false;
+    }
+
 
     public long getConversationId() {
         return conversationId;
     }
+
     public void setConversationId(@NonNull long conversationId) {
         this.conversationId = conversationId;
     }
@@ -50,21 +59,12 @@ public class Message {
     public void setSeq(int seq) {
         this.seq = seq;
     }
-
     public long getTs() {
         return ts;
     }
     public void setTs(long ts) {
         this.ts = ts;
     }
-
-    public String getMessageContent() {
-        return content;
-    }
-    public void setMessageContent(String content) {
-        this.content = content;
-    }
-
     public boolean isFromUser() {
         return fromUser;
     }

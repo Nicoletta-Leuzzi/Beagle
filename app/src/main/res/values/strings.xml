@@ -4,65 +4,73 @@
     <!-- UI comuni -->
     <string name="hint_email">Email</string>
     <string name="hint_password">Password</string>
-    <string name="btn_login">Accedi</string>
-    <string name="btn_register">Crea un nuovo account</string>
-    <string name="btn_logout">Esci</string>
-    <string name="please_wait">Attendere…</string>
-    <string name="welcome">Benvenuta/o</string>
+    <string name="btn_login">Login</string>
+    <string name="btn_register">Create new account</string>
+    <string name="btn_logout">Logout</string>
 
     <!-- Navigazione / testi -->
-    <string name="already_registered">Hai già un account? Accedi</string>
-    <string name="have_account">Non hai un account?</string>
-    <string name="tv_go_register">Non hai un account? Registrati</string>
-    <string name="tv_home_text">Sei nella Home ✅</string>
-    <string name="home_message">Sei nella Home ✅</string>
+    <string name="already_registered">Already have an account?</string>
+    <string name="have_account">Don\'t you have an account?</string>
 
     <!-- Chat / copy -->
-    <string name="saluto_iniziale">Come sta %1$s?</string>
-    <string name="hint">Descrivi il problema</string>
-    <string name="no_text">Scrivi una domanda all’AI sul tuo pet</string>
+    <string name="initial_greeting">How is %1$s doing?</string>
+    <string name="hint">Describe your problem</string>
+    <string name="no_text">Write a question to the AI regarding your pet</string>
 
-    <!-- Messaggi di esito -->
-    <string name="login_success">Login effettuato!</string>
-    <string name="register_success">Registrazione completata!</string>
 
     <!-- Pet / cronologia -->
-    <string name="no_pet">Non hai ancora aggiunto un pet, aggiungilo</string>
-    <string name="add_pet_button">Aggiungi un nuovo pet</string>
-    <string name="conversations_history_title">Chat</string>
-    <string name="history_description">Pulsante cronologia</string>
-    <string name="pet_profile_description">Pulsante profilo pet</string>
-    <string name="chat_fragment_title">Beagle OSS</string>
+    <string name="no_pet">No pets saved. Add one to get started.</string>
+    <string name="add_pet_button">Add a new pet</string>
+    <string name="conversations_history_title">History</string>
+    <string name="history_description">History button</string>
+    <string name="pet_profile_description">Pet profile button</string>
+    <string name="new_chat_description">New chat button</string>
 
     <!-- Errori Login/Register -->
-    <string name="error_email_login">Inserisci un’email valida.</string>
-    <string name="error_password_login">La password deve avere almeno 6 caratteri.</string>
-    <string name="error_collision_user">Utente già registrato.</string>
-    <string name="error_unexpected">Si è verificato un errore inatteso. Riprova.</string>
-    <string name="error_invalid_email">Email non valida.</string>
-    <string name="error_generic">Si è verificato un errore. Riprova.</string>
+    <string name="error_email_login">Provide a valid email address.</string>
+    <string name="error_password_login">Password must contain at least 6 characters.</string>
+    <string name="error_collision_user">This user is already registered.</string>
+    <string name="error_unexpected">An unexpected error occurred. Please try again.</string>
+    <string name="error_invalid_email">Invalid email address.</string>
+    <string name="error_generic">An error has occurred. Try again.</string>
 
     <!-- Google Sign-In -->
     <string name="default_web_client_id">REPLACE_WITH_YOUR_WEB_CLIENT_ID</string>
 
     <!-- Extra -->
-    <string name="hello_world">Hello World!</string>
 
     <!-- Login extra -->
-    <string name="forgot_password">Hai dimenticato la password?</string>
-    <string name="or">oppure</string>
-    <string name="continue_with_google">Continua con Google</string>
+    <string name="forgot_password">Forgot password?</string>
+    <string name="or">Or</string>
+    <string name="continue_with_google">Continue with Google</string>
 
     <!-- Forgot Password / Reset -->
-    <string name="forgot_title">Hai dimenticato la password?</string>
-    <string name="forgot_reset">Reimposta</string>
-    <string name="forgot_return_login">TORNA AL LOGIN</string>
-    <string name="forgot_email_sent">Se esiste un account per %1$s, ti abbiamo inviato un’email con le istruzioni.</string>
+    <string name="forgot_title">Forgot password?</string>
+    <string name="forgot_reset">Reset</string>
+    <string name="forgot_return_login">BACK TO LOGIN</string>
+    <string name="forgot_email_sent">We\'ve sent you an email with instructions to %1$s.</string>
 
-    <!-- Email Verification -->
-    <string name="verify_title">Verifica email</string>
-    <string name="verify_needed">Devi verificare la tua email per continuare.</string>
-    <string name="verify_resend">Invia di nuovo</string>
-    <string name="open_mail">Apri Mail</string>
-    <string name="verify_sent">Ti abbiamo inviato una email di verifica a %1$s.</string>
+    <string name="delete">Delete</string>
+    <string name="settings">Settings</string>
+    <string name="add">Add</string>
+    <string name="your_pets">Your pets</string>
+    <string name="name">Name</string>
+    <string name="species">Species</string>
+    <string name="breed">Breed</string>
+    <string name="date_of_birth">Date of birth</string>
+    <string name="age">Age</string>
+    <string name="cancel">Cancel</string>
+    <string name="save">Save</string>
+    <string name="back">Back</string>
+    <string name="theme">Theme</string>
+    <string name="language">Language</string>
+    <string name="conversation_title_test">Conversation title test</string>
+    <string name="answer">Answer</string>
+    <string name="question">Question</string>
+    <string name="dog">Dog</string>
+    <string name="cat">Cat</string>
+    <string name="english" translatable="false">English</string>
+    <string name="italian" translatable="false">Italiano</string>
+    <string name="pet_profile">Pet profile</string>
+    <string name="chat" translatable="false">Chat</string>
 </resources>

@@ -34,10 +34,9 @@ public class ForgotPasswordFragment extends Fragment {
 
     private TextInputLayout tilEmail;
     private TextInputEditText etEmail;
-    private MaterialButton btnReset, linkBackLogin;
+    private MaterialButton btnReset;
     private View progress;
 
-    // NEW: ViewModel
     private UserViewModel userViewModel;
 
     @Override
@@ -47,10 +46,10 @@ public class ForgotPasswordFragment extends Fragment {
         tilEmail = view.findViewById(R.id.tilEmail);
         etEmail = view.findViewById(R.id.etEmail);
         btnReset = view.findViewById(R.id.btnReset);
-        linkBackLogin = view.findViewById(R.id.linkBackLogin);
+        MaterialButton linkBackLogin = view.findViewById(R.id.linkBackLogin);
         progress = view.findViewById(R.id.progress);
 
-        // NEW: init ViewModel via ServiceLocator/IUserRepository
+        // init ViewModel via ServiceLocator/IUserRepository
         IUserRepository repo = ServiceLocator.getInstance().getUserRepository(requireActivity().getApplication());
         userViewModel = new ViewModelProvider(requireActivity(), new UserViewModelFactory(repo))
                 .get(UserViewModel.class);
@@ -82,7 +81,7 @@ public class ForgotPasswordFragment extends Fragment {
 
         setLoading(true);
 
-        // NEW: chiama il ViewModel (che delega al repository)
+        // chiama il ViewModel (che delega al repository)
         userViewModel.resetPassword(email).observe(getViewLifecycleOwner(), result -> {
             setLoading(false);
             if (result instanceof Result.UserSuccess) {

@@ -1,23 +1,24 @@
 <?xml version="1.0" encoding="utf-8"?>
-<navigation
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/nav_graph"
     app:startDestination="@id/chatFragment">
 
+    <!-- CHAT -->
     <fragment
         android:id="@+id/chatFragment"
         android:name="com.example.beagle.ui.chat.fragment.ChatFragment"
-        tools:layout="@layout/fragment_chat"
-        android:label="@string/chat_fragment_title">
+        android:label="@string/chat"
+        tools:layout="@layout/fragment_chat">
 
-        <!-- Added: argument passed from intents or navigation to open a specific conversation -->
+        <!-- Per aprire una conversazione specifica -->
         <argument
             android:name="conversationId"
             app:argType="string"
-            />
+            app:nullable="true" />
 
+        <!-- Chat -> Cronologia -->
         <action
             android:id="@+id/action_chatFragment_to_conversationsHistoryFragment"
             app:destination="@id/conversationsHistoryFragment"
@@ -25,15 +26,82 @@
             app:exitAnim="@anim/hold"
             app:popEnterAnim="@anim/hold"
             app:popExitAnim="@anim/slide_out_left" />
+
+        <!-- Chat -> Profile (btnSettings in Chat) -->
+        <action
+            android:id="@+id/action_chatFragment_to_profileFragment"
+            app:destination="@id/profileFragment"
+            app:enterAnim="@anim/slide_in_left"
+            app:exitAnim="@anim/hold"
+            app:popEnterAnim="@anim/hold"
+            app:popExitAnim="@anim/slide_out_left" />
     </fragment>
 
+    <!-- CRONOLOGIA -->
     <fragment
         android:id="@+id/conversationsHistoryFragment"
         android:name="com.example.beagle.ui.chat.fragment.ConversationsHistoryFragment"
         android:label="@string/conversations_history_title"
         tools:layout="@layout/fragment_conversations_history">
+
+        <!-- Cronologia -> Chat -->
         <action
             android:id="@+id/action_conversationsHistoryFragment_to_chatFragment"
+            app:popUpToInclusive="true"
+            app:popUpTo="@id/chatFragment"
+            app:destination="@id/chatFragment"
+            app:enterAnim="@anim/slide_in_left"
+            app:exitAnim="@anim/hold"
+            app:popEnterAnim="@anim/hold"
+            app:popExitAnim="@anim/slide_out_left" />
+
+        <!-- Cronologia -> Profile -->
+        <action
+            android:id="@+id/action_conversationsHistoryFragment_to_profileFragment"
+            app:popUpToInclusive="true"
+            app:popUpTo="@id/chatFragment"
+            app:destination="@id/profileFragment"
+            app:enterAnim="@anim/slide_in_left"
+            app:exitAnim="@anim/hold"
+            app:popEnterAnim="@anim/hold"
+            app:popExitAnim="@anim/slide_out_left" />
+    </fragment>
+
+    <!-- PROFILE -->
+    <fragment
+        android:id="@+id/profileFragment"
+        android:name="com.example.beagle.ui.chat.fragment.ProfileFragment"
+        android:label="@string/pet_profile"
+        tools:layout="@layout/fragment_profile">
+
+        <argument
+            android:name="petId"
+            app:argType="string"
+            app:nullable="true" />
+        <argument
+            android:name="editMode"
+            android:defaultValue="false"
+            app:argType="boolean" />
+
+        <!-- Profile -> Settings (btnSettings in Profile) -->
+        <action
+            android:id="@+id/action_profileFragment_to_settingsFragment"
+            app:destination="@id/settingsFragment"
+            app:enterAnim="@anim/slide_in_left"
+            app:exitAnim="@anim/hold"
+            app:popEnterAnim="@anim/hold"
+            app:popExitAnim="@anim/slide_out_left" />
+        <action
+            android:id="@+id/action_profileFragment_to_chatFragment"
+            app:popUpToInclusive="true"
+            app:popUpTo="@id/chatFragment"
             app:destination="@id/chatFragment" />
     </fragment>
+
+    <!-- SETTINGS -->
+    <fragment
+        android:id="@+id/settingsFragment"
+        android:name="com.example.beagle.ui.chat.fragment.SettingsFragment"
+        android:label="@string/settings"
+        tools:layout="@layout/fragment_settings" />
 </navigation>

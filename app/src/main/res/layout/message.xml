@@ -18,7 +18,7 @@
             android:id="@+id/textViewAnswer"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="answer"
+            android:text="@string/answer"
             android:textSize="20sp" />
     </LinearLayout>
 
@@ -36,7 +36,7 @@
             android:id="@+id/textViewQuestion"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="question"
+            android:text="@string/question"
             android:textSize="20sp" />
     </LinearLayout>
 

@@ -15,7 +15,19 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
 
-        <!-- Email -->
+        <!-- Illustrazione / header -->
+        <ImageView
+            android:id="@+id/header_register"
+            android:layout_width="0dp"
+            android:layout_height="280dp"
+            android:contentDescription="@null"
+            android:scaleType="centerCrop"
+            android:src="@drawable/header_register"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent" />
+
+        <!-- Email (SOTTO l'immagine) -->
         <com.google.android.material.textfield.TextInputLayout
             android:id="@+id/tilEmail"
             style="@style/Widget.Material3.TextInputLayout.FilledBox"
@@ -23,7 +35,7 @@
             android:layout_height="wrap_content"
             android:layout_marginStart="24dp"
             android:layout_marginEnd="24dp"
-            android:layout_marginTop="12dp"
+            android:layout_marginTop="16dp"
             android:hint="@string/hint_email"
             app:boxStrokeWidth="1dp"
             app:boxStrokeWidthFocused="2dp"
@@ -34,7 +46,7 @@
             app:startIconTint="?attr/colorOnSurfaceVariant"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toTopOf="parent">
+            app:layout_constraintTop_toBottomOf="@id/header_register">
 
             <com.google.android.material.textfield.TextInputEditText
                 android:id="@+id/textInputEmail"
@@ -119,7 +131,7 @@
                 style="@style/TextAppearance.Material3.BodyMedium"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Hai già un account?" />
+                android:text="@string/already_registered" />
 
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/tvGoLogin"

@@ -22,15 +22,18 @@ public interface ConversationDAO {
     @Query("SELECT * FROM Conversation WHERE petId = :petId ORDER BY createdAt DESC LIMIT 1")
     Conversation getLastConversation(long petId);
 
-    @Query("SELECT * FROM CONVERSATION WHERE petId = :petId AND conversationId = :conversationId")
-    Conversation getSingleConversation(long petId, long conversationId);
+    @Query("SELECT * FROM Conversation WHERE conversationId = :conversationId LIMIT 1")
+    Conversation getConversationById(long conversationId);
 
-    @Insert(onConflict = OnConflictStrategy.IGNORE)
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
     void insertAll(List<Conversation> conversations);
 
-    @Insert(onConflict = OnConflictStrategy.IGNORE)
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
     void insert(Conversation... conversations);
 
     @Delete()
     void delete(Conversation conversation);
+
+    @Query("DELETE FROM Conversation WHERE petId = :petId")
+    void deleteAll(long petId);
 }

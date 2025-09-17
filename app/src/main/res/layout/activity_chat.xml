@@ -16,6 +16,8 @@
             android:id="@+id/topAppBar"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:background="?attr/colorSurface"
+            app:titleTextColor="?attr/colorOnSurface"
             app:titleCentered="true" />
 
     </com.google.android.material.appbar.AppBarLayout>
@@ -24,7 +26,7 @@
         android:name="androidx.navigation.fragment.NavHostFragment"
         app:navGraph="@navigation/chat_nav_graph"
         app:defaultNavHost="true"
-        android:id="@+id/fragmentContainterViewChat"
+        android:id="@+id/fragmentContainerViewChat"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         app:layout_behavior="@string/appbar_scrolling_view_behavior" /> <!-- Comportamento app bar -->

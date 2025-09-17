@@ -1,0 +1,712 @@
+package com.example.beagle.ui.chat.fragment;
+
+import static android.view.View.INVISIBLE;
+import static android.view.View.VISIBLE;
+
+import static com.example.beagle.util.Constants.PET_ID_BUNDLE_KEY;
+import static com.example.beagle.util.Constants.PET_NAME_BUNDLE_KEY;
+import static com.example.beagle.util.Constants.SHARED_PREFERENCES_ACTIVE_PET_ID;
+import static com.example.beagle.util.Constants.SHARED_PREFERENCES_ACTIVE_PET_NAME;
+import static com.example.beagle.util.Constants.SHARED_PREFERENCES_FILENAME;
+
+import android.os.Build;
+import android.os.Bundle;
+
+import androidx.activity.OnBackPressedCallback;
+import androidx.annotation.NonNull;
+import androidx.annotation.RequiresApi;
+import androidx.constraintlayout.widget.ConstraintLayout;
+import androidx.core.view.MenuHost;
+import androidx.core.view.MenuProvider;
+import androidx.fragment.app.Fragment;
+import androidx.lifecycle.Lifecycle;
+import androidx.lifecycle.MutableLiveData;
+import androidx.lifecycle.ViewModelProvider;
+import androidx.navigation.Navigation;
+import androidx.navigation.fragment.NavHostFragment;
+
+import android.text.Editable;
+import android.text.TextWatcher;
+import android.util.Log;
+import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.ArrayAdapter;
+import android.widget.Button;
+
+import com.example.beagle.R;
+import com.example.beagle.adapter.PetAdapter;
+import com.example.beagle.adapter.SpeciesAdapter;
+import com.example.beagle.model.Pet;
+import com.example.beagle.model.Result;
+import com.example.beagle.repository.pet.PetRepository;
+import com.example.beagle.ui.chat.viewmodel.pet.PetReadViewModel;
+import com.example.beagle.ui.chat.viewmodel.pet.PetReadViewModelFactory;
+import com.example.beagle.ui.chat.viewmodel.pet.PetWriteViewModel;
+import com.example.beagle.ui.chat.viewmodel.pet.PetWriteViewModelFactory;
+import com.example.beagle.util.ServiceLocator;
+import com.example.beagle.util.SharedPreferencesUtils;
+import com.google.android.material.datepicker.CalendarConstraints;
+import com.google.android.material.datepicker.DateValidatorPointBackward;
+import com.google.android.material.datepicker.MaterialDatePicker;
+import com.google.android.material.datepicker.MaterialPickerOnPositiveButtonClickListener;
+import com.google.android.material.snackbar.Snackbar;
+import com.google.android.material.textfield.MaterialAutoCompleteTextView;
+import com.google.android.material.textfield.TextInputEditText;
+import com.google.android.material.textfield.TextInputLayout;
+
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.time.Instant;
+import java.time.LocalDate;
+import java.time.ZoneId;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+import java.util.Locale;
+import java.util.Objects;
+
+public class ProfileFragment extends Fragment {
+
+    private TextInputEditText name, breed, birthDate, age;
+    private Button btnSave, btnCancel, btnAdd, btnDelete, btnSettings;
+    private ConstraintLayout btns_save_cancel;
+    private SimpleDateFormat sdf;
+    private MaterialAutoCompleteTextView autoCompletePet, autoCompleteSpecies;
+    private TextInputLayout autoCompletePetLayout, autoCompleteSpeciesLayout, nameLayout, breedLayout, birthDateLayout, ageLayout;
+    private Pet pet;
+    private boolean fieldsError;
+    private final List<Pet> animals = new ArrayList<>();
+    private final List<String> species = new ArrayList<>();
+    // 0 = cane, 1 = gatto
+    private ArrayAdapter<Pet> petAdapter;
+    private ArrayAdapter<String> speciesAdapter;
+
+    private PetReadViewModel petReadViewModel;
+    private PetWriteViewModel petWriteViewModel;
+    private MutableLiveData<Result> petReadMutableLiveData;
+    private MutableLiveData<Result> petSavedMutableLiveData;
+    private MutableLiveData<Result> petDeletedMutableLiveData;
+
+    private SharedPreferencesUtils sharedPreferencesUtils;
+
+
+    private int years = 0, remainingMonths = 0;
+
+    public ProfileFragment() {
+        // Required empty public constructor
+    }
+
+    @Override
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+
+
+        OnBackPressedCallback callback = new OnBackPressedCallback(true) {
+            @Override
+            public void handleOnBackPressed() {
+                Bundle bundle = new Bundle();
+
+                if(pet != null) {
+                    sharedPreferencesUtils.writeStringData(
+                            SHARED_PREFERENCES_FILENAME,
+                            SHARED_PREFERENCES_ACTIVE_PET_ID,
+                            Long.toString(pet.getPetId()));
+
+                    sharedPreferencesUtils.writeStringData(
+                            SHARED_PREFERENCES_FILENAME,
+                            SHARED_PREFERENCES_ACTIVE_PET_NAME,
+                            pet.getName());
+                }
+
+                Navigation.findNavController(requireView()).navigate
+                        (R.id.action_profileFragment_to_chatFragment);
+            }
+        };
+
+        requireActivity().getOnBackPressedDispatcher().addCallback(this, callback);
+
+
+        sharedPreferencesUtils = new SharedPreferencesUtils(requireActivity().getApplication());
+
+        PetRepository petRepository =
+                ServiceLocator.getInstance().getPetRepository(
+                        requireActivity().getApplication()
+                );
+
+
+        petReadViewModel = new ViewModelProvider(
+                requireActivity(),
+                new PetReadViewModelFactory(petRepository))
+                .get(PetReadViewModel.class);
+
+
+
+        petWriteViewModel = new ViewModelProvider(
+                requireActivity(),
+                new PetWriteViewModelFactory(petRepository))
+                .get(PetWriteViewModel.class);
+
+        sdf = new SimpleDateFormat("dd/MM/yyyy", Locale.getDefault());
+    }
+
+    @Override
+    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+                             Bundle savedInstanceState) {
+        View view = inflater.inflate(R.layout.fragment_profile, container, false);
+
+        Log.d("pet","onCreateView");
+        name = view.findViewById(R.id.outlinedTextFieldName);
+        nameLayout = view.findViewById(R.id.nameLayout);
+        autoCompleteSpecies = view.findViewById(R.id.autoCompleteSpecies);
+        breed = view.findViewById(R.id.outlinedTextFieldBreed);
+        breedLayout = view.findViewById(R.id.breedLayout);
+        birthDate = view.findViewById(R.id.outlinedTextFieldBirthDate);
+        birthDateLayout = view.findViewById(R.id.birthDateLayout);
+        age = view.findViewById(R.id.outlinedTextFieldAge);
+        ageLayout = view.findViewById(R.id.ageLayout);
+        btns_save_cancel = view.findViewById(R.id.btns_save_cancel);
+        btnSave = view.findViewById(R.id.btn_save);
+        btnCancel = view.findViewById(R.id.btn_cancel);
+        btnAdd = view.findViewById(R.id.btnAdd);
+        btnDelete = view.findViewById(R.id.btn_delete);
+        btnSettings = view.findViewById(R.id.btnSettings);
+        autoCompletePet = view.findViewById(R.id.outlinedTextFieldDropDownMenu);
+        autoCompletePetLayout = view.findViewById(R.id.textInputLayoutDropDownMenu);
+        autoCompleteSpeciesLayout = view.findViewById(R.id.speciesLayoutDropDownMenu);
+
+        fieldsError = false;
+
+        petAdapter = new PetAdapter(requireContext(), animals);
+        autoCompletePet.setAdapter(petAdapter);
+
+        speciesAdapter = new SpeciesAdapter(requireContext(), species);
+        autoCompleteSpecies.setAdapter(speciesAdapter);
+        species.add(getString(R.string.dog));
+        species.add(getString(R.string.cat));
+        speciesAdapter.notifyDataSetChanged();
+
+        MenuHost menuHost = requireActivity();
+        menuHost.addMenuProvider(new MenuProvider() {
+            @Override
+            public void onCreateMenu(@NonNull Menu menu, @NonNull MenuInflater menuInflater) {
+                menu.clear();
+                menuInflater.inflate(R.menu.menu_settings, menu);
+            }
+
+            @Override
+            public boolean onMenuItemSelected(@NonNull MenuItem menuItem) {
+                int id = menuItem.getItemId();
+                if (id == R.id.btnSettings) {
+
+                    NavHostFragment.findNavController(ProfileFragment.this)
+                            .navigate(R.id.action_profileFragment_to_settingsFragment);
+                    return true;
+                }
+                if (id == R.id.btnAdd) {
+                    btnAdd.setVisibility(View.INVISIBLE);
+                    btnSettings.setVisibility(View.INVISIBLE);
+                    btns_save_cancel.setVisibility(View.VISIBLE);
+                    btnDelete.setVisibility(View.INVISIBLE);
+                    disableDropDownMenu();
+                    clearAllFields();
+                    enableAllInputText();
+                    return true;
+                }
+                return false;
+            }
+        }, getViewLifecycleOwner(), Lifecycle.State.RESUMED);
+
+        if(animals.isEmpty()){
+            disableDropDownMenu();
+            btnDelete.setVisibility(INVISIBLE);
+        }
+
+
+        Log.d("pet","prima di readPet");
+        petReadMutableLiveData = petReadViewModel.getPets(false);
+        if (!petReadMutableLiveData.hasActiveObservers()) {
+            petReadMutableLiveData.observe(getViewLifecycleOwner(),
+                    result -> {
+                        Log.d("pet", "petRead observer");
+                        if (result.isSuccess()) {
+                            Log.d("pet", "petRead success");
+                            animals.clear();
+                            animals.addAll(((Result.PetSuccess) result).getData());
+                            petAdapter.notifyDataSetChanged();
+                            disableAllInputText();
+
+                            if (!animals.isEmpty()) {
+                                int i = animals.size()-1;
+                                pet = animals.get(i);
+
+                                btnDelete.setVisibility(VISIBLE);
+                                enableDropDownMenu();
+                                autoCompletePet.setText(pet.toString(), false);
+                                if (pet != null) {
+                                    sharedPreferencesUtils.writeStringData(
+                                            SHARED_PREFERENCES_FILENAME,
+                                            SHARED_PREFERENCES_ACTIVE_PET_ID,
+                                            Long.toString(pet.getPetId()));
+
+                                    sharedPreferencesUtils.writeStringData(
+                                            SHARED_PREFERENCES_FILENAME,
+                                            SHARED_PREFERENCES_ACTIVE_PET_NAME,
+                                            pet.getName());
+                                }
+                            }
+                            else {
+                                disableDropDownMenu();
+                                btnDelete.setVisibility(INVISIBLE);
+                                autoCompletePet.setText("", false);
+                            }
+
+                            btnAdd.setVisibility(VISIBLE);
+                            btnSettings.setVisibility(VISIBLE);
+                            btns_save_cancel.setVisibility(INVISIBLE);
+
+                        }
+                    });
+        }
+
+
+
+
+        btnSave.setOnClickListener(v -> {
+
+            fieldsError = false;
+            if(Objects.requireNonNull(name.getText()).toString().isEmpty()){
+                nameLayout.setError("Obbligatorio");
+                fieldsError = true;
+            }
+
+            if(autoCompleteSpecies.getText().toString().isEmpty()){
+                autoCompleteSpeciesLayout.setError("Obbligatorio");
+                fieldsError = true;
+            }
+
+            if(Objects.requireNonNull(breed.getText()).toString().isEmpty()){
+                breedLayout.setError("Obbligatorio");
+                fieldsError = true;
+            }
+
+            if(Objects.requireNonNull(birthDate.getText()).toString().isEmpty()){
+                birthDateLayout.setError("Obbligatorio");
+                fieldsError = true;
+            }
+
+            if(!fieldsError) {
+                try {
+                    byte speciesCode = mapSpeciesToCode(autoCompleteSpecies.getText().toString());
+                    pet = new Pet(
+                            name.getText().toString(),
+                            speciesCode,
+                            breed.getText().toString(),
+                            Objects.requireNonNull(sdf.parse(birthDate.getText().toString())).getTime());
+                } catch (ParseException e) {
+                    throw new RuntimeException(e);
+                }
+
+                Log.d("pet", "prima di petSavedMutableData");
+                petSavedMutableLiveData = petWriteViewModel.addPet(pet);
+                if(!petSavedMutableLiveData.hasActiveObservers()) {
+                    petSavedMutableLiveData.observe(getViewLifecycleOwner(), result -> {
+                        Log.d("pet", "dentro observer petSavedMutableData");
+                        if (result.isSuccess()) {
+                            Log.d("pet", "petSavedMutableData success");
+
+                            if (animals.isEmpty()) {
+                                disableDropDownMenu();
+                            } else {
+                                enableDropDownMenu();
+                                autoCompletePet.setText(pet.toString(), false);
+                            }
+                            disableAllInputText();
+                        }
+                    });
+                }
+            }
+        else {
+            Snackbar.make(view, "Compila tutti i campi", Snackbar.LENGTH_SHORT).show();
+        }
+        });
+
+        btnCancel.setOnClickListener(v-> {
+            if(!(animals.isEmpty())) {
+                name.setText(pet.getName());
+                autoCompleteSpecies.setText(pet.getSpeciesString(),false);
+                breed.setText(pet.getBreed());
+                if (pet.getBirthDate() != 0) {
+                    birthDate.setText(sdf.format(new Date(pet.getBirthDate())));
+                }
+                autoCompletePet.setText(pet.toString(), false);
+                btnDelete.setVisibility(VISIBLE);
+                enableDropDownMenu();
+            }
+                else{
+                    clearAllFields();
+                    disableDropDownMenu();
+                }
+            resetErrors();
+            disableAllInputText();
+            btnAdd.setVisibility(VISIBLE);
+            btnSettings.setVisibility(VISIBLE);
+            btns_save_cancel.setVisibility(INVISIBLE);
+        });
+
+        autoCompletePet.setOnItemClickListener(
+                (parent, v, position, id) -> {
+
+            pet = (Pet) parent.getItemAtPosition(position);
+            name.setText(pet.getName());
+            autoCompleteSpecies.setText(pet.getSpeciesString(),false);
+            breed.setText(pet.getBreed());
+
+            if (pet.getBirthDate() != 0) {
+                birthDate.setText(sdf.format(new Date(pet.getBirthDate())));
+            }
+//            age.setText(pet.getAge());
+            btnDelete.setVisibility(VISIBLE);
+        });
+
+
+        birthDate.setOnClickListener(v -> showDatePicker());
+
+        birthDate.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+
+            }
+
+            @RequiresApi(api = Build.VERSION_CODES.O)
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+
+                if (!s.toString().isEmpty()) {
+                    birthDateLayout.setError(null);
+                    try {
+                        years = (calculateAge(Objects.requireNonNull(sdf.parse(Objects.requireNonNull(birthDate.getText()).toString())).getTime())/12);
+                        remainingMonths = (calculateAge(Objects.requireNonNull(sdf.parse(birthDate.getText().toString())).getTime())%12);
+
+                        StringBuilder sb = new StringBuilder();
+
+                        // Gestione anni
+                        if (years > 0) {
+                            sb.append(years).append(years == 1 ? " Year" : " Years");
+                        }
+
+                        // Gestione mesi (solo se > 0)
+                        if (remainingMonths > 0) {
+                            if (sb.length() > 0) sb.append(" "); // aggiunge spazio se c’è già "Year"
+                            sb.append(remainingMonths).append(remainingMonths == 1 ? " Month" : " Months");
+                        }
+
+                        // Se entrambi 0 (caso raro: oggi è la data di nascita)
+                        if (sb.length() == 0) {
+                            sb.append("0 Months");
+                        }
+
+                        age.setText(sb.toString());
+
+                    } catch (ParseException e) {
+                        throw new RuntimeException(e);
+                    }
+                }
+            }
+
+            @Override
+            public void afterTextChanged(Editable editable) {
+
+            }
+        });
+
+        autoCompleteSpecies.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+
+                if (!s.toString().isEmpty()) {
+                    autoCompleteSpeciesLayout.setError(null);
+                }
+            }
+
+            @Override
+            public void afterTextChanged(Editable editable) {
+
+            }
+        });
+
+        name.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int i, int i1, int i2) {
+                if (!s.toString().isEmpty()) {
+                    nameLayout.setError(null);
+                }
+            }
+
+            @Override
+            public void afterTextChanged(Editable editable) {
+
+            }
+        });
+
+        breed.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int i, int i1, int i2) {
+                if (!s.toString().isEmpty()) {
+                    breedLayout.setError(null);
+                }
+            }
+
+            @Override
+            public void afterTextChanged(Editable editable) {
+
+            }
+        });
+
+        btnAdd.setOnClickListener(v->{
+            btnAdd.setVisibility(INVISIBLE);
+            btnSettings.setVisibility(INVISIBLE);
+            btns_save_cancel.setVisibility(VISIBLE);
+            btnDelete.setVisibility(INVISIBLE);
+            disableDropDownMenu();
+            clearAllFields();
+            enableAllInputText();
+        });
+
+        btnDelete.setOnClickListener(v->{
+            Log.d("pet", "Delete button clicked");
+            petDeletedMutableLiveData = petWriteViewModel.deletePet(pet);
+            if (!petDeletedMutableLiveData.hasActiveObservers()) {
+                Log.d("pet", "Delte has observer");
+                petDeletedMutableLiveData.observe(getViewLifecycleOwner(),
+                        result -> {
+                            if (result.isSuccess()) {
+                                Log.d("pet", "DELETE SUCCESS");
+
+                                clearAllFields();
+                                btnDelete.setVisibility(INVISIBLE);
+                                if(animals.isEmpty()){
+                                    autoCompletePetLayout.setEnabled(false);
+                                    disableDropDownMenu();
+                                } else {
+                                    enableDropDownMenu();
+                                    autoCompletePet.setText(pet.toString(), false);
+                                    int i = animals.size()-1;
+                                    pet = animals.get(i);
+                                }
+                                disableAllInputText();
+                            }
+                        });
+            }
+
+
+        });
+
+        autoCompletePetLayout.setEndIconOnClickListener(null);
+        autoCompleteSpeciesLayout.setEndIconOnClickListener(null);
+        
+        autoCompleteSpecies.setOnClickListener(v-> {
+            if (!autoCompleteSpecies.getText().toString().isEmpty())
+                speciesAdapter.getFilter().filter(null);
+        });
+
+        btnSettings.setOnClickListener(v-> Navigation.findNavController(v)
+                .navigate(R.id.action_profileFragment_to_settingsFragment));
+
+
+        return view;
+    }
+
+
+
+
+
+
+// METODI
+    private void showDatePicker() {
+        // Costruzione del MaterialDatePicker
+        MaterialDatePicker.Builder<Long> builder = MaterialDatePicker.Builder.datePicker();
+        builder.setTitleText("Select Birth Date");
+
+        // Imposto il vincolo di non poter scegliere date future
+        CalendarConstraints.Builder constraintsBuilder = new CalendarConstraints.Builder();
+        constraintsBuilder.setValidator(DateValidatorPointBackward.now());
+        builder.setCalendarConstraints(constraintsBuilder.build());
+
+        // Se c’è già una data scritta, impostala come selezione iniziale
+        String currentText = birthDate.getText() != null ? birthDate.getText().toString() : "";
+        if (!currentText.isEmpty()) {
+            try {
+                Date parsedDate = sdf.parse(currentText);
+                if (parsedDate != null) {
+                    builder.setSelection(parsedDate.getTime());
+                }
+            } catch (Exception e) {
+                Log.e("BirthDatePicker", "Errore nel parsing della data: " + currentText, e);
+            }
+        }
+
+        final MaterialDatePicker<Long> datePicker = builder.build();
+
+        // Callback sul pulsante OK
+        datePicker.addOnPositiveButtonClickListener
+        (selection -> {
+            String formattedDate = sdf.format(new Date(selection));
+            birthDate.setText(formattedDate);
+        });
+
+        // Callback su Cancel
+        datePicker.addOnNegativeButtonClickListener(dialog -> birthDate.clearFocus());
+
+        // Callback su chiusura del popup
+        datePicker.addOnDismissListener(dialog -> birthDate.clearFocus());
+
+        // Mostro il calendario
+        datePicker.show(getParentFragmentManager(), "DATE_PICKER");
+    }
+
+    private void enableAllInputText(){
+        nameLayout.setEnabled(true);
+        autoCompleteSpeciesLayout.setEnabled(true);
+        breedLayout.setEnabled(true);
+        birthDateLayout.setEnabled(true);
+    }
+
+    private void disableAllInputText(){
+        nameLayout.setEnabled(false);
+        autoCompleteSpeciesLayout.setEnabled(false);
+        breedLayout.setEnabled(false);
+        birthDateLayout.setEnabled(false);
+    }
+
+    private void disableDropDownMenu(){
+        autoCompletePetLayout.setEnabled(false);
+    }
+
+    private void enableDropDownMenu(){
+        autoCompletePetLayout.setEnabled(true);
+    }
+
+    private void clearAllFields(){
+        autoCompletePet.setText("", false);
+        name.setText("");
+        autoCompleteSpecies.setText("", false);
+        breed.setText("");
+        birthDate.setText("");
+        age.setText("");
+    }
+
+    private void deletePet (Pet petToBeDeleted){
+        if(!animals.isEmpty()){
+            animals.remove(petToBeDeleted);
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.VANILLA_ICE_CREAM) {
+                pet = animals.getLast();
+            }
+            if (animals.isEmpty()) {
+                disableDropDownMenu();
+            } else {
+                enableDropDownMenu();
+                autoCompletePet.setText(pet.toString(), false);
+            }
+            disableAllInputText();
+            if (animals.isEmpty()) {
+                disableDropDownMenu();
+            } else {
+                enableDropDownMenu();
+                autoCompletePet.setText(pet.toString(), false);
+            }
+
+        }
+        petAdapter.notifyDataSetChanged();
+    }
+
+    private void resetErrors(){
+        nameLayout.setError(null);
+        autoCompleteSpeciesLayout.setError(null);
+        breedLayout.setError(null);
+        birthDateLayout.setError(null);
+    }
+
+        @RequiresApi(api = Build.VERSION_CODES.O)
+        private int calculateAge(long birthTimestamp) {
+            // Converte il timestamp in LocalDate
+            LocalDate birthDate = Instant.ofEpochMilli(birthTimestamp)
+                    .atZone(ZoneId.systemDefault())
+                    .toLocalDate();
+
+            LocalDate today = LocalDate.now();
+
+            // Calcola mesi totali tra anni e mesi
+            int months = (today.getYear() - birthDate.getYear()) * 12
+                    + (today.getMonthValue() - birthDate.getMonthValue());
+
+            // Se il giorno odierno è prima del giorno di nascita, sottrai 1 mese
+            if (today.getDayOfMonth() < birthDate.getDayOfMonth()) {
+                months--;
+            }
+
+            // Sicurezza: non avere mesi negativi
+            months = Math.max(months, 0);
+
+            return months;
+        }
+
+
+    private byte mapSpeciesToCode(String label) {
+        if (label == null) return -1;
+        String l = label.trim().toLowerCase(Locale.ITALIAN);
+        if (l.startsWith("cane")) return 0;
+        if (l.startsWith("gatto")) return 1;
+        return -1;                             // Sconosciuto
+    }
+
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

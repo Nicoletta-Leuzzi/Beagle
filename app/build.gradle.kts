@@ -1,3 +1,5 @@
+import com.android.build.gradle.internal.cxx.configure.gradleLocalProperties
+
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.google.services) // Google Services attivo (Firebase, default_web_client_id, ecc.)
@@ -5,15 +7,19 @@ plugins {
 
 android {
     namespace = "com.example.beagle"
-    compileSdk = 35
+    compileSdk = 36
 
     defaultConfig {
         applicationId = "com.example.beagle"
-        minSdk = 24
+        minSdk = 26
         targetSdk = 35
         versionCode = 1
         versionName = "1.0"
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
+
+        resValue("string", "API_KEY", gradleLocalProperties(rootDir, providers).getProperty("API_KEY"))
+        resValue("bool", "debug_mode", gradleLocalProperties(rootDir, providers).getProperty("debug_mode"))
+
     }
 
     buildTypes {
@@ -43,14 +49,12 @@ android {
 dependencies {
     // Base UI (version catalog)
     implementation(libs.appcompat)
-    implementation(libs.material)          // Material 3: usi Widget.Material3.* nei layout
+    implementation(libs.material)
     implementation(libs.activity)
     implementation(libs.constraintlayout)
-    implementation("com.google.android.material:material:1.13.0")
 
 
     // MVVM / Lifecycle
-    implementation(libs.lifecycle.viewmodel.v284)
     implementation(libs.lifecycle.livedata.v284)
     implementation(libs.lifecycle.runtime)
 
@@ -62,7 +66,7 @@ dependencies {
     implementation(platform(libs.firebase.bom))
     implementation(libs.firebase.auth)
     implementation(libs.firebase.database)
-    implementation(libs.play.services.auth) // Google Sign-In (Play Services)
+    implementation(libs.play.services.auth)
 
     // Credential Manager + Google Identity Services
     implementation(libs.androidx.credentials)
@@ -71,10 +75,16 @@ dependencies {
 
     // Room (Java: annotationProcessor)
     implementation(libs.room.runtime)
+    implementation(libs.androidx.lifecycle.viewmodel)
     annotationProcessor(libs.androidx.room.compiler)
 
     // Test
     testImplementation(libs.junit)
     androidTestImplementation(libs.ext.junit)
     androidTestImplementation(libs.espresso.core)
+
+    // JSON
+    implementation(libs.gson)
+    implementation(libs.retrofit)
+    implementation(libs.converter.gson)
 }

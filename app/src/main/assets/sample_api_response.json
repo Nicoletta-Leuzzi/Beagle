@@ -1,0 +1,21 @@
+{
+  "id": "chatcmpl-123XYZ",
+  "object": "chat.completion",
+  "created":1749600000,
+  "model": "gpt-oss-120b",
+  "choices": [
+    {
+      "message": {
+        "role": "assistant",
+        "content": "Artificial intelligence (AI) refers to the simulation of human intelligence in machines that are programmed to think like humans and mimic their actions. The term may also be applied to any machine that exhibits traits associated with a human mind such as learning and problem-solving."
+      },
+      "finish_reason": "stop",
+      "index": 0
+    }
+  ],
+  "usage": {
+    "prompt_tokens": 29,
+    "completion_tokens": 58,
+    "total_tokens": 87
+  }
+}
