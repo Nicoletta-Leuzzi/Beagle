@@ -69,10 +69,26 @@ public class PetRepository implements IPetResponseCallback {
 
     }
 
+    @Override
+    public void onSuccessReadFromRemote(List<Pet> petList) {
+        Result.PetSuccess result = new Result.PetSuccess(petList);
+        petMutableLiveData.postValue(result);
+    }
 
     @Override
     public void onSuccessReadFromLocal(Pet pet) {
+        List<Pet> petList = new ArrayList<>();
+        if (pet != null) {
+            petList.add(pet);
+        }
+        Result.PetSuccess result = new Result.PetSuccess(petList);
+        petMutableLiveData.postValue(result);
+    }
 
+    @Override
+    public void onFailureReadFromRemote(Exception exception) {
+        Result.Error result = new Result.Error(exception.getMessage());
+        petMutableLiveData.postValue(result);
     }
 
     @Override
@@ -82,10 +98,31 @@ public class PetRepository implements IPetResponseCallback {
     }
 
     @Override
+    public void onSuccessDeleteFromRemote(long petId) {
+        Result.PetSuccess result = new Result.PetSuccess(new ArrayList<>());
+        petDeletedLiveData.postValue(result);
+        petMutableLiveData.postValue(result);
+    }
+
+    @Override
     public void onSuccessDeleteFromLocal(List<Pet> petList) {
         Result.PetSuccess result = new Result.PetSuccess(petList);
         petDeletedLiveData.postValue(result);
         petMutableLiveData.postValue(result);
 
+    }
+
+    @Override
+    public void onFailureDeleteFromRemote(Exception exception) {
+        Result.Error result = new Result.Error(exception.getMessage());
+        petDeletedLiveData.postValue(result);
+        petMutableLiveData.postValue(result);
+    }
+
+    @Override
+    public void onFailureDeleteFromLocal(Exception exception) {
+        Result.Error result = new Result.Error(exception.getMessage());
+        petDeletedLiveData.postValue(result);
+        petMutableLiveData.postValue(result);
     }
 }
