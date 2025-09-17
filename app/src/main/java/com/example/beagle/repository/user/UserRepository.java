@@ -21,36 +21,36 @@ public class UserRepository implements IUserRepository {
 
     public UserRepository(BaseUserAuthenticationRemoteDataSource authDs) {
         this.userRemoteDataSource = authDs;
+        // ----- CALLBACK UNICO  -----
+        UserResponseCallback callback = new UserResponseCallback() {
+            @Override
+            public void onSuccessFromAuthentication(User user) {
+                userMutableLiveData.postValue(new Result.UserSuccess(user));
+            }
+
+            @Override
+            public void onFailureFromAuthentication(String message) {
+                userMutableLiveData.postValue(new Result.Error(message));
+            }
+
+            @Override
+            public void onSuccessFromRemoteDatabase(User user) {
+                userMutableLiveData.postValue(new Result.UserSuccess(user));
+            }
+
+            @Override
+            public void onFailureFromRemoteDatabase(String message) {
+                userMutableLiveData.postValue(new Result.Error(message));
+            }
+
+            @Override
+            public void onSuccessLogout() {
+                userMutableLiveData.postValue(new Result.UserSuccess(null));
+            }
+        };
         this.userRemoteDataSource.setUserResponseCallback(callback);
     }
 
-    // ----- CALLBACK UNICO  -----
-    private final UserResponseCallback callback = new UserResponseCallback() {
-        @Override
-        public void onSuccessFromAuthentication(User user) {
-            userMutableLiveData.postValue(new Result.UserSuccess(user));
-        }
-
-        @Override
-        public void onFailureFromAuthentication(String message) {
-            userMutableLiveData.postValue(new Result.Error(message));
-        }
-
-        @Override
-        public void onSuccessFromRemoteDatabase(User user) {
-            userMutableLiveData.postValue(new Result.UserSuccess(user));
-        }
-
-        @Override
-        public void onFailureFromRemoteDatabase(String message) {
-            userMutableLiveData.postValue(new Result.Error(message));
-        }
-
-        @Override
-        public void onSuccessLogout() {
-            userMutableLiveData.postValue(new Result.UserSuccess(null));
-        }
-    };
     // ----- FINE CALLBACK -----
 
     @Override
