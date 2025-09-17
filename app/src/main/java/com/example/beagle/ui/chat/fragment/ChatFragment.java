@@ -361,7 +361,6 @@ public class ChatFragment extends Fragment {
             public void onCreateMenu(@NonNull Menu menu, @NonNull MenuInflater menuInflater) {
                 menu.clear(); // pulisce menu prima di aggiungere elementi di questo fragment
                 menuInflater.inflate(R.menu.menu_chat, menu);
-
             }
 
             @Override
