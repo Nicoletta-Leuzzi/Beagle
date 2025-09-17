@@ -196,11 +196,20 @@ public class ProfileFragment extends Fragment {
                             animals.addAll(((Result.PetSuccess) result).getData());
                             petAdapter.notifyDataSetChanged();
                             disableAllInputText();
-                            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.VANILLA_ICE_CREAM) {
-                                Log.d("pet", "TRUUUUUUUUE");
-                                pet = animals.getLast();
-                            } else {
-                                pet = animals.get(0);
+
+
+                            if (!animals.isEmpty()) {
+                                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.VANILLA_ICE_CREAM) {
+                                    Log.d("pet", "TRUUUUUUUUE");
+                                    pet = animals.getLast();
+                                } else {
+                                    pet = animals.get(petAdapter.getCount()-1);
+                                }
+                                enableDropDownMenu();
+                                autoCompletePet.setText(pet.toString(), false);
+                            }
+                            else {
+                                disableDropDownMenu();
                             }
 
 
