@@ -204,7 +204,9 @@ public class ProfileFragment extends Fragment {
                                     Log.d("pet", "TRUUUUUUUUE");
                                     pet = animals.getLast();
                                 } else {
-                                    pet = animals.get(petAdapter.getCount()-1);
+
+                                    int i = animals.size()-1;
+                                    pet = animals.get(i);
                                 }
                                 enableDropDownMenu();
                                 autoCompletePet.setText(pet.toString(), false);
