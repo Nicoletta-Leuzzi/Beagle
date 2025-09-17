@@ -56,5 +56,5 @@ room-runtime = { module = "androidx.room:room-runtime", version.ref = "roomRunti
 androidx-lifecycle-viewmodel = { group = "androidx.lifecycle", name = "lifecycle-viewmodel", version.ref = "lifecycleViewmodel" }
 
 [plugins]
-android-application = { id = "com.android.application", version.ref = "agp" }
+android-application = { id = "com.android.application", version = "8.12.0" }
 google-services = { id = "com.google.gms.google-services", version.ref = "googleServices" }
