@@ -9,6 +9,7 @@
     <fragment
         android:id="@+id/chatFragment"
         android:name="com.example.beagle.ui.chat.fragment.ChatFragment"
+        android:label="@string/chat"
         tools:layout="@layout/fragment_chat">
 
         <!-- Per aprire una conversazione specifica -->
@@ -70,7 +71,7 @@
     <fragment
         android:id="@+id/profileFragment"
         android:name="com.example.beagle.ui.chat.fragment.ProfileFragment"
-        android:label="profile_title"
+        android:label="@string/pet_profile"
         tools:layout="@layout/fragment_profile">
 
         <argument
@@ -101,6 +102,6 @@
     <fragment
         android:id="@+id/settingsFragment"
         android:name="com.example.beagle.ui.chat.fragment.SettingsFragment"
-        android:label="settings_title"
+        android:label="@string/settings"
         tools:layout="@layout/fragment_settings" />
 </navigation>

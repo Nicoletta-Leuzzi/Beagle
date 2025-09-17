@@ -89,11 +89,7 @@ public class MessageRepository implements IMessageResponseCallback {
         Result.MessageReadSuccess result = new Result.MessageReadSuccess(messageList);
         messageAddedLiveData.postValue(result);
     }
-
-    @Override
-    public void onFailureFromRemote(Exception exception) {
-
-    }
+    
 
     @Override
     public void onFailureUpdateFromLocal(Exception exception) {

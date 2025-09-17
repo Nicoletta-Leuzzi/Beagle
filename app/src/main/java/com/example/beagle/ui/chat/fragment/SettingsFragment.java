@@ -17,7 +17,7 @@ import android.widget.ArrayAdapter;
 import com.example.beagle.R;
 import com.example.beagle.adapter.LanguageAdapter;
 import com.example.beagle.ui.welcome.WelcomeActivity;
-import com.example.beagle.util.PreferencesManager;
+import com.example.beagle.util.SharedPreferencesUtils;
 import com.google.android.material.button.MaterialButton;
 import com.google.android.material.materialswitch.MaterialSwitch;
 import com.google.android.material.textfield.MaterialAutoCompleteTextView;
@@ -48,7 +48,7 @@ public class SettingsFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_settings, container, false);
-        PreferencesManager prefs = new PreferencesManager(requireContext());
+        SharedPreferencesUtils prefs = new SharedPreferencesUtils(requireContext());
         themeSwitch = view.findViewById(R.id.switchTheme);
         textInputLayoutLanguage = view.findViewById(R.id.textInputLayoutLanguage);
         autoCompleteLanguage = view.findViewById(R.id.materialAutoCompleteTextViewLanguage);
@@ -109,7 +109,7 @@ public class SettingsFragment extends Fragment {
 //METODI
 
     private void updateUi() {
-        PreferencesManager prefs = new PreferencesManager(requireContext());
+        SharedPreferencesUtils prefs = new SharedPreferencesUtils(requireContext());
 
         // --- Tema ---
         int savedTheme = prefs.getTheme();

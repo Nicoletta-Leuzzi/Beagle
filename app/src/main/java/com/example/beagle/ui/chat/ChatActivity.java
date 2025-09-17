@@ -13,7 +13,7 @@ import androidx.navigation.ui.AppBarConfiguration;
 import androidx.navigation.ui.NavigationUI;
 
 import com.example.beagle.R;
-import com.example.beagle.util.PreferencesManager;
+import com.example.beagle.util.SharedPreferencesUtils;
 import com.google.android.material.appbar.MaterialToolbar;
 
 
@@ -22,7 +22,7 @@ public class ChatActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
 
-        PreferencesManager prefs = new PreferencesManager(this);
+        SharedPreferencesUtils prefs = new SharedPreferencesUtils(this);
 
         // TEMA
         int savedTheme = prefs.getTheme();

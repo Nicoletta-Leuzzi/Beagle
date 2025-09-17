@@ -23,7 +23,7 @@
     <!-- Pet / cronologia -->
     <string name="no_pet">Non hai ancora aggiunto un animale, aggiungilo</string>
     <string name="add_pet_button">Aggiungi un nuovo animale</string>
-    <string name="conversations_history_title">Chat</string>
+    <string name="conversations_history_title">Cronologia</string>
     <string name="history_description">Pulsante cronologia</string>
     <string name="pet_profile_description">Pulsante profilo animale</string>
 
@@ -72,4 +72,5 @@
     <string name="question">Domanda</string>
     <string name="dog">Cane</string>
     <string name="cat">Gatto</string>
+    <string name="pet_profile">Profilo animale</string>
 </resources>
