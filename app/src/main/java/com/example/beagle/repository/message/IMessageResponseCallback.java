@@ -13,11 +13,10 @@ public interface IMessageResponseCallback {
     void onSuccessWriteFromLocal(List<Message> allMessages, Message message, long conversationId, int seq);
     void onSuccessUpdateFromLocal(List<Message> messageList);
 
-
     void onFailureFromRemote(Exception exception);
     void onFailureReadFromRemote(Exception exception);
     void onFailureReadFromLocal(Exception exception);
-    void onFailureWriteFromRemote(String exception);
+    void onFailureWriteFromRemote(Exception exception);
     void onFailureWriteFromLocal(Exception exception);
     void onFailureUpdateFromLocal(Exception exception);
 

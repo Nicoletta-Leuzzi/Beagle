@@ -18,8 +18,8 @@ public interface PetDAO {
     @Query("SELECT * FROM Pet WHERE petId IN (:petIds)")
     List<Pet> loadAllByIds(long[] petIds);
 
-    @Query("SELECT * FROM Pet WHERE name LIKE :name LIMIT 1")
-    Pet findByName(String name);
+    @Query("SELECT * FROM Pet WHERE petId = :petId LIMIT 1")
+    Pet getPetById(long petId);
 
     @Insert
     void insert(Pet... pets);
@@ -29,4 +29,5 @@ public interface PetDAO {
 
     @Delete
     void delete(Pet pet);
+
 }

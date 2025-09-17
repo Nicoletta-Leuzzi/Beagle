@@ -71,6 +71,11 @@ public class PetRepository implements IPetResponseCallback {
 
 
     @Override
+    public void onSuccessReadFromLocal(Pet pet) {
+
+    }
+
+    @Override
     public void onFailureFromLocal(Exception exception) {
         Result.Error result = new Result.Error(exception.getMessage());
         petMutableLiveData.postValue(result);

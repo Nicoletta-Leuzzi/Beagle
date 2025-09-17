@@ -82,9 +82,9 @@ public class ConversationFirebaseDataSource extends BaseConversationRemoteDataSo
                 .addOnCompleteListener(task -> {
                     boolean ok = delConversation.isSuccessful() && delMessages.isSuccessful();
                     if (ok) {
-                        conversationCallback.onSuccessDeleteFromRemote();
+                        conversationCallback.onSuccessDeleteFromRemote(conversationId, petId);
                     } else {
-                        conversationCallback.onFailureDeleteFromRemote(task.getException());
+                        conversationCallback.onFailureDeleteFromRemote(conversationId, petId, task.getException());
                     }
                 });
     }
