@@ -198,16 +198,11 @@ public class ProfileFragment extends Fragment {
                             petAdapter.notifyDataSetChanged();
                             disableAllInputText();
 
-
                             if (!animals.isEmpty()) {
-                                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.VANILLA_ICE_CREAM) {
-                                    Log.d("pet", "TRUUUUUUUUE");
-                                    pet = animals.getLast();
-                                } else {
+                                int i = animals.size()-1;
+                                pet = animals.get(i);
 
-                                    int i = animals.size()-1;
-                                    pet = animals.get(i);
-                                }
+                                btnDelete.setVisibility(VISIBLE);
                                 enableDropDownMenu();
                                 autoCompletePet.setText(pet.toString(), false);
                                 if (pet != null) {
@@ -221,19 +216,16 @@ public class ProfileFragment extends Fragment {
                                             SHARED_PREFERENCES_ACTIVE_PET_NAME,
                                             pet.getName());
                                 }
-
                             }
                             else {
                                 disableDropDownMenu();
+                                btnDelete.setVisibility(INVISIBLE);
+                                autoCompletePet.setText("", false);
                             }
-
 
                             btnAdd.setVisibility(VISIBLE);
                             btnSettings.setVisibility(VISIBLE);
-                            btnDelete.setVisibility(VISIBLE);
                             btns_save_cancel.setVisibility(INVISIBLE);
-
-
 
                         }
                     });
@@ -292,54 +284,9 @@ public class ProfileFragment extends Fragment {
                                 autoCompletePet.setText(pet.toString(), false);
                             }
                             disableAllInputText();
-                            if (animals.isEmpty()) {
-                                disableDropDownMenu();
-                            } else {
-                                enableDropDownMenu();
-                                autoCompletePet.setText(pet.toString(), false);
-                            }
-
-                            //petViewModel.getPets(false);
-
-                            //dovrei invece chiamare il read
-                            /*
-                            animals.clear();
-                            animals.addAll(((Result.PetSuccess) result).getData());
-                            animals.add(pet);
-                            petAdapter.notifyDataSetChanged();
-                            disableAllInputText();
-                            if (animals.isEmpty()) {
-                                disableDropDownMenu();
-                            } else {
-                                enableDropDownMenu();
-                                autoCompletePet.setText(pet.toString(), false);
-                            }
-                            btnAdd.setVisibility(VISIBLE);
-                            btnSettings.setVisibility(VISIBLE);
-                            btnDelete.setVisibility(VISIBLE);
-                            btns_save_cancel.setVisibility(INVISIBLE);
-                             */
                         }
                     });
                 }
-
-
-                /*
-                animals.add(pet);
-                petAdapter.notifyDataSetChanged();
-                disableAllInputText();
-                if (animals.isEmpty()) {
-                    disableDropDownMenu();
-                } else {
-                    enableDropDownMenu();
-                    autoCompletePet.setText(pet.toString(), false);
-                }
-                btnAdd.setVisibility(VISIBLE);
-                btnSettings.setVisibility(VISIBLE);
-                btnDelete.setVisibility(VISIBLE);
-                btns_save_cancel.setVisibility(INVISIBLE);
-
-                 */
             }
         else {
             Snackbar.make(view, "Compila tutti i campi", Snackbar.LENGTH_SHORT).show();
@@ -512,50 +459,24 @@ public class ProfileFragment extends Fragment {
                         result -> {
                             if (result.isSuccess()) {
                                 Log.d("pet", "DELETE SUCCESS");
-                                //petViewModel.getPets(false);
+
                                 clearAllFields();
                                 btnDelete.setVisibility(INVISIBLE);
                                 if(animals.isEmpty()){
                                     autoCompletePetLayout.setEnabled(false);
-                                }
-
-
-                                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.VANILLA_ICE_CREAM) {
-                                    Log.d("pet", "TURURUURURURURUURR");
-                                    pet = animals.getLast();
-                                } else {
-                                    pet = animals.get(0);
-                                }
-                                if (animals.isEmpty()) {
                                     disableDropDownMenu();
                                 } else {
                                     enableDropDownMenu();
                                     autoCompletePet.setText(pet.toString(), false);
+                                    int i = animals.size()-1;
+                                    pet = animals.get(i);
                                 }
                                 disableAllInputText();
-                                if (animals.isEmpty()) {
-                                    disableDropDownMenu();
-                                } else {
-                                    enableDropDownMenu();
-                                    autoCompletePet.setText(pet.toString(), false);
-                                }
-
-
                             }
                         });
             }
 
 
-
-/*
-            deletePet(pet);
-            clearAllFields();
-            btnDelete.setVisibility(INVISIBLE);
-            if(animals.isEmpty()){
-                autoCompletePetLayout.setEnabled(false);
-            }
-
- */
         });
 
         autoCompletePetLayout.setEndIconOnClickListener(null);
