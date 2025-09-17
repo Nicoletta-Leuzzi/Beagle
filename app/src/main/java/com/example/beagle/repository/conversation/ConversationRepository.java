@@ -15,7 +15,6 @@ public class ConversationRepository implements IConversationResponseCallback {
     private final MutableLiveData<Result> conversationsMutableLiveData;
     private final BaseConversationRemoteDataSource conversationRemoteDataSource;
     private final BaseConversationLocalDataSource conversationLocalDataSource;
-    private Long lastDeletedPetId; // ultimo petId usato per deleteConversation
 
 
     public ConversationRepository(BaseConversationRemoteDataSource conversationRemoteDataSource,
@@ -43,7 +42,6 @@ public class ConversationRepository implements IConversationResponseCallback {
     }
 
     public void deleteConversation(Conversation conversation, long petId) {
-        lastDeletedPetId = petId;
         conversationLocalDataSource.deleteConversation(conversation, petId);
         conversationRemoteDataSource.deleteConversation(conversation.getConversationId(), petId);
     }
@@ -74,16 +72,12 @@ public class ConversationRepository implements IConversationResponseCallback {
     }
 
     @Override
-    public void onSuccessDeleteFromRemote() {
-        if (lastDeletedPetId != null) {
-            conversationLocalDataSource.getConversations(lastDeletedPetId);
-        }
-        lastDeletedPetId = null;
+    public void onSuccessDeleteFromRemote(long conversationId, long petId) {
+        conversationLocalDataSource.getConversations(petId);
     }
 
     @Override
-    public void onFailureDeleteFromRemote(Exception exception) {
-        Result.Error result = new Result.Error(exception.getMessage());
-        conversationsMutableLiveData.postValue(result);
+    public void onFailureDeleteFromRemote(long conversationId, long petId, Exception exception) {
+        conversationsMutableLiveData.postValue(new Result.Error(exception.getMessage()));
     }
 }

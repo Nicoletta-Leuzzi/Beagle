@@ -9,9 +9,9 @@ public interface IConversationResponseCallback {
     void onSuccessFromLocal(List<Conversation> conversationList);
     void onSuccessReadFromRemote(List<Conversation> conversationList, long petId);
     void onSuccessWriteFromLocal(Conversation conversation);
-    void onSuccessDeleteFromRemote();
+    void onSuccessDeleteFromRemote(long conversationId, long petId);
 
     void onFailureReadFromRemote(Exception exception);
-    void onFailureDeleteFromRemote(Exception exception);
+    void onFailureDeleteFromRemote(long conversationId, long petId, Exception exception);
 
 }
