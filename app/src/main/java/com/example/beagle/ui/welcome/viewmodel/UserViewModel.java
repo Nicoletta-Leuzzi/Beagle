@@ -75,7 +75,7 @@ public class UserViewModel extends ViewModel {
         userRepository.sendPasswordReset(email)
                 .addOnSuccessListener(v -> resetResult.postValue(new Result.UserSuccess(null)))
                 .addOnFailureListener(e -> resetResult.postValue(
-                        new Result.Error(e != null && e.getMessage() != null
+                        new Result.Error(e.getMessage() != null
                                 ? e.getMessage()
                                 : "Si è verificato un errore. Riprova.")
                 ));

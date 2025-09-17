@@ -35,7 +35,7 @@ public class UserFirebaseDataSource extends BaseUserDataRemoteDataSource {
      */
     @Override
     public void saveUserData(User user) {
-        if (user == null || user.getIdToken() == null) {
+        if (user == null) {
             if (userResponseCallback != null) {
                 userResponseCallback.onFailureFromRemoteDatabase("Invalid user");
             }

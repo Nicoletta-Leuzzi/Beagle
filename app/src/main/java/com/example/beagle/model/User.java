@@ -23,7 +23,7 @@ public class User implements Parcelable {
     // Necessario per Firebase (deserializzazione)
     public User() { }
 
-    public User(String name, String email, String idToken) {
+    public User(String name, @NonNull String email, String idToken) {
         this.name = name;
         this.email = email;
         this.idToken = idToken;
@@ -31,14 +31,17 @@ public class User implements Parcelable {
 
     public String getName() { return name; }
 
+    @NonNull
     public String getEmail() { return email; }
     public void setEmail(String email) { this.email = email; }
 
     // Non salvare l'idToken nel Realtime DB
+    @NonNull
     @Exclude
     public String getIdToken() { return idToken; }
     public void setIdToken(String idToken) { this.idToken = idToken; }
 
+    @NonNull
     @Override
     public String toString() {
         return "User{" +
