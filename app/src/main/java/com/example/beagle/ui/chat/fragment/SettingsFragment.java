@@ -18,6 +18,7 @@ import android.widget.ArrayAdapter;
 
 import com.example.beagle.R;
 import com.example.beagle.ui.welcome.WelcomeActivity;
+import com.example.beagle.util.PreferencesManager;
 import com.google.android.material.button.MaterialButton;
 import com.google.android.material.materialswitch.MaterialSwitch;
 import com.google.android.material.textfield.MaterialAutoCompleteTextView;
@@ -51,6 +52,7 @@ public class SettingsFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_settings, container, false);
+        PreferencesManager prefs = new PreferencesManager(requireContext());
         themeSwitch = view.findViewById(R.id.switchTheme);
         textInputLayoutLanguage = view.findViewById(R.id.textInputLayoutLanguage);
         autoCompleteLanguage = view.findViewById(R.id.materialAutoCompleteTextViewLanguage);
@@ -64,16 +66,9 @@ public class SettingsFragment extends Fragment {
         themeSwitch.setOnCheckedChangeListener((buttonView, isChecked) -> {
             autoCompleteLanguage.dismissDropDown();
             autoCompleteLanguage.clearFocus();
-            if (isChecked) {
-
-                // Tema scuro
-                AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES);
-                themeSwitch.setThumbIconResource(R.drawable.dark_mode);
-            } else {
-                // Tema chiaro
-                AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO);
-                themeSwitch.setThumbIconResource(R.drawable.light_mode);
-            }
+            int mode = isChecked ? AppCompatDelegate.MODE_NIGHT_YES : AppCompatDelegate.MODE_NIGHT_NO;
+            AppCompatDelegate.setDefaultNightMode(mode);
+            prefs.saveTheme(mode);
         });
 
         textInputLayoutLanguage.setEndIconOnClickListener(null);
@@ -88,13 +83,14 @@ public class SettingsFragment extends Fragment {
             autoCompleteLanguage.dismissDropDown();
             autoCompleteLanguage.clearFocus();
 
-            String selected = (String) parent.getItemAtPosition(position);
-
-            if (selected.equalsIgnoreCase(getString(R.string.english))) {
-                AppCompatDelegate.setApplicationLocales(LocaleListCompat.forLanguageTags("en"));
-            } else if (selected.equalsIgnoreCase(getString(R.string.italian))) {
-                AppCompatDelegate.setApplicationLocales(LocaleListCompat.forLanguageTags("it"));
+            String langTag;
+            if (position == 0) {
+                langTag = "en";
+            } else {
+                langTag = "it";
             }
+            AppCompatDelegate.setApplicationLocales(LocaleListCompat.forLanguageTags(langTag));
+            prefs.saveLanguage(langTag);
         });
 
         btnLogout.setOnClickListener(v -> {

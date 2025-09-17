@@ -340,10 +340,10 @@ public class ProfileFragment extends Fragment {
 //                petAdapter.getFilter().filter(null);
 //        });
 //
-//        autoCompleteSpecies.setOnClickListener(v-> {
-//            if (!autoCompleteSpecies.getText().toString().isEmpty())
-//                speciesAdapter.getFilter().filter(null);
-//        });
+        autoCompleteSpecies.setOnClickListener(v-> {
+            if (!autoCompleteSpecies.getText().toString().isEmpty())
+                speciesAdapter.getFilter().filter(null);
+        });
 
         btnSettings.setOnClickListener(v->{
             Navigation.findNavController(v)
