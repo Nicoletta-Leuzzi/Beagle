@@ -54,21 +54,15 @@ public class UserFirebaseDataSource extends BaseUserDataRemoteDataSource {
                 } else {
                     // Crea il nodo utente
                     userRef.setValue(user)
-                            .addOnSuccessListener(new OnSuccessListener<>() {
-                                @Override
-                                public void onSuccess(Void unused) {
-                                    if (userResponseCallback != null) {
-                                        userResponseCallback.onSuccessFromRemoteDatabase(user);
-                                    }
+                            .addOnSuccessListener(unused -> {
+                                if (userResponseCallback != null) {
+                                    userResponseCallback.onSuccessFromRemoteDatabase(user);
                                 }
                             })
-                            .addOnFailureListener(new OnFailureListener() {
-                                @Override
-                                public void onFailure(@NonNull Exception e) {
-                                    if (userResponseCallback != null) {
-                                        userResponseCallback.onFailureFromRemoteDatabase(
-                                                e.getLocalizedMessage() != null ? e.getLocalizedMessage() : "Write failed");
-                                    }
+                            .addOnFailureListener(e -> {
+                                if (userResponseCallback != null) {
+                                    userResponseCallback.onFailureFromRemoteDatabase(
+                                            e.getLocalizedMessage() != null ? e.getLocalizedMessage() : "Write failed");
                                 }
                             });
                 }
