@@ -6,14 +6,11 @@ import java.util.List;
 
 public interface IConversationResponseCallback {
 
-    void onSuccessFromRemote();
     void onSuccessFromLocal(List<Conversation> conversationList);
     void onSuccessReadFromRemote(List<Conversation> conversationList, long petId);
     void onSuccessWriteFromLocal(Conversation conversation);
     void onSuccessDeleteFromRemote();
 
-    void onFailureFromRemote(Exception exception);
-    void onFailureFromLocal(Exception exception);
     void onFailureReadFromRemote(Exception exception);
     void onFailureDeleteFromRemote(Exception exception);
 
