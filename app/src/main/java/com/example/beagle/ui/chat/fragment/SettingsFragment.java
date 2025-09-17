@@ -17,6 +17,7 @@ import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 
 import com.example.beagle.R;
+import com.example.beagle.adapter.LanguageAdapter;
 import com.example.beagle.ui.welcome.WelcomeActivity;
 import com.example.beagle.util.PreferencesManager;
 import com.google.android.material.button.MaterialButton;
@@ -33,7 +34,7 @@ public class SettingsFragment extends Fragment {
     private MaterialSwitch themeSwitch;
     private TextInputLayout textInputLayoutLanguage;
     private MaterialAutoCompleteTextView autoCompleteLanguage;
-    private List<String> languages = new ArrayList<>();
+//    private List<String> languages = new ArrayList<>();
     private ArrayAdapter<String> languageAdapter;
     private MaterialButton btnLogout;
 
@@ -58,9 +59,7 @@ public class SettingsFragment extends Fragment {
         autoCompleteLanguage = view.findViewById(R.id.materialAutoCompleteTextViewLanguage);
         btnLogout = view.findViewById(R.id.btnLogout);
 
-        languages.add(getString(R.string.english));
-        languages.add(getString(R.string.italian));
-        languageAdapter = new ArrayAdapter<>(getContext(), android.R.layout.simple_dropdown_item_1line, languages);
+        languageAdapter = new LanguageAdapter(requireContext());
         autoCompleteLanguage.setAdapter(languageAdapter);
 
         updateUi();
