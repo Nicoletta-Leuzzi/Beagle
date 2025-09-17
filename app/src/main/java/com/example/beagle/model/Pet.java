@@ -17,27 +17,16 @@ import androidx.room.Ignore;
 import androidx.room.Index;
 import androidx.room.PrimaryKey;
 
-@Entity(
-        foreignKeys = @ForeignKey(
-                entity = User.class,
-                parentColumns = "idToken",
-                childColumns = "idToken",
-                onDelete = ForeignKey.CASCADE,
-                onUpdate = ForeignKey.CASCADE
-        ),
-        indices = { @Index(value = {"idToken", "name"}, unique = true),
-                @Index("idToken") }
-)
+@Entity
 public class Pet {
     @PrimaryKey(autoGenerate = true)
     private long petId; // autogenerato da Room
-    private String idToken, name, breed, age;
+    private String name, breed, age;
     private byte species; // TODO: da rivedere utilizzo
     private long birthDate;
 
-    public Pet(long petId, @NonNull String idToken, @NonNull String name, byte species, String breed, long birthDate) {
+    public Pet(long petId, @NonNull String name, byte species, String breed, long birthDate) {
         this.petId = petId;
-        this.idToken = idToken;
         this.name = name;
         this.species = species;
         this.breed = breed;
@@ -47,9 +36,8 @@ public class Pet {
 
     // Costruttore di comodo per creare un nuovo Pet prima dell'inserimento (senza id)
     @Ignore
-    public Pet(@NonNull String idToken, @NonNull String name,
+    public Pet(@NonNull String name,
                byte species, String breed, long birthDate) {
-        this.idToken = idToken;
         this.name = name;
         this.species = species;
         this.breed = breed;
@@ -60,7 +48,6 @@ public class Pet {
     @Ignore
     public Pet(Pet other){
         this.petId = other.petId;
-        this.idToken = other.idToken;
         this.name = other.name;
         this.species = other.species;
         this.breed = other.breed;
@@ -92,14 +79,6 @@ public class Pet {
     public void setBirthDate(long birthDate) {
         this.birthDate = birthDate;
         this.age=calculateAge(getBirthDate());
-    }
-
-    public String getIdToken() {
-        return idToken;
-    }
-
-    public void setIdToken(String idToken) {
-        this.idToken = idToken;
     }
 
     public String getName() {

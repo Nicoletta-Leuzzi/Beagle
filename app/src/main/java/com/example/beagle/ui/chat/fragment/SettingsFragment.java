@@ -18,6 +18,7 @@ import android.widget.ArrayAdapter;
 
 import com.example.beagle.R;
 import com.example.beagle.ui.welcome.WelcomeActivity;
+import com.example.beagle.util.PreferencesManager;
 import com.google.android.material.button.MaterialButton;
 import com.google.android.material.materialswitch.MaterialSwitch;
 import com.google.android.material.textfield.MaterialAutoCompleteTextView;
@@ -51,6 +52,7 @@ public class SettingsFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_settings, container, false);
+        PreferencesManager prefs = new PreferencesManager(requireContext());
         themeSwitch = view.findViewById(R.id.switchTheme);
         textInputLayoutLanguage = view.findViewById(R.id.textInputLayoutLanguage);
         autoCompleteLanguage = view.findViewById(R.id.materialAutoCompleteTextViewLanguage);
@@ -61,19 +63,14 @@ public class SettingsFragment extends Fragment {
         languageAdapter = new ArrayAdapter<>(getContext(), android.R.layout.simple_dropdown_item_1line, languages);
         autoCompleteLanguage.setAdapter(languageAdapter);
 
+        updateUi();
+
         themeSwitch.setOnCheckedChangeListener((buttonView, isChecked) -> {
             autoCompleteLanguage.dismissDropDown();
             autoCompleteLanguage.clearFocus();
-            if (isChecked) {
-
-                // Tema scuro
-                AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES);
-                themeSwitch.setThumbIconResource(R.drawable.dark_mode);
-            } else {
-                // Tema chiaro
-                AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO);
-                themeSwitch.setThumbIconResource(R.drawable.light_mode);
-            }
+            int mode = isChecked ? AppCompatDelegate.MODE_NIGHT_YES : AppCompatDelegate.MODE_NIGHT_NO;
+            AppCompatDelegate.setDefaultNightMode(mode);
+            prefs.saveTheme(mode);
         });
 
         textInputLayoutLanguage.setEndIconOnClickListener(null);
@@ -88,13 +85,14 @@ public class SettingsFragment extends Fragment {
             autoCompleteLanguage.dismissDropDown();
             autoCompleteLanguage.clearFocus();
 
-            String selected = (String) parent.getItemAtPosition(position);
-
-            if (selected.equalsIgnoreCase(getString(R.string.english))) {
-                AppCompatDelegate.setApplicationLocales(LocaleListCompat.forLanguageTags("en"));
-            } else if (selected.equalsIgnoreCase(getString(R.string.italian))) {
-                AppCompatDelegate.setApplicationLocales(LocaleListCompat.forLanguageTags("it"));
+            String langTag;
+            if (position == 0) {
+                langTag = "en";
+            } else {
+                langTag = "it";
             }
+            AppCompatDelegate.setApplicationLocales(LocaleListCompat.forLanguageTags(langTag));
+            prefs.saveLanguage(langTag);
         });
 
         btnLogout.setOnClickListener(v -> {
@@ -115,6 +113,59 @@ public class SettingsFragment extends Fragment {
 
 
 //METODI
+
+    private void updateUi() {
+        PreferencesManager prefs = new PreferencesManager(requireContext());
+
+        // --- Tema ---
+        int savedTheme = prefs.getTheme();
+        boolean isNight;
+
+        if (savedTheme == -1) {
+            // Primo avvio: rilevo tema di sistema
+            int currentNightMode = getResources().getConfiguration().uiMode & android.content.res.Configuration.UI_MODE_NIGHT_MASK;
+            if (currentNightMode == android.content.res.Configuration.UI_MODE_NIGHT_YES) {
+                isNight = true;
+                savedTheme = AppCompatDelegate.MODE_NIGHT_YES;
+            } else {
+                isNight = false;
+                savedTheme = AppCompatDelegate.MODE_NIGHT_NO;
+            }
+            prefs.saveTheme(savedTheme);
+        } else {
+            isNight = savedTheme == AppCompatDelegate.MODE_NIGHT_YES;
+        }
+
+        themeSwitch.setChecked(isNight);
+        AppCompatDelegate.setDefaultNightMode(savedTheme);
+
+        // Cambio icona thumb dello switch
+        if (isNight) {
+            themeSwitch.setThumbIconDrawable(getResources().getDrawable(R.drawable.dark_mode, null));
+        } else {
+            themeSwitch.setThumbIconDrawable(getResources().getDrawable(R.drawable.light_mode, null));
+        }
+
+        // --- Lingua ---
+        String savedLang = prefs.getLanguage();
+        if (savedLang.isEmpty()) {
+            // Primo accesso: prendo lingua di sistema
+            savedLang = getResources().getConfiguration().getLocales().get(0).getLanguage();
+            prefs.saveLanguage(savedLang);
+        }
+
+        AppCompatDelegate.setApplicationLocales(LocaleListCompat.forLanguageTags(savedLang));
+
+        if ("en".equals(savedLang)) {
+            autoCompleteLanguage.setText(getString(R.string.english), false);
+        } else if ("it".equals(savedLang)) {
+            autoCompleteLanguage.setText(getString(R.string.italian), false);
+        }
+    }
+
+
+
+
 
 }
 

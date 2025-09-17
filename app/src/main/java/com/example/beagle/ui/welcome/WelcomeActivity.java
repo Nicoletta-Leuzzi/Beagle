@@ -4,7 +4,6 @@ import android.os.Bundle;
 import androidx.appcompat.app.AppCompatActivity;
 import com.example.beagle.R;
 
-/** Activity contenitore: ospita il NavHost dei fragment di login/register. */
 public class WelcomeActivity extends AppCompatActivity {
 
     @Override

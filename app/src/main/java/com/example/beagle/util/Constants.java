@@ -6,8 +6,6 @@ public final class Constants {
     private Constants() {
     }
 
-    // --- Regole UI ---
-    public static final int MINIMUM_LENGTH_PASSWORD = 6;
 
     // --- Errori normalizzati lato Auth (mappati dal DataSource Firebase) ---
     public static final String WEAK_PASSWORD_ERROR = "weak_password_error";
@@ -26,10 +24,17 @@ public final class Constants {
     public static final String FIREBASE_MESSAGES_COLLECTION = "messages";
 
 
-
-    public static final String CONVERSATION_BUNDLE_KEY = "current_conversation";
+    // Bundle keys
+    public static final String CONVERSATION_BUNDLE_KEY = "active_conversation";
     public static final String CONVERSATION_DELETED_BUNDLE_KEY = "deleted_conversation";
-    public static final String PET_BUNDLE_KEY = "current_pet";
+    public static final String PET_ID_BUNDLE_KEY = "active_pet_id";
+    public static final String PET_NAME_BUNDLE_KEY = "active_pet_name";
+
+    // Shared Preferences
+    public static final String SHARED_PREFERENCES_FILENAME = "beagle";
+    public static final String SHARED_PREFERENCES_ACTIVE_PET_ID = "active_pet_id";
+    public static final String SHARED_PREFERENCES_ACTIVE_PET_NAME = "active_pet_name";
+
 
     // API
     public static final String API_BASE_URL = "https://api.compactif.ai/v1/";

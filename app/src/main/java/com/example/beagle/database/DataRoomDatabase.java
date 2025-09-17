@@ -17,14 +17,14 @@ import com.example.beagle.util.Constants;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
-@Database(entities = {Message.class, Conversation.class, Pet.class, User.class},
+@Database(entities = {Message.class, Conversation.class, Pet.class},
         version = DATABASE_VERSION, exportSchema = true)
 public abstract class DataRoomDatabase extends RoomDatabase {
 
     public abstract MessageDAO messageDao();
     public abstract ConversationDAO conversationDao();
     public abstract PetDAO petDao();
-    public abstract UserDAO userDao(); // TODO cancella
+
 
     private static volatile DataRoomDatabase INSTANCE;
 

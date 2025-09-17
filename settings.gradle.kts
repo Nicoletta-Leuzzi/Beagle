@@ -12,7 +12,7 @@ pluginManagement {
     }
     plugins {
         // 👇 aggiunto: dichiarazione plugin Google Services con versione
-        id("com.google.gms.google-services") version "4.4.2"
+        id("com.google.gms.google-services") version "4.4.3"
     }
 }
 
