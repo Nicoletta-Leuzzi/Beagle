@@ -99,11 +99,21 @@ public class ProfileFragment extends Fragment {
             @Override
             public void handleOnBackPressed() {
                 Bundle bundle = new Bundle();
-                //bundle.putLong(PET_ID_BUNDLE_KEY, pet.getPetId());
-                //bundle.putString(PET_NAME_BUNDLE_KEY, pet.getName());
+
+                if(pet != null) {
+                    sharedPreferencesUtils.writeStringData(
+                            SHARED_PREFERENCES_FILENAME,
+                            SHARED_PREFERENCES_ACTIVE_PET_ID,
+                            Long.toString(pet.getPetId()));
+
+                    sharedPreferencesUtils.writeStringData(
+                            SHARED_PREFERENCES_FILENAME,
+                            SHARED_PREFERENCES_ACTIVE_PET_NAME,
+                            pet.getName());
+                }
 
                 Navigation.findNavController(requireView()).navigate
-                        (R.id.action_profileFragment_to_chatFragment, bundle);
+                        (R.id.action_profileFragment_to_chatFragment);
             }
         };
 
@@ -187,8 +197,32 @@ public class ProfileFragment extends Fragment {
                             animals.addAll(((Result.PetSuccess) result).getData());
                             petAdapter.notifyDataSetChanged();
                             disableAllInputText();
-                            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.VANILLA_ICE_CREAM) {
-                                pet = animals.getLast();
+
+
+                            if (!animals.isEmpty()) {
+                                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.VANILLA_ICE_CREAM) {
+                                    Log.d("pet", "TRUUUUUUUUE");
+                                    pet = animals.getLast();
+                                } else {
+                                    pet = animals.get(petAdapter.getCount()-1);
+                                }
+                                enableDropDownMenu();
+                                autoCompletePet.setText(pet.toString(), false);
+                                if (pet != null) {
+                                    sharedPreferencesUtils.writeStringData(
+                                            SHARED_PREFERENCES_FILENAME,
+                                            SHARED_PREFERENCES_ACTIVE_PET_ID,
+                                            Long.toString(pet.getPetId()));
+
+                                    sharedPreferencesUtils.writeStringData(
+                                            SHARED_PREFERENCES_FILENAME,
+                                            SHARED_PREFERENCES_ACTIVE_PET_NAME,
+                                            pet.getName());
+                                }
+
+                            }
+                            else {
+                                disableDropDownMenu();
                             }
 
 
@@ -196,21 +230,9 @@ public class ProfileFragment extends Fragment {
                             btnSettings.setVisibility(VISIBLE);
                             btnDelete.setVisibility(VISIBLE);
                             btns_save_cancel.setVisibility(INVISIBLE);
-                            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.VANILLA_ICE_CREAM) {
-                                pet = animals.getLast();
-                            }
 
-                            if(pet != null) {
-                                sharedPreferencesUtils.writeStringData(
-                                        SHARED_PREFERENCES_FILENAME,
-                                        SHARED_PREFERENCES_ACTIVE_PET_ID,
-                                        Long.toString(pet.getPetId()));
 
-                                sharedPreferencesUtils.writeStringData(
-                                        SHARED_PREFERENCES_FILENAME,
-                                        SHARED_PREFERENCES_ACTIVE_PET_NAME,
-                                        pet.getName());
-                            }
+
                         }
                     });
         }
@@ -480,18 +502,42 @@ public class ProfileFragment extends Fragment {
         });
 
         btnDelete.setOnClickListener(v->{
-
+            Log.d("pet", "Delete button clicked");
             petDeletedMutableLiveData = petWriteViewModel.deletePet(pet);
             if (!petDeletedMutableLiveData.hasActiveObservers()) {
+                Log.d("pet", "Delte has observer");
                 petDeletedMutableLiveData.observe(getViewLifecycleOwner(),
                         result -> {
                             if (result.isSuccess()) {
+                                Log.d("pet", "DELETE SUCCESS");
                                 //petViewModel.getPets(false);
                                 clearAllFields();
                                 btnDelete.setVisibility(INVISIBLE);
                                 if(animals.isEmpty()){
                                     autoCompletePetLayout.setEnabled(false);
                                 }
+
+
+                                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.VANILLA_ICE_CREAM) {
+                                    Log.d("pet", "TURURUURURURURUURR");
+                                    pet = animals.getLast();
+                                } else {
+                                    pet = animals.get(0);
+                                }
+                                if (animals.isEmpty()) {
+                                    disableDropDownMenu();
+                                } else {
+                                    enableDropDownMenu();
+                                    autoCompletePet.setText(pet.toString(), false);
+                                }
+                                disableAllInputText();
+                                if (animals.isEmpty()) {
+                                    disableDropDownMenu();
+                                } else {
+                                    enableDropDownMenu();
+                                    autoCompletePet.setText(pet.toString(), false);
+                                }
+
 
                             }
                         });
