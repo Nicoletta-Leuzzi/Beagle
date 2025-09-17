@@ -57,6 +57,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
+import java.util.Objects;
 
 public class ProfileFragment extends Fragment {
 
@@ -159,7 +160,7 @@ public class ProfileFragment extends Fragment {
 
         fieldsError = false;
 
-        petAdapter = new ArrayAdapter<>(getContext(), android.R.layout.simple_dropdown_item_1line, animals);
+        petAdapter = new ArrayAdapter<>(Objects.requireNonNull(getContext()), android.R.layout.simple_dropdown_item_1line, animals);
         autoCompletePet.setAdapter(petAdapter);
 
         speciesAdapter = new ArrayAdapter<>(getContext(), android.R.layout.simple_dropdown_item_1line, species);
@@ -220,7 +221,7 @@ public class ProfileFragment extends Fragment {
         btnSave.setOnClickListener(v -> {
 
             fieldsError = false;
-            if(name.getText().toString().isEmpty()){
+            if(Objects.requireNonNull(name.getText()).toString().isEmpty()){
                 nameLayout.setError("Obbligatorio");
                 fieldsError = true;
             }
@@ -230,12 +231,12 @@ public class ProfileFragment extends Fragment {
                 fieldsError = true;
             }
 
-            if(breed.getText().toString().isEmpty()){
+            if(Objects.requireNonNull(breed.getText()).toString().isEmpty()){
                 breedLayout.setError("Obbligatorio");
                 fieldsError = true;
             }
 
-            if(birthDate.getText().toString().isEmpty()){
+            if(Objects.requireNonNull(birthDate.getText()).toString().isEmpty()){
                 birthDateLayout.setError("Obbligatorio");
                 fieldsError = true;
             }
@@ -247,7 +248,7 @@ public class ProfileFragment extends Fragment {
                             name.getText().toString(),
                             speciesCode,
                             breed.getText().toString(),
-                            sdf.parse(birthDate.getText().toString()).getTime());
+                            Objects.requireNonNull(sdf.parse(birthDate.getText().toString())).getTime());
                 } catch (ParseException e) {
                     throw new RuntimeException(e);
                 }
@@ -375,8 +376,8 @@ public class ProfileFragment extends Fragment {
                 if (!s.toString().isEmpty()) {
                     birthDateLayout.setError(null);
                     try {
-                        years = (calculateAge(sdf.parse(birthDate.getText().toString()).getTime())/12);
-                        remainingMonths = (calculateAge(sdf.parse(birthDate.getText().toString()).getTime())%12);
+                        years = (calculateAge(Objects.requireNonNull(sdf.parse(Objects.requireNonNull(birthDate.getText()).toString())).getTime())/12);
+                        remainingMonths = (calculateAge(Objects.requireNonNull(sdf.parse(birthDate.getText().toString())).getTime())%12);
 
                         StringBuilder sb = new StringBuilder();
 
