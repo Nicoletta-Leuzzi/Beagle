@@ -201,14 +201,13 @@ public class ProfileFragment extends Fragment {
             public boolean onMenuItemSelected(@NonNull MenuItem menuItem) {
                 int id = menuItem.getItemId();
                 if (id == R.id.btnSettings) {
-                    // Azione pulsante settings
-                    // es: apri un fragment o activity
+
                     NavHostFragment.findNavController(ProfileFragment.this)
                             .navigate(R.id.action_profileFragment_to_settingsFragment);
                     return true;
                 }
                 if (id == R.id.btnAdd) {
-                    btnAdd.setVisibility(View.INVISIBLE); // se vuoi comunque nascondere il vecchio bottone
+                    btnAdd.setVisibility(View.INVISIBLE);
                     btnSettings.setVisibility(View.INVISIBLE);
                     btns_save_cancel.setVisibility(View.VISIBLE);
                     btnDelete.setVisibility(View.INVISIBLE);
