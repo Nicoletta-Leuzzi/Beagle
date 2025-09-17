@@ -6,17 +6,17 @@ import androidx.lifecycle.ViewModelProvider;
 
 import com.example.beagle.repository.pet.PetRepository;
 
-public class PetViewModelFactory implements ViewModelProvider.Factory {
+public class PetReadViewModelFactory implements ViewModelProvider.Factory {
 
     private final PetRepository petRepository;
 
-    public PetViewModelFactory(PetRepository petRepository) {
+    public PetReadViewModelFactory(PetRepository petRepository) {
         this.petRepository = petRepository;
     }
 
     @NonNull
     @Override
     public <T extends ViewModel> T create(@NonNull Class<T> modelClass) {
-        return (T) new PetViewModel(petRepository);
+        return (T) new PetReadViewModel(petRepository);
     }
 }

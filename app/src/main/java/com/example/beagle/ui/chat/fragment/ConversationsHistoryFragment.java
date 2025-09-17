@@ -33,12 +33,16 @@ import java.util.List;
 
 public class ConversationsHistoryFragment extends Fragment {
 
+    private long petId;
+
     public ConversationsHistoryFragment() { }
 
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        assert getArguments() != null;
+        petId = getArguments().getLong(Constants.PET_ID_BUNDLE_KEY);
     }
 
     @Override
@@ -50,7 +54,7 @@ public class ConversationsHistoryFragment extends Fragment {
         recyclerView.setLayoutManager(new LinearLayoutManager(view.getContext()));
 
 
-        long petId = 420;
+        //long petId = 420;
         //demo.addAll(ServiceLocator.getInstance().getDao(requireActivity().getApplication()).conversationDao().getAll());
         List<Conversation> conversationList = new ArrayList<>(ServiceLocator.getInstance().getDao(requireActivity().getApplication()).conversationDao().getConversations(petId));
 

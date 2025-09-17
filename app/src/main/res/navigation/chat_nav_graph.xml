@@ -90,6 +90,11 @@
             app:exitAnim="@anim/hold"
             app:popEnterAnim="@anim/hold"
             app:popExitAnim="@anim/slide_out_left" />
+        <action
+            android:id="@+id/action_profileFragment_to_chatFragment"
+            app:popUpToInclusive="true"
+            app:popUpTo="@id/chatFragment"
+            app:destination="@id/chatFragment" />
     </fragment>
 
     <!-- SETTINGS -->

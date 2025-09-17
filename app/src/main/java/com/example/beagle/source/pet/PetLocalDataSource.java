@@ -25,8 +25,7 @@ public class PetLocalDataSource extends BasePetLocalDataSource {
     public void insertPet(Pet pet) {
         DataRoomDatabase.databaseWriteExecutor.execute(() -> {
             petDAO.insert(pet);
-            List<Pet> petList = petDAO.getAll();
-            petCallback.onSuccessFromLocal(petList);
+            petCallback.onSuccessFromLocal(petDAO.getAll());
         });
     }
 
@@ -34,8 +33,7 @@ public class PetLocalDataSource extends BasePetLocalDataSource {
     public void insertPets(List<Pet> petList) {
         DataRoomDatabase.databaseWriteExecutor.execute(() -> {
             petDAO.insertAll(petList);
-            List<Pet> newPetList = petDAO.getAll();
-            petCallback.onSuccessFromLocal(newPetList);
+            petCallback.onSuccessFromLocal(petDAO.getAll());
         });
     }
 

@@ -4,22 +4,14 @@ import android.os.Parcel;
 import android.os.Parcelable;
 
 import androidx.annotation.NonNull;
-import androidx.room.Entity;
-import androidx.room.Ignore;
-import androidx.room.Index;
-import androidx.room.PrimaryKey;
 
 import com.google.firebase.database.Exclude;
 
-@Entity(
-        indices = { @Index(value = "email", unique = true)}
-)
 public class User implements Parcelable {
     private String name;
     @NonNull private String email;
-    @PrimaryKey @NonNull private String idToken;
+    @NonNull private String idToken;
 
-    @Ignore
     // Necessario per Firebase (deserializzazione)
     public User() { }
 
@@ -67,7 +59,6 @@ public class User implements Parcelable {
         this.idToken = source.readString();
     }
 
-    @Ignore
     protected User(Parcel in) {
         this.name = in.readString();
         this.email = in.readString();

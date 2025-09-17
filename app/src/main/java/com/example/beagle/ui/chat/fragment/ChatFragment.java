@@ -1,5 +1,11 @@
 package com.example.beagle.ui.chat.fragment;
 
+import static com.example.beagle.util.Constants.PET_ID_BUNDLE_KEY;
+import static com.example.beagle.util.Constants.PET_NAME_BUNDLE_KEY;
+import static com.example.beagle.util.Constants.SHARED_PREFERENCES_ACTIVE_PET_ID;
+import static com.example.beagle.util.Constants.SHARED_PREFERENCES_ACTIVE_PET_NAME;
+import static com.example.beagle.util.Constants.SHARED_PREFERENCES_FILENAME;
+
 import android.content.res.Resources;
 import android.os.Bundle;
 
@@ -43,6 +49,7 @@ import com.example.beagle.ui.chat.viewmodel.message.MessageViewModel;
 import com.example.beagle.ui.chat.viewmodel.message.MessageViewModelFactory;
 import com.example.beagle.util.Constants;
 import com.example.beagle.util.ServiceLocator;
+import com.example.beagle.util.SharedPreferencesUtils;
 import com.google.android.material.snackbar.Snackbar;
 import com.google.android.material.textfield.TextInputEditText;
 import com.google.firebase.database.DatabaseReference;
@@ -63,14 +70,17 @@ public class ChatFragment extends Fragment {
 
 
     // TODO: Da rimuovere dopo con ultimo animale se esiste (e mettere in luogo più adeguato)
-    Pet pet = new Pet("420", "Among Us", (byte) 1, "Test", 123);
-    long petId = Long.parseLong(pet.getIdToken());
+    //Pet pet = new Pet("Among Us", (byte) 1, "Test", 123);
+    //long petId = Long.parseLong(pet.getIdToken());
+
 
 
     // TODO: Rimuovere i log DOPO aver finito, ora mi servono ancora
     public String TAG = "TEST";
 
     private long conversationId;
+    private long petId;
+    private String petName;
     private Conversation activeConversation;
     private List<Message> messageList;
     private MessageRecyclerAdapter adapter;
@@ -93,12 +103,12 @@ public class ChatFragment extends Fragment {
 
     private FirebaseDatabase database = FirebaseDatabase.getInstance(Constants.FIREBASE_REALTIME_DATABASE);
     private DatabaseReference dbRef;
-    ValueEventListener postListener;
 
-    MutableLiveData<Result> getMessagesMutableLiveData;
-    MutableLiveData<Result> saveUserMessageMutableLiveData;
-    MutableLiveData<Result> saveAIMessageMutableLiveData;
-    MutableLiveData<Result> createConversationMutableLiveData;
+    private MutableLiveData<Result> getMessagesMutableLiveData;
+    private MutableLiveData<Result> saveUserMessageMutableLiveData;
+    private MutableLiveData<Result> saveAIMessageMutableLiveData;
+    private MutableLiveData<Result> createConversationMutableLiveData;
+    private SharedPreferencesUtils sharedPreferencesUtils;
 
 
 
@@ -118,6 +128,8 @@ public class ChatFragment extends Fragment {
         Log.d("asd", "");
         Log.d(TAG,"onCreate");
 
+        sharedPreferencesUtils = new SharedPreferencesUtils(requireActivity().getApplication());
+
         Log.d(TAG, "conversationId: " + conversationId + " dovrebbe essere 0");
         // Dal bundle, prende il conversationId (se esiste, altrimenti prende 0)
         // NOTA: key forzatamente da definire nel Constants
@@ -125,8 +137,31 @@ public class ChatFragment extends Fragment {
         conversationId = getArguments().getLong(Constants.CONVERSATION_BUNDLE_KEY);
         Log.d(TAG, "ID FROM BUNDLE: " + conversationId);
         Log.d("asd", "ID FROM BUNDLE: " + conversationId);
-        //petId = getArguments().getLong(Constants.PET_BUNDLE_KEY);
+        //petId = getArguments().getLong(PET_ID_BUNDLE_KEY);
+        //petName = getArguments().getString(PET_NAME_BUNDLE_KEY);
+
+        // petId = getArguments().getLong(Constants.PET_BUNDLE_KEY);
         // Preso info dal bundle
+
+
+        if (sharedPreferencesUtils.readStringData(
+                SHARED_PREFERENCES_FILENAME, SHARED_PREFERENCES_ACTIVE_PET_ID) != null &&
+                sharedPreferencesUtils.readStringData(
+                        SHARED_PREFERENCES_FILENAME, SHARED_PREFERENCES_ACTIVE_PET_NAME) != null) {
+            String petIdString = sharedPreferencesUtils.readStringData(SHARED_PREFERENCES_FILENAME,
+                    SHARED_PREFERENCES_ACTIVE_PET_ID);
+            petId = Long.parseLong(petIdString);
+
+            petName = sharedPreferencesUtils.readStringData(SHARED_PREFERENCES_FILENAME,
+                    SHARED_PREFERENCES_ACTIVE_PET_NAME);
+        } else {
+            petId = 0;
+        }
+
+
+
+
+
 
 
         // SetUp MessageRepository
@@ -203,7 +238,7 @@ public class ChatFragment extends Fragment {
                                 seq.set(adapter.getItemCount());
 
 
-                                addPetButton.setVisibility(View.GONE);
+                                //addPetButton.setVisibility(View.GONE);
                                 setPromptEnabled(sendButton, editTextPrompt, true);
 
                             } else {
@@ -234,7 +269,7 @@ public class ChatFragment extends Fragment {
         // Per stringhe
         res = getResources();
 
-        if (!hasPetSaved()) {
+        if (petId == 0) {
             welcomeTextView.setVisibility(View.VISIBLE);
             welcomeTextView.setText(String.format(res.getString(R.string.no_pet)));
             addPetButton.setVisibility(View.VISIBLE);
@@ -243,7 +278,7 @@ public class ChatFragment extends Fragment {
         } else {
             if (conversationId == 0) {
                 welcomeTextView.setVisibility(View.VISIBLE);
-                welcomeTextView.setText(String.format(res.getString(R.string.initial_greeting), pet.getName()));
+                welcomeTextView.setText(String.format(res.getString(R.string.initial_greeting), petName));
                 Log.d(TAG, "App appena aperta, si crea nuova chat");
 
                 // Creazione nuova conversazione
@@ -251,8 +286,7 @@ public class ChatFragment extends Fragment {
 
 
 
-                welcomeTextView.setText(String.format(res.getString(R.string.initial_greeting),
-                        pet.getName()));
+                welcomeTextView.setText(String.format(res.getString(R.string.initial_greeting), petName));
                 welcomeTextView.setVisibility(View.VISIBLE);
 
                 addPetButton.setVisibility(View.GONE);
@@ -339,8 +373,12 @@ public class ChatFragment extends Fragment {
             @Override
             public boolean onMenuItemSelected(@NonNull MenuItem menuItem) {
                 if (menuItem.getItemId() == R.id.action_history) {
+
+                    Bundle bundle = new Bundle();
+                    bundle.putLong(PET_ID_BUNDLE_KEY, petId);
+
                     NavHostFragment.findNavController(ChatFragment.this)
-                            .navigate(R.id.action_chatFragment_to_conversationsHistoryFragment);
+                            .navigate(R.id.action_chatFragment_to_conversationsHistoryFragment, bundle);
                     //Navigation.findNavController(view).navigate(R.id.action_chatFragment_to_conversationsHistoryFragment);
                     return true;
                 }
