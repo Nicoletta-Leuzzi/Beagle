@@ -23,16 +23,14 @@ public class UserFirebaseDataSource extends BaseUserDataRemoteDataSource {
     // Usa il DB di default del progetto (da google-services.json).
     private final DatabaseReference rootRef;
 
-    // Nodi usati (rinomina se hai costanti dedicate)
+    // Nodi usati
     private static final String NODE_USERS = "users";
 
     public UserFirebaseDataSource() {
         rootRef = FirebaseDatabase.getInstance().getReference();
     }
 
-    /**
-     * Salva l'utente se non esiste già, altrimenti ritorna successo.
-     */
+    //Salva l'utente se non esiste già, altrimenti ritorna successo.
     @Override
     public void saveUserData(User user) {
         if (user == null) {

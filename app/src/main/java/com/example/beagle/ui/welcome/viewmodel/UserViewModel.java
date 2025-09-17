@@ -10,28 +10,23 @@ import com.example.beagle.model.User;
 import com.example.beagle.repository.user.IUserRepository;
 import com.example.beagle.repository.user.UserRepository;
 
-/**
- * ViewModel per l'autenticazione (login/registrazione).
- */
+//ViewModel per l'autenticazione
 public class UserViewModel extends ViewModel {
 
     private final IUserRepository userRepository;
-
-    // 🔄 NIENTE più LiveData cache condivisa per login/signup/logout
-    // private MutableLiveData<Result> userMutableLiveData;
 
     // risultato del reset password
     private final MutableLiveData<Result> resetResult = new MutableLiveData<>();
 
 
 
-    // LiveData STABILI per osservazione "una volta sola" dal Fragment (se usi le azioni)
+    // LiveData STABILI per osservazione "una volta sola" dal Fragment
     private final MutableLiveData<Result> emailLoginResult  = new MutableLiveData<>();
     private final MutableLiveData<Result> googleLoginResult = new MutableLiveData<>();
 
     private boolean authenticationError = false;
 
-    /** Costruttore di default (comodo per test/prototipi). */
+    //Costruttore di default
     public UserViewModel() {
         this(new UserRepository());
     }
@@ -41,22 +36,19 @@ public class UserViewModel extends ViewModel {
         this.userRepository = userRepository;
     }
 
-    // ===================== API "vecchio stile" (compatibilità) =====================
-
-    /** Entry point stile prof: se isUserRegistered==true -> login, altrimenti -> signup.
+    /** se isUserRegistered==true -> login, altrimenti -> signup.
      *  RITORNA SEMPRE una nuova LiveData dal repository (niente cache). */
     public LiveData<Result> getUserMutableLiveData(String email, String password, boolean isUserRegistered) {
         return userRepository.getUser(email, password, isUserRegistered);
     }
 
-    /** Variante per Google One Tap: prende l'idToken e delega al repo.
-     *  Anche qui: SEMPRE una nuova LiveData. */
+    /** Variante per Google One Tap: prende l'idToken e delega al repo.*/
     public LiveData<Result> getGoogleUserMutableLiveData(String token) {
         return userRepository.getGoogleUser(token);
     }
 
 
-    // ===================== Stato utente / helper =====================
+    //Stato utente / helper
 
     /** Utente attualmente loggato (se presente nel provider sottostante). */
     public User getLoggedUser() {
@@ -69,7 +61,7 @@ public class UserViewModel extends ViewModel {
         this.authenticationError = authenticationError;
     }
 
-    // ===================== RESET PASSWORD =====================
+    //RESET PASSWORD
 
     public LiveData<Result> resetPassword(String email) {
         userRepository.sendPasswordReset(email)

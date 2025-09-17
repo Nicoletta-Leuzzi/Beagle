@@ -51,7 +51,7 @@ public class UserRepository implements IUserRepository {
         this.userRemoteDataSource.setUserResponseCallback(callback);
     }
 
-    // ----- FINE CALLBACK -----
+    //FINE CALLBACK
 
     @Override
     public MutableLiveData<Result> getGoogleUser(String idToken) {
@@ -95,7 +95,7 @@ public class UserRepository implements IUserRepository {
         return userRemoteDataSource.getLoggedUser();
     }
 
-    // --- Reset password ---
+    //Reset password
     @Override
     public Task<Void> sendPasswordReset(String email) {
         return FirebaseAuth.getInstance().sendPasswordResetEmail(email);

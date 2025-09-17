@@ -119,7 +119,7 @@ public class LoginFragment extends Fragment {
         }
     }
 
-    // ---------------- EMAIL/PASSWORD ----------------
+    // EMAIL/PASSWORD
 
     private void performEmailLogin() {
         String email = textOf(etEmail);
@@ -191,7 +191,7 @@ public class LoginFragment extends Fragment {
         live.observe(getViewLifecycleOwner(), wrapper);
     }
 
-    // ---------------- GOOGLE SIGN-IN (Credential Manager) ----------------
+    //GOOGLE SIGN-IN (Credential Manager)
 
     private void setupGoogleSignIn() {
         if (btnGoogle == null) {
@@ -312,7 +312,7 @@ public class LoginFragment extends Fragment {
                 if (result instanceof Result.UserSuccess) {
                     userViewModel.setAuthenticationError(false);
                     clearFieldErrors();
-                    // ✅ NIENTE verifica email: entra direttamente
+                    // NIENTE verifica email: entra direttamente
                     goNext();
                 } else if (result instanceof Result.Error) {
                     userViewModel.setAuthenticationError(true);
@@ -327,7 +327,7 @@ public class LoginFragment extends Fragment {
         live.observe(getViewLifecycleOwner(), wrapper);
     }
 
-    // ---------------- Util ----------------
+    //Util
 
     private String textOf(EditText editText) {
         return editText.getText() == null ? "" : editText.getText().toString().trim();

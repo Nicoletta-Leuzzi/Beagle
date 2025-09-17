@@ -35,7 +35,6 @@ public class User implements Parcelable {
     public String getEmail() { return email; }
     public void setEmail(String email) { this.email = email; }
 
-    // Non salvare l'idToken nel Realtime DB
     @NonNull
     @Exclude
     public String getIdToken() { return idToken; }

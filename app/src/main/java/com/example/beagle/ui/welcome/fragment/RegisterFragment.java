@@ -37,19 +37,18 @@ public class RegisterFragment extends Fragment {
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        // Come per il login, per rapidità riuso activity_register
         return inflater.inflate(R.layout.fragment_register, container, false);
     }
 
     @Override
     public void onViewCreated(View root, @Nullable Bundle savedInstanceState) {
-        // --- Bind UI ---
+        // Bind UI
         textInputEmail    = root.findViewById(R.id.textInputEmail);
         textInputPassword = root.findViewById(R.id.textInputPassword);
         signupButton      = root.findViewById(R.id.signupButton);
         progressBar       = root.findViewById(R.id.progressBar);
 
-        // Link "Hai già un account? Accedi" (se il view esiste nel layout attuale)
+        // Link "Hai già un account? Accedi"
         View linkGoLogin = root.findViewById(R.id.tvGoLogin);
         if (linkGoLogin != null) {
             linkGoLogin.setOnClickListener(v ->
@@ -59,13 +58,13 @@ public class RegisterFragment extends Fragment {
         }
 
 
-        // --- VM condivisa con Login ---
+        //VM condivisa con Login
         IUserRepository repo = ServiceLocator.getInstance().getUserRepository(requireActivity().getApplication());
         userViewModel = new ViewModelProvider(requireActivity(), new UserViewModelFactory(repo))
                 .get(UserViewModel.class);
         userViewModel.setAuthenticationError(false);
 
-        // --- Registrazione ---
+        //Registrazione
         signupButton.setOnClickListener(v -> {
             String email = textOf(textInputEmail);
             String pwd   = textOf(textInputPassword);
@@ -90,8 +89,7 @@ public class RegisterFragment extends Fragment {
         });
     }
 
-    // ----------------- Helpers -----------------
-
+    //Helpers
     private void goNext() {
         startActivity(new Intent(requireContext(), ChatActivity.class));
         requireActivity().finish();
@@ -123,7 +121,7 @@ public class RegisterFragment extends Fragment {
         Snackbar.make(anchor, msg, Snackbar.LENGTH_SHORT).show();
     }
 
-    /** Mappa stringhe errore del repo/DS Firebase alle risorse UI. */
+    //Mappa stringhe errore del repo/DS Firebase alle risorse UI.
     private String getErrorMessage(String type) {
         if (WEAK_PASSWORD_ERROR.equals(type)) {
             return getString(R.string.error_password_login);
