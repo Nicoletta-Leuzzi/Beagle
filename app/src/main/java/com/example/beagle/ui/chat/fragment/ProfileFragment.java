@@ -30,6 +30,8 @@ import android.widget.ArrayAdapter;
 import android.widget.Button;
 
 import com.example.beagle.R;
+import com.example.beagle.adapter.PetAdapter;
+import com.example.beagle.adapter.SpeciesAdapter;
 import com.example.beagle.model.Pet;
 import com.example.beagle.model.Result;
 import com.example.beagle.repository.pet.PetRepository;
@@ -170,10 +172,10 @@ public class ProfileFragment extends Fragment {
 
         fieldsError = false;
 
-        petAdapter = new ArrayAdapter<>(Objects.requireNonNull(getContext()), android.R.layout.simple_dropdown_item_1line, animals);
+        petAdapter = new PetAdapter(requireContext(), animals);
         autoCompletePet.setAdapter(petAdapter);
 
-        speciesAdapter = new ArrayAdapter<>(getContext(), android.R.layout.simple_dropdown_item_1line, species);
+        speciesAdapter = new SpeciesAdapter(requireContext(), species);
         autoCompleteSpecies.setAdapter(speciesAdapter);
         species.add(getString(R.string.dog));
         species.add(getString(R.string.cat));
