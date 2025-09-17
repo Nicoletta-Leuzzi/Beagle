@@ -14,4 +14,6 @@ public abstract class BasePetRemoteDataSource {
     public abstract void getPets();
 
     public abstract void insertPet(Pet pet);
+
+    public abstract void deletePet(Pet pet);
 }
