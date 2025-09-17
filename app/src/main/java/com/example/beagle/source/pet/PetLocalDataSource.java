@@ -16,9 +16,7 @@ public class PetLocalDataSource extends BasePetLocalDataSource {
 
     @Override
     public void getPets() {
-        DataRoomDatabase.databaseWriteExecutor.execute(() -> {
-            petCallback.onSuccessFromLocal(petDAO.getAll());
-        });
+        DataRoomDatabase.databaseWriteExecutor.execute(() -> petCallback.onSuccessFromLocal(petDAO.getAll()));
     }
 
     @Override

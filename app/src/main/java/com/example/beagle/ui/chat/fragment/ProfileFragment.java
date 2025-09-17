@@ -557,12 +557,9 @@ public class ProfileFragment extends Fragment {
 
         // Callback sul pulsante OK
         datePicker.addOnPositiveButtonClickListener
-        (new MaterialPickerOnPositiveButtonClickListener<Long>() {
-            @Override
-            public void onPositiveButtonClick(Long selection) {
-                String formattedDate = sdf.format(new Date(selection));
-                birthDate.setText(formattedDate);
-            }
+        (selection -> {
+            String formattedDate = sdf.format(new Date(selection));
+            birthDate.setText(formattedDate);
         });
 
         // Callback su Cancel
