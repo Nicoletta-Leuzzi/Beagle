@@ -5,11 +5,19 @@ import android.content.Intent;
 import android.os.Bundle;
 
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatDelegate;
 import androidx.core.os.LocaleListCompat;
+import androidx.core.view.MenuHost;
+import androidx.core.view.MenuProvider;
 import androidx.fragment.app.Fragment;
+import androidx.lifecycle.Lifecycle;
+import androidx.navigation.fragment.NavHostFragment;
 
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
@@ -58,6 +66,7 @@ public class SettingsFragment extends Fragment {
         autoCompleteLanguage.setAdapter(languageAdapter);
 
         updateUi();
+
 
         themeSwitch.setOnCheckedChangeListener((buttonView, isChecked) -> {
             autoCompleteLanguage.dismissDropDown();

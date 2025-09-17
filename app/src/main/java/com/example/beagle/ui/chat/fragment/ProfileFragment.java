@@ -13,17 +13,25 @@ import android.os.Build;
 import android.os.Bundle;
 
 import androidx.activity.OnBackPressedCallback;
+import androidx.annotation.NonNull;
 import androidx.annotation.RequiresApi;
 import androidx.constraintlayout.widget.ConstraintLayout;
+import androidx.core.view.MenuHost;
+import androidx.core.view.MenuProvider;
 import androidx.fragment.app.Fragment;
+import androidx.lifecycle.Lifecycle;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.navigation.Navigation;
+import androidx.navigation.fragment.NavHostFragment;
 
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
@@ -180,6 +188,38 @@ public class ProfileFragment extends Fragment {
         species.add(getString(R.string.dog));
         species.add(getString(R.string.cat));
         speciesAdapter.notifyDataSetChanged();
+
+        MenuHost menuHost = requireActivity();
+        menuHost.addMenuProvider(new MenuProvider() {
+            @Override
+            public void onCreateMenu(@NonNull Menu menu, @NonNull MenuInflater menuInflater) {
+                menu.clear();
+                menuInflater.inflate(R.menu.menu_settings, menu);
+            }
+
+            @Override
+            public boolean onMenuItemSelected(@NonNull MenuItem menuItem) {
+                int id = menuItem.getItemId();
+                if (id == R.id.btnSettings) {
+                    // Azione pulsante settings
+                    // es: apri un fragment o activity
+                    NavHostFragment.findNavController(ProfileFragment.this)
+                            .navigate(R.id.action_profileFragment_to_settingsFragment);
+                    return true;
+                }
+                if (id == R.id.btnAdd) {
+                    btnAdd.setVisibility(View.INVISIBLE); // se vuoi comunque nascondere il vecchio bottone
+                    btnSettings.setVisibility(View.INVISIBLE);
+                    btns_save_cancel.setVisibility(View.VISIBLE);
+                    btnDelete.setVisibility(View.INVISIBLE);
+                    disableDropDownMenu();
+                    clearAllFields();
+                    enableAllInputText();
+                    return true;
+                }
+                return false;
+            }
+        }, getViewLifecycleOwner(), Lifecycle.State.RESUMED);
 
         if(animals.isEmpty()){
             disableDropDownMenu();
