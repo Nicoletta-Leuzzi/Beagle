@@ -24,7 +24,7 @@ public abstract class DataRoomDatabase extends RoomDatabase {
     public abstract MessageDAO messageDao();
     public abstract ConversationDAO conversationDao();
     public abstract PetDAO petDao();
-    public abstract UserDAO userDao();
+    public abstract UserDAO userDao(); // TODO cancella
 
     private static volatile DataRoomDatabase INSTANCE;
 
