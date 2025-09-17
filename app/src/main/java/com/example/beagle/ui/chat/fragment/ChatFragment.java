@@ -137,12 +137,6 @@ public class ChatFragment extends Fragment {
         conversationId = getArguments().getLong(Constants.CONVERSATION_BUNDLE_KEY);
         Log.d(TAG, "ID FROM BUNDLE: " + conversationId);
         Log.d("asd", "ID FROM BUNDLE: " + conversationId);
-        //petId = getArguments().getLong(PET_ID_BUNDLE_KEY);
-        //petName = getArguments().getString(PET_NAME_BUNDLE_KEY);
-
-        // petId = getArguments().getLong(Constants.PET_BUNDLE_KEY);
-        // Preso info dal bundle
-
 
         if (sharedPreferencesUtils.readStringData(
                 SHARED_PREFERENCES_FILENAME, SHARED_PREFERENCES_ACTIVE_PET_ID) != null &&
