@@ -3,16 +3,26 @@ package com.example.beagle.ui.chat.fragment;
 import static android.view.View.INVISIBLE;
 import static android.view.View.VISIBLE;
 
+import static com.example.beagle.util.Constants.PET_ID_BUNDLE_KEY;
+import static com.example.beagle.util.Constants.PET_NAME_BUNDLE_KEY;
+import static com.example.beagle.util.Constants.SHARED_PREFERENCES_ACTIVE_PET_ID;
+import static com.example.beagle.util.Constants.SHARED_PREFERENCES_ACTIVE_PET_NAME;
+import static com.example.beagle.util.Constants.SHARED_PREFERENCES_FILENAME;
+
 import android.os.Build;
 import android.os.Bundle;
 
+import androidx.activity.OnBackPressedCallback;
 import androidx.annotation.RequiresApi;
 import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.fragment.app.Fragment;
+import androidx.lifecycle.MutableLiveData;
+import androidx.lifecycle.ViewModelProvider;
 import androidx.navigation.Navigation;
 
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -21,6 +31,14 @@ import android.widget.Button;
 
 import com.example.beagle.R;
 import com.example.beagle.model.Pet;
+import com.example.beagle.model.Result;
+import com.example.beagle.repository.pet.PetRepository;
+import com.example.beagle.ui.chat.viewmodel.pet.PetReadViewModel;
+import com.example.beagle.ui.chat.viewmodel.pet.PetReadViewModelFactory;
+import com.example.beagle.ui.chat.viewmodel.pet.PetWriteViewModel;
+import com.example.beagle.ui.chat.viewmodel.pet.PetWriteViewModelFactory;
+import com.example.beagle.util.ServiceLocator;
+import com.example.beagle.util.SharedPreferencesUtils;
 import com.google.android.material.datepicker.CalendarConstraints;
 import com.google.android.material.datepicker.DateValidatorPointBackward;
 import com.google.android.material.datepicker.MaterialDatePicker;
@@ -35,9 +53,7 @@ import java.text.SimpleDateFormat;
 import java.time.Instant;
 import java.time.LocalDate;
 import java.time.ZoneId;
-import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
@@ -58,6 +74,15 @@ public class ProfileFragment extends Fragment {
     private ArrayAdapter<Pet> petAdapter;
     private ArrayAdapter<String> speciesAdapter;
 
+    private PetReadViewModel petReadViewModel;
+    private PetWriteViewModel petWriteViewModel;
+    private MutableLiveData<Result> petReadMutableLiveData;
+    private MutableLiveData<Result> petSavedMutableLiveData;
+    private MutableLiveData<Result> petDeletedMutableLiveData;
+
+    private SharedPreferencesUtils sharedPreferencesUtils;
+
+
     private int years = 0, remainingMonths = 0;
 
     public ProfileFragment() {
@@ -67,6 +92,43 @@ public class ProfileFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+
+        OnBackPressedCallback callback = new OnBackPressedCallback(true) {
+            @Override
+            public void handleOnBackPressed() {
+                Bundle bundle = new Bundle();
+                //bundle.putLong(PET_ID_BUNDLE_KEY, pet.getPetId());
+                //bundle.putString(PET_NAME_BUNDLE_KEY, pet.getName());
+
+                Navigation.findNavController(requireView()).navigate
+                        (R.id.action_profileFragment_to_chatFragment, bundle);
+            }
+        };
+
+        requireActivity().getOnBackPressedDispatcher().addCallback(this, callback);
+
+
+        sharedPreferencesUtils = new SharedPreferencesUtils(requireActivity().getApplication());
+
+        PetRepository petRepository =
+                ServiceLocator.getInstance().getPetRepository(
+                        requireActivity().getApplication()
+                );
+
+
+        petReadViewModel = new ViewModelProvider(
+                requireActivity(),
+                new PetReadViewModelFactory(petRepository))
+                .get(PetReadViewModel.class);
+
+
+
+        petWriteViewModel = new ViewModelProvider(
+                requireActivity(),
+                new PetWriteViewModelFactory(petRepository))
+                .get(PetWriteViewModel.class);
+
         sdf = new SimpleDateFormat("dd/MM/yyyy", Locale.getDefault());
     }
 
@@ -75,6 +137,7 @@ public class ProfileFragment extends Fragment {
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_profile, container, false);
 
+        Log.d("pet","onCreateView");
         name = view.findViewById(R.id.outlinedTextFieldName);
         nameLayout = view.findViewById(R.id.nameLayout);
         autoCompleteSpecies = view.findViewById(R.id.autoCompleteSpecies);
@@ -110,6 +173,50 @@ public class ProfileFragment extends Fragment {
             btnDelete.setVisibility(INVISIBLE);
         }
 
+
+        Log.d("pet","prima di readPet");
+        petReadMutableLiveData = petReadViewModel.getPets(false);
+        if (!petReadMutableLiveData.hasActiveObservers()) {
+            petReadMutableLiveData.observe(getViewLifecycleOwner(),
+                    result -> {
+                        Log.d("pet", "petRead observer");
+                        if (result.isSuccess()) {
+                            Log.d("pet", "petRead success");
+                            animals.clear();
+                            animals.addAll(((Result.PetSuccess) result).getData());
+                            petAdapter.notifyDataSetChanged();
+                            disableAllInputText();
+                            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.VANILLA_ICE_CREAM) {
+                                pet = animals.getLast();
+                            }
+
+
+                            btnAdd.setVisibility(VISIBLE);
+                            btnSettings.setVisibility(VISIBLE);
+                            btnDelete.setVisibility(VISIBLE);
+                            btns_save_cancel.setVisibility(INVISIBLE);
+                            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.VANILLA_ICE_CREAM) {
+                                pet = animals.getLast();
+                            }
+
+                            if(pet != null) {
+                                sharedPreferencesUtils.writeStringData(
+                                        SHARED_PREFERENCES_FILENAME,
+                                        SHARED_PREFERENCES_ACTIVE_PET_ID,
+                                        Long.toString(pet.getPetId()));
+
+                                sharedPreferencesUtils.writeStringData(
+                                        SHARED_PREFERENCES_FILENAME,
+                                        SHARED_PREFERENCES_ACTIVE_PET_NAME,
+                                        pet.getName());
+                            }
+                        }
+                    });
+        }
+
+
+
+
         btnSave.setOnClickListener(v -> {
 
             fieldsError = false;
@@ -137,7 +244,6 @@ public class ProfileFragment extends Fragment {
                 try {
                     byte speciesCode = mapSpeciesToCode(autoCompleteSpecies.getText().toString());
                     pet = new Pet(
-                            "",
                             name.getText().toString(),
                             speciesCode,
                             breed.getText().toString(),
@@ -146,6 +252,54 @@ public class ProfileFragment extends Fragment {
                     throw new RuntimeException(e);
                 }
 
+                Log.d("pet", "prima di petSavedMutableData");
+                petSavedMutableLiveData = petWriteViewModel.addPet(pet);
+                if(!petSavedMutableLiveData.hasActiveObservers()) {
+                    petSavedMutableLiveData.observe(getViewLifecycleOwner(), result -> {
+                        Log.d("pet", "dentro observer petSavedMutableData");
+                        if (result.isSuccess()) {
+                            Log.d("pet", "petSavedMutableData success");
+
+                            if (animals.isEmpty()) {
+                                disableDropDownMenu();
+                            } else {
+                                enableDropDownMenu();
+                                autoCompletePet.setText(pet.toString(), false);
+                            }
+                            disableAllInputText();
+                            if (animals.isEmpty()) {
+                                disableDropDownMenu();
+                            } else {
+                                enableDropDownMenu();
+                                autoCompletePet.setText(pet.toString(), false);
+                            }
+
+                            //petViewModel.getPets(false);
+
+                            //dovrei invece chiamare il read
+                            /*
+                            animals.clear();
+                            animals.addAll(((Result.PetSuccess) result).getData());
+                            animals.add(pet);
+                            petAdapter.notifyDataSetChanged();
+                            disableAllInputText();
+                            if (animals.isEmpty()) {
+                                disableDropDownMenu();
+                            } else {
+                                enableDropDownMenu();
+                                autoCompletePet.setText(pet.toString(), false);
+                            }
+                            btnAdd.setVisibility(VISIBLE);
+                            btnSettings.setVisibility(VISIBLE);
+                            btnDelete.setVisibility(VISIBLE);
+                            btns_save_cancel.setVisibility(INVISIBLE);
+                             */
+                        }
+                    });
+                }
+
+
+                /*
                 animals.add(pet);
                 petAdapter.notifyDataSetChanged();
                 disableAllInputText();
@@ -159,6 +313,8 @@ public class ProfileFragment extends Fragment {
                 btnSettings.setVisibility(VISIBLE);
                 btnDelete.setVisibility(VISIBLE);
                 btns_save_cancel.setVisibility(INVISIBLE);
+
+                 */
             }
         else {
             Snackbar.make(view, "Compila tutti i campi", Snackbar.LENGTH_SHORT).show();
@@ -323,12 +479,34 @@ public class ProfileFragment extends Fragment {
         });
 
         btnDelete.setOnClickListener(v->{
+
+            petDeletedMutableLiveData = petWriteViewModel.deletePet(pet);
+            if (!petDeletedMutableLiveData.hasActiveObservers()) {
+                petDeletedMutableLiveData.observe(getViewLifecycleOwner(),
+                        result -> {
+                            if (result.isSuccess()) {
+                                //petViewModel.getPets(false);
+                                clearAllFields();
+                                btnDelete.setVisibility(INVISIBLE);
+                                if(animals.isEmpty()){
+                                    autoCompletePetLayout.setEnabled(false);
+                                }
+
+                            }
+                        });
+            }
+
+
+
+/*
             deletePet(pet);
             clearAllFields();
             btnDelete.setVisibility(INVISIBLE);
             if(animals.isEmpty()){
                 autoCompletePetLayout.setEnabled(false);
             }
+
+ */
         });
 
         autoCompletePetLayout.setEndIconOnClickListener(null);
@@ -440,6 +618,19 @@ public class ProfileFragment extends Fragment {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.VANILLA_ICE_CREAM) {
                 pet = animals.getLast();
             }
+            if (animals.isEmpty()) {
+                disableDropDownMenu();
+            } else {
+                enableDropDownMenu();
+                autoCompletePet.setText(pet.toString(), false);
+            }
+            disableAllInputText();
+            if (animals.isEmpty()) {
+                disableDropDownMenu();
+            } else {
+                enableDropDownMenu();
+                autoCompletePet.setText(pet.toString(), false);
+            }
 
         }
         petAdapter.notifyDataSetChanged();
@@ -484,6 +675,7 @@ public class ProfileFragment extends Fragment {
         if (l.startsWith("gatto")) return 1;
         return -1;                             // Sconosciuto
     }
+
 }
 
 

@@ -9,4 +9,6 @@ public interface IPetResponseCallback {
     void onFailureFromRemote(Exception exception);
     void onSuccessFromLocal(List<Pet> petList);
     void onFailureFromLocal(Exception exception);
+
+    void onSuccessDeleteFromLocal(List<Pet> petList);
 }
