@@ -77,7 +77,6 @@ public class RegisterFragment extends Fragment {
                         .observe(getViewLifecycleOwner(), result -> {
                             setLoading(false);
                             if (result instanceof Result.UserSuccess) {
-                                User user = ((Result.UserSuccess) result).getData();
                                 userViewModel.setAuthenticationError(false);
                                 goNext();
                             } else if (result instanceof Result.Error) {
