@@ -17,7 +17,6 @@ public class LanguageAdapter extends ArrayAdapter<String> {
     public LanguageAdapter(@NonNull Context context) {
         super(context, android.R.layout.simple_dropdown_item_1line);
 
-        // Popola la lista con le stringhe localizzate
         languages.add(context.getString(R.string.english));
         languages.add(context.getString(R.string.italian));
 
