@@ -1,6 +1,5 @@
 package com.example.beagle.source.user;
 
-import android.util.Log;
 
 import androidx.annotation.NonNull;
 
