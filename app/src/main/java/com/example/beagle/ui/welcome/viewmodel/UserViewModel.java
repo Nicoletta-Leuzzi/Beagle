@@ -24,8 +24,7 @@ public class UserViewModel extends ViewModel {
     // risultato del reset password
     private final MutableLiveData<Result> resetResult = new MutableLiveData<>();
 
-    // risultato invio email di verifica
-    private final MutableLiveData<Result> verificationResult = new MutableLiveData<>();
+
 
     // LiveData STABILI per osservazione "una volta sola" dal Fragment (se usi le azioni)
     private final MutableLiveData<Result> emailLoginResult  = new MutableLiveData<>();
@@ -57,64 +56,6 @@ public class UserViewModel extends ViewModel {
         return userRepository.getGoogleUser(token);
     }
 
-    /** Chiamata “fire and forget” (lasciata per compatibilità). */
-    public void getUser(String email, String password, boolean isUserRegistered) {
-        userRepository.getUser(email, password, isUserRegistered);
-    }
-
-    /** Comode scorciatoie (ritornano una NUOVA LiveData ogni volta). */
-    public LiveData<Result> login(String email, String password) {
-        return getUserMutableLiveData(email, password, true);
-    }
-
-    public LiveData<Result> register(String email, String password) {
-        return getUserMutableLiveData(email, password, false);
-    }
-
-    /** Logout: restituisce direttamente la LiveData del repo (niente cache). */
-    public LiveData<Result> logout() {
-        return userRepository.logout();
-    }
-
-    // ===================== API NUOVE per il LoginFragment (opzionali) =====================
-
-    /** Getter stabili osservati UNA SOLA VOLTA nel LoginFragment. */
-    public LiveData<Result> getEmailLoginResult() {
-        return emailLoginResult;
-    }
-
-    public LiveData<Result> getGoogleLoginResult() {
-        return googleLoginResult;
-    }
-
-    /**
-     * Azione: login email/password.
-     * Osserva one-shot la sorgente del repo e riversa l'esito su emailLoginResult.
-     */
-    public void loginWithEmail(String email, String password) {
-        LiveData<Result> src = userRepository.getUser(email, password, /*isUserRegistered=*/true);
-        Observer<Result> once = new Observer<Result>() {
-            @Override public void onChanged(Result r) {
-                emailLoginResult.setValue(r);
-                src.removeObserver(this); // evita leak: osservazione one-shot
-            }
-        };
-        src.observeForever(once);
-    }
-
-    /**
-     * Azione: login tramite Google (idToken).
-     */
-    public void loginWithGoogle(String idToken) {
-        LiveData<Result> src = userRepository.getGoogleUser(idToken);
-        Observer<Result> once = new Observer<Result>() {
-            @Override public void onChanged(Result r) {
-                googleLoginResult.setValue(r);
-                src.removeObserver(this);
-            }
-        };
-        src.observeForever(once);
-    }
 
     // ===================== Stato utente / helper =====================
 
@@ -123,10 +64,7 @@ public class UserViewModel extends ViewModel {
         return userRepository.getLoggedUser();
     }
 
-    /** Flag d’errore di autenticazione. */
-    public boolean isAuthenticationError() {
-        return authenticationError;
-    }
+
 
     public void setAuthenticationError(boolean authenticationError) {
         this.authenticationError = authenticationError;
