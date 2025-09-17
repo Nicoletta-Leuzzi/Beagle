@@ -30,6 +30,7 @@
     <string name="conversations_history_title">Chat</string>
     <string name="history_description">History button</string>
     <string name="pet_profile_description">Pet profile button</string>
+    <string name="new_chat_description">New chat button</string>
 
     <!-- Errori Login/Register -->
     <string name="error_email_login">Provide a valid email address.</string>

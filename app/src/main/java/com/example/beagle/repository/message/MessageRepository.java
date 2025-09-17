@@ -4,14 +4,15 @@ import android.util.Log;
 
 import androidx.lifecycle.MutableLiveData;
 
+import com.example.beagle.model.APIMessage;
+import com.example.beagle.model.ChatCompletionResponse;
+import com.example.beagle.model.Choice;
 import com.example.beagle.model.Message;
-import com.example.beagle.model.MessageAPIResponse;
 import com.example.beagle.model.Result;
 import com.example.beagle.source.message.BaseMessageAPIDataSource;
 import com.example.beagle.source.message.BaseMessageLocalDataSource;
 import com.example.beagle.source.message.BaseMessageRemoteDataSource;
 
-import java.util.ArrayList;
 import java.util.List;
 
 public class MessageRepository implements IMessageResponseCallback {
@@ -51,8 +52,6 @@ public class MessageRepository implements IMessageResponseCallback {
     public MutableLiveData<Result> addMessage(Message message, long conversationId, int seq) {
         Log.d("test", "ADDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDMES");
         messageLocalDataSource.insertMessage(message, conversationId);
-        // TODO: Come faccio ad inserire un messaggio sia su locale, sia su firebase?
-        //messageRemoteDataSource.insertMessage(message, conversationId, seq);
         return messageAddedLiveData;
     }
 
@@ -92,6 +91,11 @@ public class MessageRepository implements IMessageResponseCallback {
     }
 
     @Override
+    public void onFailureFromRemote(Exception exception) {
+
+    }
+
+    @Override
     public void onFailureUpdateFromLocal(Exception exception) {
         Result.Error result = new Result.Error(exception.getMessage());
         allMessagesMutableLiveData.postValue(result);
@@ -114,12 +118,9 @@ public class MessageRepository implements IMessageResponseCallback {
         //messageList.add(message);
         Result.MessageReadSuccess result = new Result.MessageReadSuccess(allMessages);
         messageAddedLiveData.postValue(result);
-        allMessagesMutableLiveData.postValue(result);
-        messageRemoteDataSource.insertMessage(message, conversationId, seq);
-
-
-
+        // Commentato perchè la lettura creava problemi con il MockAPI
         //allMessagesMutableLiveData.postValue(result);
+        messageRemoteDataSource.insertMessage(message, conversationId, seq);
     }
 
     @Override
@@ -131,16 +132,27 @@ public class MessageRepository implements IMessageResponseCallback {
 
     // DA CAMBIARE IL PARAMETRO CON LA RISPOSTA DELL'AI
     @Override
-    public void onSuccessFromAPI(String REPLY_WIP, long conversatioId, int seq) {
-        Message AIReply = new Message(conversatioId, seq, false, REPLY_WIP);
+    public void onSuccessFromAPI(ChatCompletionResponse response, long conversationId, int seq) {
 
+        // Recupera APIMessage e trasformalo in oggetto Message
+        List<Choice> choices = response.getChoices();
+        APIMessage aiMsg = choices.get(0).getMessage();
+        Message message = new Message(aiMsg, conversationId, seq);
 
-        messageLocalDataSource.insertAIMessage(AIReply, conversatioId);
+        messageLocalDataSource.insertAIMessage(message, conversationId);
+
         //List<Message> test = new ArrayList<>();
         //test.add(AIReply);
         //Result.MessageReadSuccess result = new Result.MessageReadSuccess(test);
         //messageAILiveData.postValue(result);
         //allMessagesMutableLiveData.postValue(result);
+    }
+
+    public void onSuccessFetchFromAPI(ChatCompletionResponse response, long conversationId, int seq) {
+
+
+
+        // Infine chiama qualcosa (o addMessage, o le chiamate dentro, per poi forse tornare qualche livedata?)
     }
 
     @Override

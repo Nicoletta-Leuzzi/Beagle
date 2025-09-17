@@ -32,6 +32,7 @@
     <string name="pet_profile_description">Pulsante profilo animale</string>
 
     <!-- Errori Login/Register -->
+    <string name="new_chat_description">Pulsante nuova chat</string>
     <string name="error_email_login">Inserisci un’email valida.</string>
     <string name="error_password_login">La password deve avere almeno 6 caratteri.</string>
     <string name="error_collision_user">Utente già registrato.</string>

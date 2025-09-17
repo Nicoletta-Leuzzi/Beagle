@@ -8,4 +8,10 @@
         android:contentDescription="@string/pet_profile_description"
         android:icon="@drawable/ic_account_circle"
         app:showAsAction="ifRoom|withText" />
+
+    <item
+        android:id="@+id/action_new_chat"
+        android:contentDescription="@string/new_chat_description"
+        android:icon="@drawable/add_icon"
+        app:showAsAction="ifRoom|withText" />
 </menu>

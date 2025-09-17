@@ -72,9 +72,6 @@ public class ChatFragment extends Fragment {
 
     private long conversationId;
     private Conversation activeConversation;
-
-    boolean active = true;
-
     private List<Message> messageList;
     private MessageRecyclerAdapter adapter;
     private RecyclerView recyclerView;
@@ -97,7 +94,12 @@ public class ChatFragment extends Fragment {
     private FirebaseDatabase database = FirebaseDatabase.getInstance(Constants.FIREBASE_REALTIME_DATABASE);
     private DatabaseReference dbRef;
     ValueEventListener postListener;
-    MutableLiveData<Result> mutableLiveData;
+
+    MutableLiveData<Result> getMessagesMutableLiveData;
+    MutableLiveData<Result> saveUserMessageMutableLiveData;
+    MutableLiveData<Result> saveAIMessageMutableLiveData;
+    MutableLiveData<Result> createConversationMutableLiveData;
+
 
 
     public ChatFragment() {
@@ -111,6 +113,9 @@ public class ChatFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        Log.d("asd", "");
+        Log.d("asd", "");
+        Log.d("asd", "");
         Log.d(TAG,"onCreate");
 
         Log.d(TAG, "conversationId: " + conversationId + " dovrebbe essere 0");
@@ -119,6 +124,7 @@ public class ChatFragment extends Fragment {
         assert getArguments() != null;
         conversationId = getArguments().getLong(Constants.CONVERSATION_BUNDLE_KEY);
         Log.d(TAG, "ID FROM BUNDLE: " + conversationId);
+        Log.d("asd", "ID FROM BUNDLE: " + conversationId);
         //petId = getArguments().getLong(Constants.PET_BUNDLE_KEY);
         // Preso info dal bundle
 
@@ -167,37 +173,46 @@ public class ChatFragment extends Fragment {
         recyclerView = view.findViewById(R.id.recyclerViewChat);
         recyclerView.setLayoutManager(new LinearLayoutManager(view.getContext()));
         messageList = new ArrayList<Message>();
+        Log.d(TAG, "IS MESSAGE LIST EMPTY? " + messageList.isEmpty());
 
         adapter = new MessageRecyclerAdapter(R.layout.message, messageList);
         recyclerView.setAdapter(adapter);
         recyclerView.getRecycledViewPool().setMaxRecycledViews(0, 0);
+        adapter.notifyDataSetChanged();
 
 
 
-        messageViewModel.getMessages(conversationId, false)
-                .observe(getViewLifecycleOwner(),
-                        result -> {
-                            Log.d(TAG, "getMessages");
-                            if (getViewLifecycleOwner().getLifecycle().getCurrentState() == Lifecycle.State.RESUMED) {
-                                if (result.isSuccess()) {
-                                    Log.d(TAG, "getMessagesObserver");
-                                    //int initialSize = this.messageList.size()
-                                    messageList.clear();
-                                    messageList.addAll(((Result.MessageReadSuccess) result).getData());
-                                    adapter.notifyItemRangeChanged(seq.get(), messageList.size()-1);
+        getMessagesMutableLiveData = messageViewModel.getMessages(conversationId, false);
+        Log.d(TAG,"");
+        Log.d(TAG, "THIS IS AFTER assegnamento getMessagesMutableLiveData" + Long.toString(conversationId));
+        Log.d(TAG,"");
+        if (!getMessagesMutableLiveData.hasActiveObservers()) {
+            getMessagesMutableLiveData.observe(getViewLifecycleOwner(),
+                    result -> {
+                        Log.d(TAG, "getMessages");
+                        Log.d(TAG, "THIS IS INSIDE assegnamento getMessagesMutableLiveData" + Long.toString(conversationId));
+                        if (getViewLifecycleOwner().getLifecycle().getCurrentState() == Lifecycle.State.RESUMED) {
+                            if (result.isSuccess()) {
+                                Log.d(TAG, "getMessagesObserver");
+                                //int initialSize = this.messageList.size()
+                                messageList.clear();
+                                messageList.addAll(((Result.MessageReadSuccess) result).getData());
+                                adapter.notifyItemRangeChanged(seq.get(), messageList.size() - 1);
 
-                                    recyclerView.setVisibility(View.VISIBLE);
-                                    seq.set(adapter.getItemCount());
+                                recyclerView.setVisibility(View.VISIBLE);
+                                seq.set(adapter.getItemCount());
 
 
-                                    addPetButton.setVisibility(View.GONE);
-                                    setPromptEnabled(sendButton, editTextPrompt, true);
-                                } else {
-                                    Log.d(TAG, "getMessages ELSE error");
-                                    Snackbar.make(view, "ERROR_RETRIVING_MESSAGES", Snackbar.LENGTH_SHORT).show();
-                                }
+                                addPetButton.setVisibility(View.GONE);
+                                setPromptEnabled(sendButton, editTextPrompt, true);
+
+                            } else {
+                                Log.d(TAG, "getMessages ELSE error");
+                                Snackbar.make(view, "ERROR_RETRIVING_MESSAGES", Snackbar.LENGTH_SHORT).show();
                             }
-                        });
+                        }
+                    });
+        }
         return view;
     }
 
@@ -270,11 +285,16 @@ public class ChatFragment extends Fragment {
                 setPromptEnabled(sendButton, editTextPrompt, false);
                 messageSeq = seq.getAndIncrement();
 
+
                 if (conversationId == 0) {
+                    Log.d("asd", "conversationId: " + conversationId + " dovrebbe essere 0");
                     Log.d(TAG, "conversationId: " + conversationId + " dovrebbe essere 0");
-                    mutableLiveData = conversationViewModel.addConversation(activeConversation, petId);
-                    mutableLiveData.observe(getViewLifecycleOwner(),
+                    //Log.d("asd", "createConversationMutableLiveData.hasActiveObservers()" + createConversationMutableLiveData.hasActiveObservers());
+                    createConversationMutableLiveData = conversationViewModel.addConversation(activeConversation, petId);
+                    Log.d("asd", "conversationId: " + conversationId + "DOPO ASSEGNAMENTO CONVERSATION MUTABLE");
+                    createConversationMutableLiveData.observe(getViewLifecycleOwner(),
                             result -> {
+                                Log.d("asd", "conversationId: " + conversationId + "CONVERSATION OBSERVER - START");
 
                                 if (getViewLifecycleOwner().getLifecycle().getCurrentState() == Lifecycle.State.RESUMED) {
                                     if (result.isSuccess()) {
@@ -282,16 +302,20 @@ public class ChatFragment extends Fragment {
 
                                         conversationId = (((Result.ConversationSuccess) result).getData()).get(0).getConversationId();
                                         Log.d(TAG, "conversationId: " + conversationId + " dovrebbe essere id autogenerato");
+                                        Log.d("ASD", "conversationId: " + conversationId + " dovrebbe essere id autogenerato");
 
                                         Message messageQuestion = createMessage(conversationId, messageSeq,
                                                 true, question);
+                                        Log.d("asd", Long.toString(conversationId) + "Before saveMessage");
                                         saveMessage(messageQuestion, conversationId, messageSeq, view);
+                                        createConversationMutableLiveData.removeObservers(getViewLifecycleOwner());
                                     } else {
                                         // result NOT success
                                     }
                                 } // not resume
                             });
                 } else {
+                    Log.d("asd", "NON dovrebbe creare nuova conversazione" + conversationId);
                     Message messageQuestion = createMessage(conversationId, messageSeq,
                             true, question);
                     saveMessage(messageQuestion, conversationId, messageSeq, view);
@@ -342,27 +366,97 @@ public class ChatFragment extends Fragment {
 
     private void saveMessage(Message message, long conversationId, int messageSeq, View view) {
         Log.d(TAG, "SAVE MESSAGE" + message);
+        Log.d(TAG, "AAAAAAAAAAAAAAAAAAA"+Long.toString(conversationId));
 
-        if (!messageViewModel.addMessage(message, conversationId, messageSeq).hasActiveObservers()) {
-            Log.d(TAG, "saveMessage has no active observers");
-            messageViewModel.addMessage(message, conversationId, messageSeq).observe(getViewLifecycleOwner(),
+        Log.d("asd", Long.toString(conversationId) + "Before all observers");
+
+
+        saveUserMessageMutableLiveData = messageViewModel.addMessage(message, conversationId, messageSeq);
+        if (!saveUserMessageMutableLiveData.hasActiveObservers()) {
+            saveUserMessageMutableLiveData.observe(getViewLifecycleOwner(),
                     result -> {
+                        Log.d("asd", Long.toString(conversationId) + "saveMessage - Inside observer");
+                        Log.d(TAG, "AAAAAAAAAAAAAAAAAAA"+Long.toString(conversationId));
                         Log.d(TAG, "saveMessage - Inside observer");
                         if (getViewLifecycleOwner().getLifecycle().getCurrentState() == Lifecycle.State.RESUMED) {
                             Log.d(TAG, "saveMessage - RESUMED");
+                            Log.d("asd", Long.toString(conversationId) + "saveMessage - Inside observer");
                             if (result.isSuccess()) {
                                 Log.d(TAG, "saveMessage - RESUMED - SUCCESS");
 
-
-                                if (!aiReplyViewModel.getAIReply(conversationId, seq.get()).hasActiveObservers()) {
+                                Log.d(TAG, "AAAAAAAAAAAAAAAAAAA"+Long.toString(conversationId));
+                                saveAIMessageMutableLiveData = aiReplyViewModel.getAIReply(conversationId, seq.get());
+                                if (!saveAIMessageMutableLiveData.hasActiveObservers()) {
                                     Log.d(TAG, "getAIReply has no active observer");
-                                    aiReplyViewModel.getAIReply(conversationId, seq.get()).observe(getViewLifecycleOwner(),
+                                    saveAIMessageMutableLiveData.observe(getViewLifecycleOwner(),
                                             replyResult -> {
+                                                Log.d(TAG, "AAAAAAAAAAAAAAAAAAA"+Long.toString(conversationId));
+                                                Log.d("asd", Long.toString(conversationId) + "getAIReply - Inside observer");
                                                 Log.d(TAG, "getAIReply - Inside observer");
                                                 if (getViewLifecycleOwner().getLifecycle().getCurrentState() == Lifecycle.State.RESUMED) {
                                                     Log.d(TAG, "getAIReply - RESUMED");
                                                     if (replyResult.isSuccess()) {
                                                         Log.d(TAG, "getAIReply - RESUMED - SUCCESS");
+                                                        Log.d("asd", Long.toString(conversationId) + "getAIReply - RESUMED - SUCCESS");
+
+                                                    } else {
+                                                        Log.d(TAG, "getAIReply - RESUMED - FAILURE");
+                                                        Snackbar.make(view, "ERROR_GETTING_AI_REPLY", Snackbar.LENGTH_SHORT).show();
+                                                    }
+                                                } else {
+                                                    Log.d(TAG, "getAIReply - NOT RESUMED");
+                                                }
+                                                saveAIMessageMutableLiveData.removeObservers(getViewLifecycleOwner());
+                                                Log.d(TAG, "getAIReply - END");
+                                            });
+                                } else {
+                                    Log.d(TAG, "getAIReply has active observer");
+                                }
+
+
+                            } else {
+                                Log.d(TAG, "saveMessage - RESUMED - FAILURE");
+                                Snackbar.make(view, "ERROR_ADDING_MESSAGE", Snackbar.LENGTH_SHORT).show();
+                            }
+                        } else {
+                            Log.d(TAG, "saveMessage - NOT RESUMED");
+                        }
+                        saveUserMessageMutableLiveData.removeObservers(getViewLifecycleOwner());
+                        Log.d(TAG, "saveMessage - END");
+
+                    });
+        } else {
+            Log.d(TAG, "saveMessage has active observer");
+        }
+
+
+        /*
+        if (!messageViewModel.addMessage(message, conversationId, messageSeq).hasActiveObservers()) {
+            Log.d(TAG, "saveMessage has no active observers");
+            messageViewModel.addMessage(message, conversationId, messageSeq).observe(getViewLifecycleOwner(),
+                    result -> {
+                        Log.d("asd", Long.toString(conversationId) + "saveMessage - Inside observer");
+                        Log.d(TAG, "AAAAAAAAAAAAAAAAAAA"+Long.toString(conversationId));
+                        Log.d(TAG, "saveMessage - Inside observer");
+                        if (getViewLifecycleOwner().getLifecycle().getCurrentState() == Lifecycle.State.RESUMED) {
+                            Log.d(TAG, "saveMessage - RESUMED");
+                            Log.d("asd", Long.toString(conversationId) + "saveMessage - Inside observer");
+                            if (result.isSuccess()) {
+                                Log.d(TAG, "saveMessage - RESUMED - SUCCESS");
+
+                                Log.d(TAG, "AAAAAAAAAAAAAAAAAAA"+Long.toString(conversationId));
+                                if (!aiReplyViewModel.getAIReply(conversationId, seq.get()).hasActiveObservers()) {
+                                    Log.d(TAG, "getAIReply has no active observer");
+                                    aiReplyViewModel.getAIReply(conversationId, seq.get()).observe(getViewLifecycleOwner(),
+                                            replyResult -> {
+                                                Log.d(TAG, "AAAAAAAAAAAAAAAAAAA"+Long.toString(conversationId));
+                                                Log.d("asd", Long.toString(conversationId) + "getAIReply - Inside observer");
+                                                Log.d(TAG, "getAIReply - Inside observer");
+                                                if (getViewLifecycleOwner().getLifecycle().getCurrentState() == Lifecycle.State.RESUMED) {
+                                                    Log.d(TAG, "getAIReply - RESUMED");
+                                                    if (replyResult.isSuccess()) {
+                                                        Log.d(TAG, "getAIReply - RESUMED - SUCCESS");
+                                                        Log.d("asd", Long.toString(conversationId) + "getAIReply - RESUMED - SUCCESS");
 
                                                     } else {
                                                         Log.d(TAG, "getAIReply - RESUMED - FAILURE");
@@ -391,6 +485,8 @@ public class ChatFragment extends Fragment {
         } else {
             Log.d(TAG, "saveMessage has active observer");
         }
+
+         */
 
 
     }
