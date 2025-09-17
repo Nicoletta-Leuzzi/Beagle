@@ -34,7 +34,6 @@ public class RegisterFragment extends Fragment {
     private TextInputEditText textInputPassword;
     private View signupButton;
     private View progressBar;
-    private View linkGoLogin;
 
     public RegisterFragment() { /* empty */ }
 
@@ -53,7 +52,7 @@ public class RegisterFragment extends Fragment {
         progressBar       = root.findViewById(R.id.progressBar);
 
         // Link "Hai già un account? Accedi" (se il view esiste nel layout attuale)
-        linkGoLogin = root.findViewById(R.id.tvGoLogin);
+        View linkGoLogin = root.findViewById(R.id.tvGoLogin);
         if (linkGoLogin != null) {
             linkGoLogin.setOnClickListener(v ->
                     NavHostFragment.findNavController(this)
