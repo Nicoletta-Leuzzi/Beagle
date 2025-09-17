@@ -511,13 +511,7 @@ public class ProfileFragment extends Fragment {
 
         autoCompletePetLayout.setEndIconOnClickListener(null);
         autoCompleteSpeciesLayout.setEndIconOnClickListener(null);
-
-        //DA ATIVARE SE I DROPDOWN VANNO IN CONFLITTO CON IL CAMBIO TEMA
-//        autoCompletePet.setOnClickListener(v-> {
-//            if (!autoCompletePet.getText().toString().isEmpty())
-//                petAdapter.getFilter().filter(null);
-//        });
-//
+        
         autoCompleteSpecies.setOnClickListener(v-> {
             if (!autoCompleteSpecies.getText().toString().isEmpty())
                 speciesAdapter.getFilter().filter(null);
