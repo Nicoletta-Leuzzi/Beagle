@@ -36,6 +36,8 @@ public final class Constants {
     public static final String API_KEY_ERROR = "api_key_error";
     public static final String SAMPLE_JSON_FILENAME = "sample_api_response.json";
     public static final String MODEL = "gpt-oss-120b";
+    public static final String RETROFIT_ERROR = "retrofit_error";
+
 
 
 
