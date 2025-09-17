@@ -555,7 +555,7 @@ public class ProfileFragment extends Fragment {
                     builder.setSelection(parsedDate.getTime());
                 }
             } catch (Exception e) {
-                e.printStackTrace();
+                Log.e("BirthDatePicker", "Errore nel parsing della data: " + currentText, e);
             }
         }
 
