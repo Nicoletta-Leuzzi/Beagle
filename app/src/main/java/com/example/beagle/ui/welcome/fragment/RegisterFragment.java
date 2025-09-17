@@ -17,7 +17,6 @@ import androidx.navigation.fragment.NavHostFragment;
 
 import com.example.beagle.R;
 import com.example.beagle.model.Result;
-import com.example.beagle.model.User;
 import com.example.beagle.repository.user.IUserRepository;
 import com.example.beagle.ui.chat.ChatActivity;
 import com.example.beagle.ui.welcome.viewmodel.UserViewModel;

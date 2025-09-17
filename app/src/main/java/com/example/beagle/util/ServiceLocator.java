@@ -5,7 +5,6 @@ import android.content.Context;
 
 import com.example.beagle.R;
 import com.example.beagle.database.DataRoomDatabase;
-import com.example.beagle.model.Pet;
 import com.example.beagle.repository.conversation.ConversationRepository;
 import com.example.beagle.repository.message.MessageRepository;
 import com.example.beagle.repository.pet.PetRepository;

@@ -3,7 +3,6 @@ package com.example.beagle.ui.welcome.viewmodel;
 import androidx.annotation.NonNull;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
-import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModel;
 
 import com.example.beagle.model.Result;
