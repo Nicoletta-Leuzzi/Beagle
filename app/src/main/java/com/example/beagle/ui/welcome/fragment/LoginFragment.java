@@ -157,11 +157,15 @@ public class LoginFragment extends Fragment {
         // Se ha già un valore (es. l'errore del tentativo precedente), ignoriamo SOLO la prima emissione
         final boolean ignoreFirst = (live.getValue() != null);
 
-        Observer<Result> wrapper = new Observer<Result>() {
+        Observer<Result> wrapper = new Observer<>() {
             boolean first = true;
 
-            @Override public void onChanged(Result result) {
-                if (ignoreFirst && first) { first = false; return; }
+            @Override
+            public void onChanged(Result result) {
+                if (ignoreFirst && first) {
+                    first = false;
+                    return;
+                }
 
                 setLoading(false);
 
@@ -236,7 +240,7 @@ public class LoginFragment extends Fragment {
                 request,
                 null,
                 ContextCompat.getMainExecutor(requireContext()),
-                new CredentialManagerCallback<GetCredentialResponse, GetCredentialException>() {
+                new CredentialManagerCallback<>() {
                     @Override
                     public void onResult(GetCredentialResponse response) {
                         setLoading(false);
@@ -261,8 +265,7 @@ public class LoginFragment extends Fragment {
         try {
             Credential cred = response.getCredential();
 
-            if (cred instanceof CustomCredential) {
-                CustomCredential custom = (CustomCredential) cred;
+            if (cred instanceof CustomCredential custom) {
 
                 if (GoogleIdTokenCredential.TYPE_GOOGLE_ID_TOKEN_CREDENTIAL.equals(custom.getType())) {
                     GoogleIdTokenCredential googleCred =
@@ -294,11 +297,15 @@ public class LoginFragment extends Fragment {
 
         final boolean ignoreFirst = (live.getValue() != null);
 
-        Observer<Result> wrapper = new Observer<Result>() {
+        Observer<Result> wrapper = new Observer<>() {
             boolean first = true;
 
-            @Override public void onChanged(Result result) {
-                if (ignoreFirst && first) { first = false; return; }
+            @Override
+            public void onChanged(Result result) {
+                if (ignoreFirst && first) {
+                    first = false;
+                    return;
+                }
 
                 setLoading(false);
 

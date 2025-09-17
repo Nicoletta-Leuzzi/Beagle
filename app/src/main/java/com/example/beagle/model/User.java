@@ -72,11 +72,16 @@ public class User implements Parcelable {
         this.idToken = in.readString();
     }
 
-    public static final Parcelable.Creator<User> CREATOR = new Parcelable.Creator<User>() {
+    public static final Parcelable.Creator<User> CREATOR = new Parcelable.Creator<>() {
         @Override
-        public User createFromParcel(Parcel source) { return new User(source); }
+        public User createFromParcel(Parcel source) {
+            return new User(source);
+        }
+
         @Override
-        public User[] newArray(int size) { return new User[size]; }
+        public User[] newArray(int size) {
+            return new User[size];
+        }
     };
 
 

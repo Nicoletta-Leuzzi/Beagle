@@ -54,7 +54,7 @@ public class UserFirebaseDataSource extends BaseUserDataRemoteDataSource {
                 } else {
                     // Crea il nodo utente
                     userRef.setValue(user)
-                            .addOnSuccessListener(new OnSuccessListener<Void>() {
+                            .addOnSuccessListener(new OnSuccessListener<>() {
                                 @Override
                                 public void onSuccess(Void unused) {
                                     if (userResponseCallback != null) {
