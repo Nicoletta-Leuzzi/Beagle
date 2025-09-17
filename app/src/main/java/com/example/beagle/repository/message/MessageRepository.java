@@ -136,8 +136,8 @@ public class MessageRepository implements IMessageResponseCallback {
 
         // Verifica che la risposta sia valida
         if (response == null) {
-         messageAILiveData.postValue(new Result.Error("Null response from API"));
-         return;
+            messageAILiveData.postValue(new Result.Error("Null response from API"));
+            return;
         }
 
         // Recupera APIMessage e trasformalo in oggetto Message
