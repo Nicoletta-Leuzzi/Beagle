@@ -108,7 +108,7 @@ public class MessageRepository implements IMessageResponseCallback {
     }
 
     @Override
-    public void onFailureWriteFromRemote(String exception) {
+    public void onFailureWriteFromRemote(Exception exception) {
 
     }
 
@@ -134,23 +134,37 @@ public class MessageRepository implements IMessageResponseCallback {
     @Override
     public void onSuccessFromAPI(ChatCompletionResponse response, long conversationId, int seq) {
 
+        // Verifica che la risposta sia valida
+        if (response == null) {
+         messageAILiveData.postValue(new Result.Error("Null response from API"));
+        }
+
         // Recupera APIMessage e trasformalo in oggetto Message
         List<Choice> choices = response.getChoices();
-        APIMessage aiMsg = choices.get(0).getMessage();
+        if (choices == null || choices.isEmpty()) {
+            messageAILiveData.postValue(new Result.Error("No choices in AI response"));
+            return;
+        }
+
+        APIMessage aiMsg;
+
+        Choice choice = choices.get(0);
+        if (choice != null) {
+            aiMsg = choice.getMessage();
+        } else aiMsg = null;
+
+        if (aiMsg == null || aiMsg.getContent() == null) {
+            messageAILiveData.postValue(new Result.Error("No message in choice 0"));
+            return;
+        }
+
         Message message = new Message(aiMsg, conversationId, seq);
-
         messageLocalDataSource.insertAIMessage(message, conversationId);
-
-        //List<Message> test = new ArrayList<>();
-        //test.add(AIReply);
-        //Result.MessageReadSuccess result = new Result.MessageReadSuccess(test);
-        //messageAILiveData.postValue(result);
-        //allMessagesMutableLiveData.postValue(result);
     }
 
     public void onSuccessFetchFromAPI(ChatCompletionResponse response, long conversationId, int seq) {
 
-
+    // todo togliere?
 
         // Infine chiama qualcosa (o addMessage, o le chiamate dentro, per poi forse tornare qualche livedata?)
     }
