@@ -35,7 +35,6 @@ public class RegisterFragment extends Fragment {
     private View signupButton;
     private View progressBar;
 
-    public RegisterFragment() { /* empty */ }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {

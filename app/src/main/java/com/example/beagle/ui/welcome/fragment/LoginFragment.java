@@ -59,7 +59,6 @@ public class LoginFragment extends Fragment {
     private GetSignInWithGoogleOption siwgOption;
     private GetGoogleIdOption googleIdAnyAccountOption;
 
-    public LoginFragment() { /* empty */ }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
