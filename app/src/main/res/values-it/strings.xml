@@ -7,22 +7,18 @@
     <string name="btn_login">Accedi</string>
     <string name="btn_register">Crea un nuovo account</string>
     <string name="btn_logout">Esci</string>
-    <string name="please_wait">Attendere…</string>
-    <string name="welcome">Benvenuta/o</string>
+
 
     <!-- Navigazione / testi -->
     <string name="already_registered">Hai già un account?</string>
     <string name="have_account">Non hai un account? Registrati</string>
-    <string name="home_message">Sei nella Home ✅</string>
+
 
     <!-- Chat / copy -->
     <string name="initial_greeting">Come sta %1$s?</string>
     <string name="hint">Descrivi il problema</string>
     <string name="no_text">Scrivi una domanda all’AI sul tuo animale</string>
 
-    <!-- Messaggi di esito -->
-    <string name="login_success">Login effettuato!</string>
-    <string name="register_success">Registrazione completata!</string>
 
     <!-- Pet / cronologia -->
     <string name="no_pet">Non hai ancora aggiunto un animale, aggiungilo</string>
@@ -56,12 +52,7 @@
     <string name="forgot_return_login">TORNA AL LOGIN</string>
     <string name="forgot_email_sent">Se esiste un account per %1$s, ti abbiamo inviato un’email con le istruzioni.</string>
 
-    <!-- Email Verification -->
-    <string name="verify_title">Verifica email</string>
-    <string name="verify_needed">Devi verificare la tua email per continuare.</string>
-    <string name="verify_resend">Invia di nuovo</string>
-    <string name="open_mail">Apri email</string>
-    <string name="verify_sent">Ti abbiamo inviato una email di verifica a %1$s.</string>
+
     <string name="delete">Elimina</string>
     <string name="settings">Impostazioni</string>
     <string name="add">Aggiungi</string>

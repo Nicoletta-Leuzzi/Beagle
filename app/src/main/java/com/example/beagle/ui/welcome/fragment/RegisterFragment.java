@@ -17,7 +17,6 @@ import androidx.navigation.fragment.NavHostFragment;
 
 import com.example.beagle.R;
 import com.example.beagle.model.Result;
-import com.example.beagle.model.User;
 import com.example.beagle.repository.user.IUserRepository;
 import com.example.beagle.ui.chat.ChatActivity;
 import com.example.beagle.ui.welcome.viewmodel.UserViewModel;
@@ -34,42 +33,38 @@ public class RegisterFragment extends Fragment {
     private TextInputEditText textInputPassword;
     private View signupButton;
     private View progressBar;
-    private View linkGoLogin;
 
-    public RegisterFragment() { /* empty */ }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        // Come per il login, per rapidità riuso activity_register
         return inflater.inflate(R.layout.fragment_register, container, false);
     }
 
     @Override
     public void onViewCreated(View root, @Nullable Bundle savedInstanceState) {
-        // --- Bind UI ---
+        // Bind UI
         textInputEmail    = root.findViewById(R.id.textInputEmail);
         textInputPassword = root.findViewById(R.id.textInputPassword);
         signupButton      = root.findViewById(R.id.signupButton);
         progressBar       = root.findViewById(R.id.progressBar);
 
-        // eventuale TextView "Hai già un account? Accedi" se presente nel layout
-        int goLoginId = getResources().getIdentifier("tvGoLogin", "id", requireContext().getPackageName());
-        if (goLoginId != 0) {
-            linkGoLogin = root.findViewById(goLoginId);
-            if (linkGoLogin != null) {
-                linkGoLogin.setOnClickListener(v ->
-                        NavHostFragment.findNavController(this)
-                                .navigate(R.id.action_registerFragment_to_loginFragment));
-            }
+        // Link "Hai già un account? Accedi"
+        View linkGoLogin = root.findViewById(R.id.tvGoLogin);
+        if (linkGoLogin != null) {
+            linkGoLogin.setOnClickListener(v ->
+                    NavHostFragment.findNavController(this)
+                            .navigate(R.id.action_registerFragment_to_loginFragment)
+            );
         }
 
-        // --- VM condivisa con Login ---
+
+        //VM condivisa con Login
         IUserRepository repo = ServiceLocator.getInstance().getUserRepository(requireActivity().getApplication());
         userViewModel = new ViewModelProvider(requireActivity(), new UserViewModelFactory(repo))
                 .get(UserViewModel.class);
         userViewModel.setAuthenticationError(false);
 
-        // --- Registrazione ---
+        //Registrazione
         signupButton.setOnClickListener(v -> {
             String email = textOf(textInputEmail);
             String pwd   = textOf(textInputPassword);
@@ -80,7 +75,6 @@ public class RegisterFragment extends Fragment {
                         .observe(getViewLifecycleOwner(), result -> {
                             setLoading(false);
                             if (result instanceof Result.UserSuccess) {
-                                User user = ((Result.UserSuccess) result).getData();
                                 userViewModel.setAuthenticationError(false);
                                 goNext();
                             } else if (result instanceof Result.Error) {
@@ -95,8 +89,7 @@ public class RegisterFragment extends Fragment {
         });
     }
 
-    // ----------------- Helpers -----------------
-
+    //Helpers
     private void goNext() {
         startActivity(new Intent(requireContext(), ChatActivity.class));
         requireActivity().finish();
@@ -128,7 +121,7 @@ public class RegisterFragment extends Fragment {
         Snackbar.make(anchor, msg, Snackbar.LENGTH_SHORT).show();
     }
 
-    /** Mappa stringhe errore del repo/DS Firebase alle risorse UI. */
+    //Mappa stringhe errore del repo/DS Firebase alle risorse UI.
     private String getErrorMessage(String type) {
         if (WEAK_PASSWORD_ERROR.equals(type)) {
             return getString(R.string.error_password_login);

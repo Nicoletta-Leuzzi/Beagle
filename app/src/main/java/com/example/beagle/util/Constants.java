@@ -6,8 +6,6 @@ public final class Constants {
     private Constants() {
     }
 
-    // --- Regole UI ---
-    public static final int MINIMUM_LENGTH_PASSWORD = 6;
 
     // --- Errori normalizzati lato Auth (mappati dal DataSource Firebase) ---
     public static final String WEAK_PASSWORD_ERROR = "weak_password_error";

@@ -345,10 +345,8 @@ public class ProfileFragment extends Fragment {
                 speciesAdapter.getFilter().filter(null);
         });
 
-        btnSettings.setOnClickListener(v->{
-            Navigation.findNavController(v)
-                    .navigate(R.id.action_profileFragment_to_settingsFragment);
-        });
+        btnSettings.setOnClickListener(v-> Navigation.findNavController(v)
+                .navigate(R.id.action_profileFragment_to_settingsFragment));
 
 
         return view;

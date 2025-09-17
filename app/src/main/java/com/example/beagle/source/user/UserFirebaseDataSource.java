@@ -1,6 +1,5 @@
 package com.example.beagle.source.user;
 
-import android.util.Log;
 
 import androidx.annotation.NonNull;
 
@@ -13,8 +12,6 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
-import java.util.ArrayList;
-import java.util.Set;
 
 /**
  * Recupero/salvataggio dati utente su Firebase Realtime Database.
@@ -22,25 +19,21 @@ import java.util.Set;
  */
 public class UserFirebaseDataSource extends BaseUserDataRemoteDataSource {
 
-    private static final String TAG = UserFirebaseDataSource.class.getSimpleName();
 
     // Usa il DB di default del progetto (da google-services.json).
     private final DatabaseReference rootRef;
 
-    // Nodi usati (rinomina se hai costanti dedicate)
+    // Nodi usati
     private static final String NODE_USERS = "users";
-    private static final String NODE_FAVORITES = "favorite_news"; // opzionale, vedi no-op sotto
 
     public UserFirebaseDataSource() {
         rootRef = FirebaseDatabase.getInstance().getReference();
     }
 
-    /**
-     * Salva l'utente se non esiste già, altrimenti ritorna successo.
-     */
+    //Salva l'utente se non esiste già, altrimenti ritorna successo.
     @Override
     public void saveUserData(User user) {
-        if (user == null || user.getIdToken() == null) {
+        if (user == null) {
             if (userResponseCallback != null) {
                 userResponseCallback.onFailureFromRemoteDatabase("Invalid user");
             }
@@ -59,21 +52,15 @@ public class UserFirebaseDataSource extends BaseUserDataRemoteDataSource {
                 } else {
                     // Crea il nodo utente
                     userRef.setValue(user)
-                            .addOnSuccessListener(new OnSuccessListener<Void>() {
-                                @Override
-                                public void onSuccess(Void unused) {
-                                    if (userResponseCallback != null) {
-                                        userResponseCallback.onSuccessFromRemoteDatabase(user);
-                                    }
+                            .addOnSuccessListener(unused -> {
+                                if (userResponseCallback != null) {
+                                    userResponseCallback.onSuccessFromRemoteDatabase(user);
                                 }
                             })
-                            .addOnFailureListener(new OnFailureListener() {
-                                @Override
-                                public void onFailure(@NonNull Exception e) {
-                                    if (userResponseCallback != null) {
-                                        userResponseCallback.onFailureFromRemoteDatabase(
-                                                e.getLocalizedMessage() != null ? e.getLocalizedMessage() : "Write failed");
-                                    }
+                            .addOnFailureListener(e -> {
+                                if (userResponseCallback != null) {
+                                    userResponseCallback.onFailureFromRemoteDatabase(
+                                            e.getLocalizedMessage() != null ? e.getLocalizedMessage() : "Write failed");
                                 }
                             });
                 }

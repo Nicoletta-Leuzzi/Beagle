@@ -34,7 +34,7 @@ public class ForgotPasswordFragment extends Fragment {
 
     private TextInputLayout tilEmail;
     private TextInputEditText etEmail;
-    private MaterialButton btnReset, linkBackLogin;
+    private MaterialButton btnReset;
     private View progress;
 
     private UserViewModel userViewModel;
@@ -46,7 +46,7 @@ public class ForgotPasswordFragment extends Fragment {
         tilEmail = view.findViewById(R.id.tilEmail);
         etEmail = view.findViewById(R.id.etEmail);
         btnReset = view.findViewById(R.id.btnReset);
-        linkBackLogin = view.findViewById(R.id.linkBackLogin);
+        MaterialButton linkBackLogin = view.findViewById(R.id.linkBackLogin);
         progress = view.findViewById(R.id.progress);
 
         // init ViewModel via ServiceLocator/IUserRepository

@@ -4,7 +4,6 @@ import android.os.Parcel;
 import android.os.Parcelable;
 
 import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 import androidx.room.Entity;
 import androidx.room.Ignore;
 import androidx.room.Index;
@@ -24,23 +23,24 @@ public class User implements Parcelable {
     // Necessario per Firebase (deserializzazione)
     public User() { }
 
-    public User(String name, String email, String idToken) {
+    public User(String name, @NonNull String email, String idToken) {
         this.name = name;
         this.email = email;
         this.idToken = idToken;
     }
 
     public String getName() { return name; }
-    public void setName(String name) { this.name = name; }
 
+    @NonNull
     public String getEmail() { return email; }
     public void setEmail(String email) { this.email = email; }
 
-    // Non salvare l'idToken nel Realtime DB
+    @NonNull
     @Exclude
     public String getIdToken() { return idToken; }
     public void setIdToken(String idToken) { this.idToken = idToken; }
 
+    @NonNull
     @Override
     public String toString() {
         return "User{" +
@@ -74,11 +74,16 @@ public class User implements Parcelable {
         this.idToken = in.readString();
     }
 
-    public static final Parcelable.Creator<User> CREATOR = new Parcelable.Creator<User>() {
+    public static final Parcelable.Creator<User> CREATOR = new Parcelable.Creator<>() {
         @Override
-        public User createFromParcel(Parcel source) { return new User(source); }
+        public User createFromParcel(Parcel source) {
+            return new User(source);
+        }
+
         @Override
-        public User[] newArray(int size) { return new User[size]; }
+        public User[] newArray(int size) {
+            return new User[size];
+        }
     };
 
 
