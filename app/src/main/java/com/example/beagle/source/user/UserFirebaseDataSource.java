@@ -13,8 +13,6 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
-import java.util.ArrayList;
-import java.util.Set;
 
 /**
  * Recupero/salvataggio dati utente su Firebase Realtime Database.
@@ -22,14 +20,12 @@ import java.util.Set;
  */
 public class UserFirebaseDataSource extends BaseUserDataRemoteDataSource {
 
-    private static final String TAG = UserFirebaseDataSource.class.getSimpleName();
 
     // Usa il DB di default del progetto (da google-services.json).
     private final DatabaseReference rootRef;
 
     // Nodi usati (rinomina se hai costanti dedicate)
     private static final String NODE_USERS = "users";
-    private static final String NODE_FAVORITES = "favorite_news"; // opzionale, vedi no-op sotto
 
     public UserFirebaseDataSource() {
         rootRef = FirebaseDatabase.getInstance().getReference();
