@@ -189,37 +189,6 @@ public class ProfileFragment extends Fragment {
         species.add(getString(R.string.cat));
         speciesAdapter.notifyDataSetChanged();
 
-        MenuHost menuHost = requireActivity();
-        menuHost.addMenuProvider(new MenuProvider() {
-            @Override
-            public void onCreateMenu(@NonNull Menu menu, @NonNull MenuInflater menuInflater) {
-                menu.clear();
-                menuInflater.inflate(R.menu.menu_settings, menu);
-            }
-
-            @Override
-            public boolean onMenuItemSelected(@NonNull MenuItem menuItem) {
-                int id = menuItem.getItemId();
-                if (id == R.id.btnSettings) {
-
-                    NavHostFragment.findNavController(ProfileFragment.this)
-                            .navigate(R.id.action_profileFragment_to_settingsFragment);
-                    return true;
-                }
-                if (id == R.id.btnAdd) {
-                    btnAdd.setVisibility(View.INVISIBLE);
-                    btnSettings.setVisibility(View.INVISIBLE);
-                    btns_save_cancel.setVisibility(View.VISIBLE);
-                    btnDelete.setVisibility(View.INVISIBLE);
-                    disableDropDownMenu();
-                    clearAllFields();
-                    enableAllInputText();
-                    return true;
-                }
-                return false;
-            }
-        }, getViewLifecycleOwner(), Lifecycle.State.RESUMED);
-
         if(animals.isEmpty()){
             disableDropDownMenu();
             btnDelete.setVisibility(INVISIBLE);
