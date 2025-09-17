@@ -22,8 +22,8 @@ public interface ConversationDAO {
     @Query("SELECT * FROM Conversation WHERE petId = :petId ORDER BY createdAt DESC LIMIT 1")
     Conversation getLastConversation(long petId);
 
-    @Query("SELECT * FROM CONVERSATION WHERE petId = :petId AND conversationId = :conversationId")
-    Conversation getSingleConversation(long petId, long conversationId);
+    @Query("SELECT * FROM Conversation WHERE conversationId = :conversationId LIMIT 1")
+    Conversation getConversationById(long conversationId);
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     void insertAll(List<Conversation> conversations);

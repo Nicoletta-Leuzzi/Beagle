@@ -25,6 +25,7 @@ public abstract class DataRoomDatabase extends RoomDatabase {
     public abstract ConversationDAO conversationDao();
     public abstract PetDAO petDao();
 
+
     private static volatile DataRoomDatabase INSTANCE;
 
     public static final ExecutorService databaseWriteExecutor =

@@ -2,18 +2,13 @@ package com.example.beagle.model;
 
 
 import androidx.room.Entity;
+import androidx.room.ForeignKey;
 import androidx.room.Ignore;
+import androidx.room.Index;
 import androidx.room.PrimaryKey;
 
 @Entity(
-    /*foreignKeys = {
-            @ForeignKey(
-                    entity = User.class,
-                    parentColumns = "idToken",
-                    childColumns = "idToken",
-                    onDelete = ForeignKey.CASCADE,
-                    onUpdate = ForeignKey.CASCADE
-            ),
+    foreignKeys = {
             @ForeignKey( // deferibile se serve inserire prima la convo e poi il pet nella stessa transazione
                     entity = Pet.class,
                     parentColumns = "petId",
@@ -23,8 +18,8 @@ import androidx.room.PrimaryKey;
                     deferred = true
             )
     },
-    indices = { @Index("idToken"), @Index("petId") }
-     */
+    indices = {@Index("petId") }
+
 )
 public class Conversation {
     @PrimaryKey(autoGenerate = true)// TODO: NOTA, autoGenerate NON funge con foreign key per qualche ragione

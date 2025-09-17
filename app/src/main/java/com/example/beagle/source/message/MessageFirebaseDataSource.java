@@ -15,15 +15,16 @@ import com.google.firebase.database.FirebaseDatabase;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 public class MessageFirebaseDataSource extends BaseMessageRemoteDataSource {
     String TAG = "test";
 
     private final DatabaseReference databaseReference;
-    private final String user;
+
     public MessageFirebaseDataSource() {
         FirebaseDatabase firebaseDatabase = FirebaseDatabase.getInstance(FIREBASE_REALTIME_DATABASE);
-        user = FirebaseAuth.getInstance().getCurrentUser().getUid();
+        String user = Objects.requireNonNull(FirebaseAuth.getInstance().getCurrentUser()).getUid();
         databaseReference = firebaseDatabase.getReference().getRef()
                 .child(FIREBASE_USERS_COLLECTION)
                 .child(user)
@@ -35,7 +36,9 @@ public class MessageFirebaseDataSource extends BaseMessageRemoteDataSource {
     @Override
     public void getMessages(long conversationId) {
 
-        databaseReference.child(Long.toString(conversationId)).get().addOnCompleteListener(task -> {
+        databaseReference
+                .child(Long.toString(conversationId)).get()
+                .addOnCompleteListener(task -> {
             if (!task.isSuccessful()) {
                 messageCallback.onFailureReadFromRemote(task.getException());
             } else {
@@ -48,15 +51,24 @@ public class MessageFirebaseDataSource extends BaseMessageRemoteDataSource {
                 messageCallback.onSuccessReadFromRemote(messageList, conversationId);
             }
         });
-
-
-
-
     }
 
     @Override
     public void insertMessage(Message message, long conversationId, int seq) {
-        Log.d("test", "FIREBAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAASE");
-        databaseReference.child(Long.toString(conversationId)).child(Integer.toString(seq)).setValue(message);
+
+        databaseReference
+                .child(Long.toString(conversationId))
+                .child(Integer.toString(seq)).setValue(message)
+                .addOnSuccessListener(unused -> {
+                    if (messageCallback != null) {
+                        messageCallback.onSuccessWriteFromRemote(message);
+                    }
+                })
+                .addOnFailureListener(e -> {
+                if (messageCallback != null) {
+                    messageCallback.onFailureWriteFromRemote(e);
+                }
+        });
+
     }
 }

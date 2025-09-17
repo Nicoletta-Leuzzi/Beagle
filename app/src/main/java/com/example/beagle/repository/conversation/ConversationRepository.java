@@ -16,6 +16,7 @@ public class ConversationRepository implements IConversationResponseCallback {
     private final BaseConversationRemoteDataSource conversationRemoteDataSource;
     private final BaseConversationLocalDataSource conversationLocalDataSource;
 
+
     public ConversationRepository(BaseConversationRemoteDataSource conversationRemoteDataSource,
                                   BaseConversationLocalDataSource conversationLocalDataSource) {
         this.conversationsMutableLiveData = new MutableLiveData<>();
@@ -46,17 +47,6 @@ public class ConversationRepository implements IConversationResponseCallback {
     }
 
     @Override
-    public void onSuccessFromRemote() {
-        // TODO
-    }
-
-    @Override
-    public void onFailureFromRemote(Exception exception) {
-        Result.Error result = new Result.Error(exception.getMessage());
-        conversationsMutableLiveData.postValue(result);
-    }
-
-    @Override
     public void onSuccessReadFromRemote(List <Conversation> conversationList, long petId) {
         conversationLocalDataSource.insertConversations(conversationList, petId);
     }
@@ -82,22 +72,12 @@ public class ConversationRepository implements IConversationResponseCallback {
     }
 
     @Override
-    public void onFailureFromLocal(Exception exception) {
-        Result.Error result = new Result.Error(exception.getMessage());
-        conversationsMutableLiveData.postValue(result);
-    }
-
-
-
-    @Override
-    public void onSuccessDeleteFromRemote() {
-        // TODO
-
+    public void onSuccessDeleteFromRemote(long conversationId, long petId) {
+        conversationLocalDataSource.getConversations(petId);
     }
 
     @Override
-    public void onFailureDeleteFromRemote(Exception exception) {
-        Result.Error result = new Result.Error(exception.getMessage());
-        conversationsMutableLiveData.postValue(result);
+    public void onFailureDeleteFromRemote(long conversationId, long petId, Exception exception) {
+        conversationsMutableLiveData.postValue(new Result.Error(exception.getMessage()));
     }
 }
