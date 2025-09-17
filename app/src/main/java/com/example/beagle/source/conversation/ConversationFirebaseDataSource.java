@@ -17,7 +17,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
-public class ConversationFirebaseDataSource extends BaseConversationRemoteDataSource{
+public class ConversationFirebaseDataSource extends BaseConversationRemoteDataSource {
 
     private final DatabaseReference databaseReference;
     private final DatabaseReference messagesReference;
@@ -79,12 +79,16 @@ public class ConversationFirebaseDataSource extends BaseConversationRemoteDataSo
                 .removeValue();
 
         Tasks.whenAll(delConversation, delMessages)
-                .addOnCompleteListener(task -> {
+                .addOnSuccessListener(task -> {
                     boolean ok = delConversation.isSuccessful() && delMessages.isSuccessful();
                     if (ok) {
                         conversationCallback.onSuccessDeleteFromRemote(conversationId, petId);
-                    } else {
-                        conversationCallback.onFailureDeleteFromRemote(conversationId, petId, task.getException());
+                    }
+                })
+                .addOnFailureListener(exception -> {
+                    boolean ok = delConversation.isSuccessful() && delMessages.isSuccessful();
+                    if (!ok) {
+                        conversationCallback.onFailureDeleteFromRemote(conversationId, petId, exception);
                     }
                 });
     }

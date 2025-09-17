@@ -80,4 +80,9 @@ public class ConversationRepository implements IConversationResponseCallback {
     public void onFailureDeleteFromRemote(long conversationId, long petId, Exception exception) {
         conversationsMutableLiveData.postValue(new Result.Error(exception.getMessage()));
     }
+
+    @Override
+    public void onFailureDeleteFromLocal(long conversationId, long petId, Exception exception) {
+        conversationsMutableLiveData.postValue(new Result.Error(exception.getMessage()));
+    }
 }
