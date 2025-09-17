@@ -17,17 +17,7 @@ import androidx.room.Ignore;
 import androidx.room.Index;
 import androidx.room.PrimaryKey;
 
-@Entity(
-        foreignKeys = @ForeignKey(
-                entity = User.class,
-                parentColumns = "idToken",
-                childColumns = "idToken",
-                onDelete = ForeignKey.CASCADE,
-                onUpdate = ForeignKey.CASCADE
-        ),
-        indices = { @Index(value = {"idToken", "name"}, unique = true),
-                @Index("idToken") }
-)
+@Entity
 public class Pet {
     @PrimaryKey(autoGenerate = true)
     private long petId; // autogenerato da Room
