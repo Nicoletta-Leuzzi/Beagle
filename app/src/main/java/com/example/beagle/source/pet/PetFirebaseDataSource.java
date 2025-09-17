@@ -1,21 +1,19 @@
 package com.example.beagle.source.pet;
 
-import static com.example.beagle.util.Constants.FIREBASE_CONVERSATION_COLLECTION;
 import static com.example.beagle.util.Constants.FIREBASE_PET_COLLECTION;
 import static com.example.beagle.util.Constants.FIREBASE_REALTIME_DATABASE;
 import static com.example.beagle.util.Constants.FIREBASE_USERS_COLLECTION;
 
-import com.example.beagle.model.Message;
 import com.example.beagle.model.Pet;
-import com.google.android.gms.tasks.Task;
-import com.google.android.gms.tasks.Tasks;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 
 public class PetFirebaseDataSource extends BasePetRemoteDataSource {
@@ -36,13 +34,18 @@ public class PetFirebaseDataSource extends BasePetRemoteDataSource {
         databaseReference
                 .get()
                 .addOnCompleteListener(task -> {
+                    if (petCallback == null) {
+                        return;
+                    }
                     if (!task.isSuccessful()) {
                         petCallback.onFailureReadFromRemote(task.getException());
                     } else {
                         List<Pet> petList = new ArrayList<>();
                         for (DataSnapshot ds : task.getResult().getChildren()) {
                             Pet pet = ds.getValue(Pet.class);
-                            petList.add(pet);
+                            if (pet != null) {
+                                petList.add(pet);
+                            }
                         }
 
                         petCallback.onSuccessReadFromRemote(petList);
@@ -52,9 +55,21 @@ public class PetFirebaseDataSource extends BasePetRemoteDataSource {
 
     @Override
     public void insertPet(Pet pet) {
+        if (pet == null) {
+            return;
+        }
+
+        Map<String, Object> payload = new HashMap<>();
+        payload.put("petId", pet.getPetId());
+        payload.put("name", pet.getName());
+        payload.put("breed", pet.getBreed());
+        payload.put("age", pet.getAge());
+        payload.put("species", (int) pet.getSpecies());
+        payload.put("birthDate", pet.getBirthDate());
+
         databaseReference
                 .child(Long.toString(pet.getPetId()))
-                .setValue(pet);
+                .setValue(payload);
     }
 
     @Override
