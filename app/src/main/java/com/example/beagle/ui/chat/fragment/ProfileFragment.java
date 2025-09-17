@@ -207,6 +207,18 @@ public class ProfileFragment extends Fragment {
                                 }
                                 enableDropDownMenu();
                                 autoCompletePet.setText(pet.toString(), false);
+                                if (pet != null) {
+                                    sharedPreferencesUtils.writeStringData(
+                                            SHARED_PREFERENCES_FILENAME,
+                                            SHARED_PREFERENCES_ACTIVE_PET_ID,
+                                            Long.toString(pet.getPetId()));
+
+                                    sharedPreferencesUtils.writeStringData(
+                                            SHARED_PREFERENCES_FILENAME,
+                                            SHARED_PREFERENCES_ACTIVE_PET_NAME,
+                                            pet.getName());
+                                }
+
                             }
                             else {
                                 disableDropDownMenu();
